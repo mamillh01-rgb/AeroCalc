@@ -2,6 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <style>
+    * { box-sizing: border-box; }
+    @media (max-width: 520px) {
+      .res-grid-2 { grid-template-columns: 1fr !important; }
+      .wind-grid-3 { grid-template-columns: 1fr 1fr !important; }
+      .wind-grid-3 > :last-child { grid-column: span 2; }
+      .result-num { font-size: 36px !important; }
+      .result-num-sm { font-size: 26px !important; }
+      .tab-header-title { font-size: 24px !important; }
+      .hw-xw-grid { grid-template-columns: 1fr 1fr !important; }
+      input[type=number] { font-size: 16px !important; padding: 9px 10px !important; }
+    }
+  </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PA-28-181 Archer III · Performance Calculator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
@@ -280,8 +294,21 @@
     // ============================================================
     // SHARED UI COMPONENTS
     // ============================================================
+    const MobileContext = React.createContext(false);
+    const useIsMobileInner = () => React.useContext(MobileContext);
+
+    function Grid2({ children, style }) {
+      const mobile = useIsMobileInner();
+      return <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr", gap: "10px", ...style }}>{children}</div>;
+    }
+    function Grid3({ children, style }) {
+      const mobile = useIsMobileInner();
+      return <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr 1fr" : "1fr 1fr 1fr", gap: "8px", ...style }}>{children}</div>;
+    }
+
     function Card({ children }) {
-      return <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: "4px", padding: "32px", boxShadow: "0 0 80px rgba(90,138,106,0.10)" }}>{children}</div>;
+      const mobile = React.useContext(MobileContext);
+      return <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: "4px", padding: mobile ? "16px" : "32px", boxShadow: "0 0 80px rgba(90,138,106,0.10)" }}>{children}</div>;
     }
     function TempField({ value, onChange, unit, onUnitChange, label = "OAT AT DEPARTURE" }) {
       return (
@@ -776,7 +803,7 @@
             <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 2400" hint="2,000 – 2,550 lbs (leave blank for 2,550)" />
             <div>
               <div style={{ fontSize: "12px", letterSpacing: "3px", color: C.green, marginBottom: "8px" }}>WIND</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+              <Grid3 style={{ marginBottom: "8px" }}>
                 <div>
                   <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "2px", marginBottom: "4px" }}>RUNWAY</div>
                   <input type="number" value={runway} onChange={e => setRunway(e.target.value.slice(0,2))} placeholder="e.g. 28"
@@ -792,7 +819,7 @@
                   <input type="number" value={windSpeed} onChange={e => setWindSpeed(e.target.value)} placeholder="e.g. 10"
                     style={{ width: "100%", boxSizing: "border-box", background: C.input, border: `1px solid ${C.border}`, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
                 </div>
-              </div>
+              </Grid3>
               {windComponents && (() => {
                 const hw = windComponents.headwind;
                 const xw = windComponents.crosswind;
@@ -1066,7 +1093,7 @@
           </div>
 
           {/* Numeric result cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
+          <Grid2 style={{ marginBottom: "12px" }}>
             <div style={{ background: C.input, border: `1px solid ${markerColorRoll}`, borderRadius: "3px", padding: "16px", textAlign: "center" }}>
               <div style={{ fontSize: "15px", letterSpacing: "2px", color: markerColorRoll, marginBottom: "8px" }}>GROUND ROLL</div>
               <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{distGr}</div>
@@ -1077,10 +1104,10 @@
               <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{dist50}</div>
               <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET · FIG 5-9</div>
             </div>
-          </div>
+          </Grid2>
 
           {/* 1.5x safety buffer row */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
+          <Grid2 style={{ marginBottom: "12px" }}>
             {[{val: Math.round(distGr * 1.5), label: "GROUND ROLL ×1.5", color: markerColorRoll},
               {val: Math.round(dist50 * 1.5), label: "OVER 50 FT ×1.5",  color: markerColor50}].map(({val, label, color}) => (
               <div key={label} style={{ background: "#0a0c10", border: `1px solid ${color}55`, borderRadius: "3px", padding: "12px 16px", textAlign: "center" }}>
@@ -1089,7 +1116,7 @@
                 <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "5px", letterSpacing: "2px" }}>FEET</div>
               </div>
             ))}
-          </div>
+          </Grid2>
 
           <NoteBox text="Flaps 25°, full throttle, paved/level/dry, A/C off. Always verify against official POH charts." />
         </div>
@@ -1394,7 +1421,7 @@
             <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 2400" hint="2,000 – 2,550 lbs (leave blank for 2,550)" />
             <div>
               <div style={{ fontSize: "12px", letterSpacing: "3px", color: C.green, marginBottom: "8px" }}>WIND</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+              <Grid3 style={{ marginBottom: "8px" }}>
                 <div>
                   <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "2px", marginBottom: "4px" }}>RUNWAY</div>
                   <input type="number" value={runway} onChange={e => setRunway(e.target.value.slice(0,2))} placeholder="e.g. 28"
@@ -1410,7 +1437,7 @@
                   <input type="number" value={windSpeed} onChange={e => setWindSpeed(e.target.value)} placeholder="e.g. 10"
                     style={{ width: "100%", boxSizing: "border-box", background: C.input, border: `1px solid ${C.border}`, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
                 </div>
-              </div>
+              </Grid3>
               {windComponents && (() => {
                 const hw = windComponents.headwind;
                 const xw = windComponents.crosswind;
@@ -1682,7 +1709,7 @@
           </div>
 
           {/* Result cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
+          <Grid2 style={{ marginBottom: "12px" }}>
             <div style={{ background: C.input, border: `1px solid ${markerColorRoll}`, borderRadius: "3px", padding: "16px", textAlign: "center" }}>
               <div style={{ fontSize: "15px", letterSpacing: "2px", color: markerColorRoll, marginBottom: "8px" }}>GROUND ROLL</div>
               <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{distGr}</div>
@@ -1693,10 +1720,10 @@
               <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{dist50}</div>
               <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET · FIG 5-41</div>
             </div>
-          </div>
+          </Grid2>
 
           {/* 1.5x safety buffer */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
+          <Grid2 style={{ marginBottom: "12px" }}>
             {[{val: Math.round(distGr * 1.5), label: "GROUND ROLL ×1.5", color: markerColorRoll},
               {val: Math.round(dist50 * 1.5), label: "OVER 50 FT ×1.5",  color: markerColor50}].map(({val, label, color}) => (
               <div key={label} style={{ background: "#0a0c10", border: `1px solid ${color}55`, borderRadius: "3px", padding: "12px 16px", textAlign: "center" }}>
@@ -1705,7 +1732,7 @@
                 <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "5px", letterSpacing: "2px" }}>FEET</div>
               </div>
             ))}
-          </div>
+          </Grid2>
 
           <NoteBox text="Power off, flaps 40°, 66 KIAS, full stall touchdown, maximum braking, paved/level/dry. Always verify against official POH charts." />
         </div>
@@ -1818,34 +1845,49 @@
     // ============================================================
     // MAIN APP
     // ============================================================
+    function useIsMobile() {
+      const [mobile, setMobile] = React.useState(window.innerWidth < 520);
+      React.useEffect(() => {
+        const handler = () => setMobile(window.innerWidth < 520);
+        window.addEventListener("resize", handler);
+        return () => window.removeEventListener("resize", handler);
+      }, []);
+      return mobile;
+    }
+
     function App() {
       const [activeTab, setActiveTab] = useState("takeoff");
+      const mobile = useIsMobile();
       const tabs = [
-        { id: "takeoff",  label: "TAKEOFF",              fig: "FIG 5-9 · 5-13"  },
-        { id: "roc",      label: "RATE OF CLIMB",        fig: "FIG 5-15" },
-        { id: "tfd",      label: "TIME · FUEL · DIST",   fig: "FIG 5-17" },
-        { id: "cruise",   label: "CRUISE",               fig: "FIG 5-21 · 5-23 · 5-25" },
-        { id: "glide",    label: "GLIDE",                fig: "FIG 5-39" },
-        { id: "landing",  label: "LANDING",              fig: "FIG 5-41 · 5-43" },
+        { id: "takeoff",  label: "TAKEOFF",       fig: "5-9·5-13"  },
+        { id: "roc",      label: "CLIMB",          fig: "5-15" },
+        { id: "tfd",      label: "TIME·FUEL·DIST", fig: "5-17" },
+        { id: "cruise",   label: "CRUISE",         fig: "5-21–25" },
+        { id: "glide",    label: "GLIDE",          fig: "5-39" },
+        { id: "landing",  label: "LANDING",        fig: "5-41·5-43" },
       ];
       return (
-        <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: "32px 24px" }}>
-          <div style={{ textAlign: "center", marginBottom: "32px" }}>
-            <div style={{ fontSize: "18px", letterSpacing: "6px", color: C.green, marginBottom: "8px" }}>PA-28-181 ARCHER III · POH PERFORMANCE</div>
-            <div style={{ fontSize: "36px", fontWeight: "bold", letterSpacing: "3px", textTransform: "uppercase" }}>PERFORMANCE CALCULATOR</div>
+        <MobileContext.Provider value={mobile}>
+        <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: mobile ? "16px 12px" : "32px 24px" }}>
+          <div style={{ textAlign: "center", marginBottom: mobile ? "16px" : "32px" }}>
+            <div style={{ fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" }}>PA-28-181 ARCHER III · POH PERFORMANCE</div>
+            <div style={{ fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px", textTransform: "uppercase" }}>PERFORMANCE CALCULATOR</div>
           </div>
-          <div style={{ display: "flex", marginBottom: "24px", border: `1px solid ${C.border}`, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
+          {/* Tab bar — 2 rows of 3 on mobile, single row on desktop */}
+          <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr 1fr 1fr" : "repeat(6, 1fr)", marginBottom: mobile ? "14px" : "24px", border: `1px solid ${C.border}`, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
             {tabs.map((tab, i) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-                flex: 1, padding: "14px 8px",
+                padding: mobile ? "10px 4px" : "14px 8px",
                 background: activeTab === tab.id ? C.green : C.card,
-                border: "none", borderLeft: i > 0 ? `1px solid ${C.border}` : "none",
+                border: "none",
+                borderLeft: mobile ? (i % 3 > 0 ? `1px solid ${C.border}` : "none") : (i > 0 ? `1px solid ${C.border}` : "none"),
+                borderTop: mobile && i >= 3 ? `1px solid ${C.border}` : "none",
                 color: activeTab === tab.id ? "#0a0e1a" : C.dim,
-                fontFamily: mono, fontSize: "15px", letterSpacing: "2px",
+                fontFamily: mono, fontSize: mobile ? "10px" : "15px", letterSpacing: mobile ? "0px" : "2px",
                 cursor: "pointer", textTransform: "uppercase", transition: "all 0.15s",
               }}>
                 <div style={{ fontWeight: "bold" }}>{tab.label}</div>
-                <div style={{ fontSize: "12px", marginTop: "2px", opacity: 0.7 }}>{tab.fig}</div>
+                <div style={{ fontSize: mobile ? "9px" : "12px", marginTop: "2px", opacity: 0.7 }}>{tab.fig}</div>
               </button>
             ))}
           </div>
@@ -1854,6 +1896,7 @@
           </div>
           <div style={{ marginTop: "24px", fontSize: "12px", color: "#2a3a1a", letterSpacing: "2px" }}>PA-28-181 ARCHER III · VB-2749 · ISSUED DEC 2017</div>
         </div>
+        </MobileContext.Provider>
       );
     }
 
