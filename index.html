@@ -1208,7 +1208,9 @@
         const weightVal = parseFloat(weight) || 2550;
         if (isNaN(altVal) || isNaN(oatC)) { setError("Please fill in altitude and OAT."); return; }
         if (tempUnit === "F") oatC = (oatC - 32) * 5 / 9;
-        if (altVal < 0 || altVal > 8000) { setError("Altitude must be between 0 and 8,000 ft."); return; }
+        if (altVal > 8000) { setError("Altitude must be at or below 8,000 ft."); return; }
+        const altCalc = Math.max(0, altVal);
+        const altWasClamped = altVal < 0;
         if (weightVal < 2000 || weightVal > 2550) { setError("Weight must be between 2,000 and 2,550 lbs."); return; }
         if (isNaN(rwyNum) || rwyNum < 1 || rwyNum > 36) { setError("Please enter a valid runway number (01–36)."); return; }
         if (isNaN(windHdg) || windHdg < 0 || windHdg > 360) { setError("Please enter a valid wind direction (0–360°)."); return; }
@@ -1221,8 +1223,8 @@
         const windClamped = wDir === "head" ? Math.min(windActual, MAX_HEAD) : Math.min(windActual, MAX_TAIL);
         const windWasClamped = windActual > windClamped;
 
-        const res = calculateTakeoff(altVal, oatC, weightVal, windClamped, wDir, "50ft");
-        setResult({ ...res, windComponents: wc, windSpd, windActual, windClamped, windWasClamped, windDir: wDir, rwyNum, weightLbs: weightVal, densityAlt: getDensityAlt(altVal, oatC) });
+        const res = calculateTakeoff(altCalc, oatC, weightVal, windClamped, wDir, "50ft");
+        setResult({ ...res, windComponents: wc, windSpd, windActual, windClamped, windWasClamped, windDir: wDir, rwyNum, weightLbs: weightVal, densityAlt: getDensityAlt(altVal, oatC), altWasClamped, altVal });
       }, [alt, oat, tempUnit, weight, runway, windHeading, windSpeed, windComponents, windSpd, rwyNum, windHdg]);
 
       return (
@@ -1424,25 +1426,32 @@
 
       const grFrac = grPct / (dist50Pct + 0.08);
 
+      function bezier(t2) {
+        const u = 1 - t2;
+        return {
+          x: u*u*u*xGr + 3*u*u*t2*cp1X + 3*u*t2*t2*cp2X + t2*t2*t2*xEnd,
+          y: u*u*u*yRwy + 3*u*u*t2*cp1Y + 3*u*t2*t2*cp2Y + t2*t2*t2*yEnd,
+        };
+      }
+      function bezierAngle(t2) {
+        const dt = 0.01, t3 = Math.min(t2 + dt, 1);
+        const p1 = bezier(t2), p2 = bezier(t3);
+        return Math.atan2(-(p2.y - p1.y), p2.x - p1.x) * 180 / Math.PI;
+      }
+
       let px, py, angle;
       if (t <= grFrac) {
-        const tg = t / grFrac;
-        px = xStart + (xGr - xStart) * tg;
+        const gt = grFrac > 0 ? t / grFrac : 0;
+        px = 18 + gt * (xGr - 18);
         py = yRwy;
         // Gentle nose-up rotation near liftoff
-        angle = tg > 0.85 ? (tg - 0.85) / 0.15 * 6 : 0;
+        angle = gt > 0.85 ? (gt - 0.85) / 0.15 * 6 : 0;
       } else {
-        const tc = (t - grFrac) / (1 - grFrac);
-        const inv = 1 - tc;
-        px = inv*inv*inv*xGr + 3*inv*inv*tc*cp1X + 3*inv*tc*tc*cp2X + tc*tc*tc*xEnd;
-        py = inv*inv*inv*yRwy + 3*inv*inv*tc*cp1Y + 3*inv*tc*tc*cp2Y + tc*tc*tc*yEnd;
-        const dx = 3*inv*inv*(cp1X-xGr) + 6*inv*tc*(cp2X-cp1X) + 3*tc*tc*(xEnd-cp2X);
-        const dy = 3*inv*inv*(cp1Y-yRwy) + 6*inv*tc*(cp2Y-cp1Y) + 3*tc*tc*(yEnd-cp2Y);
-        // Flight path angle from bezier tangent
-        const fpa = -Math.atan2(-dy, dx) * 180 / Math.PI;
-        // Extra pitch-up: ramps to +12° quickly then decays — simulates rotation & climb attitude
-        const pitchExtra = 12 * Math.pow(tc, 0.3) * Math.pow(1 - tc, 0.6);
-        angle = Math.max(0, Math.min(20, fpa + pitchExtra));
+        const bt = (t - grFrac) / (1 - grFrac);
+        const pos = bezier(bt);
+        px = pos.x;
+        py = pos.y;
+        angle = bezierAngle(bt);
       }
 
       // Auto-sized label box helper
@@ -1474,6 +1483,20 @@
               </div>
             </div>
           )}
+          {result.altWasClamped && (
+            <div style={{ background: C.errorBg, border: `1px solid ${C.warm}`, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ color: C.warm, fontSize: "16px" }}>!</div>
+              <div>
+                <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.warm, marginBottom: "2px" }}>PRESSURE ALT BELOW SEA LEVEL</div>
+                <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>
+                  Entered: <strong style={{color: C.text}}>{result.altVal} ft</strong>
+                  {" · "}Calculated using <strong style={{color: C.warm}}>0 ft (SL)</strong>
+                </div>
+              </div>
+            </div>
+          )}
+
+
 
           {/* Density altitude */}
           {(() => {
@@ -1974,7 +1997,9 @@
         const weightVal = parseFloat(weight) || 2550;
         if (isNaN(altVal) || isNaN(oatC)) { setError("Please fill in altitude and OAT."); return; }
         if (tempUnit === "F") oatC = (oatC - 32) * 5/9;
-        if (altVal < 0 || altVal > 7000) { setError("Altitude must be 0 – 7,000 ft."); return; }
+        if (altVal > 7000) { setError("Altitude must be at or below 7,000 ft."); return; }
+        const altCalc = Math.max(0, altVal);
+        const altWasClamped = altVal < 0;
         if (weightVal < 2000 || weightVal > 2550) { setError("Weight must be 2,000 – 2,550 lbs."); return; }
         if (isNaN(rwyNum) || rwyNum < 1 || rwyNum > 36) { setError("Please enter a valid runway number (01–36)."); return; }
         if (isNaN(windHdg) || windHdg < 0 || windHdg > 360) { setError("Please enter a valid wind direction (0–360°)."); return; }
@@ -1988,8 +2013,8 @@
         const windWasClamped = windActual > windClamped;
 
         setResult({
-          ...calculateLanding(altVal, oatC, weightVal, windClamped, windDir),
-          groundRollFt: calculateLandingGR(altVal, oatC, weightVal, windClamped, windDir),
+          ...calculateLanding(altCalc, oatC, weightVal, windClamped, windDir),
+          groundRollFt: calculateLandingGR(altCalc, oatC, weightVal, windClamped, windDir),
           windComponents: wc,
           windSpd,
           windActual,
@@ -1997,6 +2022,8 @@
           windWasClamped,
           windDir,
           rwyNum,
+          altWasClamped,
+          altVal,
         });
       }, [alt, oat, tempUnit, weight, runway, windHeading, windSpeed, windComponents, windSpd, rwyNum, windHdg]);
 
@@ -2216,6 +2243,20 @@
               </div>
             </div>
           )}
+          {result.altWasClamped && (
+            <div style={{ background: C.errorBg, border: `1px solid ${C.warm}`, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ color: C.warm, fontSize: "16px" }}>!</div>
+              <div>
+                <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.warm, marginBottom: "2px" }}>PRESSURE ALT BELOW SEA LEVEL</div>
+                <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>
+                  Entered: <strong style={{color: C.text}}>{result.altVal} ft</strong>
+                  {" · "}Calculated using <strong style={{color: C.warm}}>0 ft (SL)</strong>
+                </div>
+              </div>
+            </div>
+          )}
+
+
 
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: "4px", padding: "14px 14px 10px", marginBottom: "14px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
@@ -2549,6 +2590,136 @@
       return mobile;
     }
 
+    function ArcherSpeedsTab({ savedState, onStateChange }) {
+      const C = useC();
+      const mono = "'Courier New', monospace";
+      const [weight, setWeight] = React.useState(savedState.weight || "");
+      const [flaps, setFlaps] = React.useState(savedState.flaps || "0");
+      const [bank, setBank] = React.useState(savedState.bank !== undefined ? savedState.bank : 0);
+
+      React.useEffect(() => {
+        onStateChange({ weight, flaps, bank });
+      }, [weight, flaps, bank]);
+
+      const weightVal = parseFloat(weight);
+      const validWeight = !isNaN(weightVal) && weightVal >= 2000 && weightVal <= 2550;
+
+      // Va: 113 KIAS at 2550 lb, scales with sqrt(W/2550)
+      const va = validWeight ? Math.round(113 * Math.sqrt(weightVal / 2550)) : null;
+
+      // Stall: Vs = Vs_base * (W/2550)^0.45 * sqrt(1/cos(bank_rad))
+      // Fig 5-5, power off, A/C off
+      const vsBase = { "0": 50, "25": 49, "40": 45 };
+      const bankRad = bank * Math.PI / 180;
+      const vs = validWeight
+        ? Math.round(vsBase[flaps] * Math.pow(weightVal / 2550, 0.45) * Math.sqrt(1 / Math.cos(bankRad)))
+        : null;
+
+      const bankColor = bank <= 30 ? C.green : bank <= 45 ? C.warm : C.error;
+      const flapsOptions = [
+        { val: "0",  label: "FLAPS 0°"  },
+        { val: "25", label: "FLAPS 25°" },
+        { val: "40", label: "FLAPS 40°" },
+      ];
+
+      return (
+        <Card>
+          <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.green, marginBottom: "24px" }}>SPEEDS REFERENCE</div>
+
+          {/* shared weight input */}
+          <div style={{ marginBottom: "20px" }}>
+            <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>GROSS WEIGHT</div>
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              <input
+                type="number"
+                value={weight}
+                onChange={e => setWeight(e.target.value)}
+                placeholder="e.g. 2400"
+                style={{ flex: 1, boxSizing: "border-box", background: C.input, border: "1px solid " + C.border, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }}
+              />
+              <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim }}>LBS</div>
+            </div>
+            {weightVal < 2000 && weight !== "" && <div style={{ fontSize: "11px", color: C.error, marginTop: "4px", letterSpacing: "1px" }}>Minimum chart weight is 2,000 lb</div>}
+          </div>
+
+          {/* ── MANEUVERING SPEED ── */}
+          <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "12px", borderBottom: "1px solid " + C.border, paddingBottom: "8px" }}>MANEUVERING SPEED (Va)</div>
+          {va !== null ? (
+            <div style={{ background: C.input, border: "2px solid " + C.cool, borderRadius: "4px", padding: "20px", textAlign: "center", marginBottom: "20px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "3px", color: C.cool, marginBottom: "6px" }}>Va AT {Math.round(weightVal).toLocaleString()} LB</div>
+              <div style={{ fontSize: "64px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{va}</div>
+              <div style={{ fontSize: "16px", letterSpacing: "4px", color: C.dim, marginTop: "6px" }}>KIAS</div>
+              <div style={{ fontSize: "11px", color: C.dim, marginTop: "8px" }}>Do not make full or abrupt control inputs above this speed</div>
+            </div>
+          ) : (
+            <div style={{ background: C.input, border: "1px solid " + C.border, borderRadius: "3px", padding: "16px", textAlign: "center", color: C.dim, fontSize: "12px", letterSpacing: "1px", marginBottom: "20px" }}>
+              Enter gross weight (2,000–2,550 lb) to calculate
+            </div>
+          )}
+
+          {/* ── STALL SPEED ── */}
+          <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "12px", borderBottom: "1px solid " + C.border, paddingBottom: "8px" }}>STALL SPEED (Vs) · FIG 5-5</div>
+          <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "1px", marginBottom: "14px" }}>Power off · A/C off · KIAS</div>
+
+          <div style={{ marginBottom: "14px" }}>
+            <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>FLAP SETTING</div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {flapsOptions.map(opt => (
+                <button key={opt.val} onClick={() => setFlaps(opt.val)} style={{
+                  flex: 1, padding: "10px", background: flaps === opt.val ? C.green : C.input,
+                  border: "1px solid " + (flaps === opt.val ? C.green : C.border),
+                  borderRadius: "3px", color: flaps === opt.val ? C.btnText : C.dim,
+                  fontFamily: mono, fontSize: "12px", letterSpacing: "1px", cursor: "pointer",
+                }}>{opt.label}</button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: "16px" }}>
+            <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>ANGLE OF BANK</div>
+            <input
+              type="range"
+              min="0" max="60" step="1"
+              value={bank}
+              onChange={e => setBank(parseInt(e.target.value))}
+              style={{ width: "100%", accentColor: C.green, marginBottom: "4px" }}
+            />
+            <div style={{ position: "relative", height: "16px" }}>
+              {[0, 15, 30, 45, 60].map(v => (
+                <span key={v} style={{
+                  position: "absolute",
+                  left: "calc(" + (v/60*100) + "% - " + (v === 0 ? "0px" : v === 60 ? "16px" : "8px") + ")",
+                  fontSize: "11px", color: bank === v ? bankColor : C.dim, letterSpacing: "1px",
+                }}>{v}°</span>
+              ))}
+            </div>
+            <div style={{ textAlign: "center", fontSize: "22px", fontWeight: "bold", color: bankColor, marginTop: "4px", letterSpacing: "2px" }}>{bank}°</div>
+          </div>
+
+          {vs !== null ? (
+            <div style={{ background: C.input, border: "2px solid " + bankColor, borderRadius: "4px", padding: "20px", textAlign: "center", marginBottom: "12px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "3px", color: bankColor, marginBottom: "6px" }}>
+                STALL SPEED · {bank}° AOB · FLAPS {flaps === "0" ? "0°" : flaps === "25" ? "25°" : "40°"}
+              </div>
+              <div style={{ fontSize: "64px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{vs}</div>
+              <div style={{ fontSize: "16px", letterSpacing: "4px", color: C.dim, marginTop: "6px" }}>KIAS</div>
+              {bank >= 45 && (
+                <div style={{ fontSize: "11px", color: C.warm, marginTop: "8px", letterSpacing: "1px" }}>
+                  {bank === 60 ? "STEEP TURN — load factor 2.0G, significant stall speed increase" : "MEDIUM TURN — maintain coordination to avoid accelerated stall"}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div style={{ background: C.input, border: "1px solid " + C.border, borderRadius: "3px", padding: "16px", textAlign: "center", color: C.dim, fontSize: "12px", letterSpacing: "1px", marginBottom: "12px" }}>
+              Enter gross weight (2,000–2,550 lb) to calculate
+            </div>
+          )}
+
+          <NoteBox text="Fig 5-5. Power off, A/C off. Va decreases with weight — do not make full/abrupt control inputs above Va. Stall speed increases with bank angle due to load factor. Always verify against official POH." />
+        </Card>
+      );
+    }
+
     function App({ onBack, theme, toggleTheme }) {
       const C = useC();
       const [activeTab, setActiveTab] = useState("takeoff");
@@ -2566,6 +2737,7 @@
         { id: "cruise",   label: "CRUISE",         fig: "5-21–25" },
         { id: "glide",    label: "GLIDE",          fig: "5-39" },
         { id: "landing",  label: "LANDING",        fig: "5-41·5-43" },
+        { id: "speeds",   label: "SPEEDS",         fig: "" },
       ];
       const tabProps = (id) => ({ savedState: tabStates[id] || {}, onStateChange: (s) => saveTabState(id, s) });
       return (
@@ -2585,16 +2757,16 @@
             <div style={{ fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" }}>PA-28-181 ARCHER III · POH PERFORMANCE</div>
             <div style={{ fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px", textTransform: "uppercase" }}>PERFORMANCE CALCULATOR</div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr 1fr 1fr" : "repeat(6, 1fr)", marginBottom: mobile ? "14px" : "24px", border: `1px solid ${C.border}`, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr 1fr 1fr" : "repeat(7, 1fr)", marginBottom: mobile ? "14px" : "24px", border: `1px solid ${C.border}`, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
             {tabs.map((tab, i) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-                padding: mobile ? "10px 4px" : "14px 8px",
+                padding: mobile ? "10px 4px" : "14px 6px",
                 background: activeTab === tab.id ? C.green : C.card,
                 border: "none",
                 borderLeft: mobile ? (i % 3 > 0 ? `1px solid ${C.border}` : "none") : (i > 0 ? `1px solid ${C.border}` : "none"),
                 borderTop: mobile && i >= 3 ? `1px solid ${C.border}` : "none",
                 color: activeTab === tab.id ? C.btnText : C.dim,
-                fontFamily: mono, fontSize: mobile ? "10px" : "15px", letterSpacing: mobile ? "0px" : "2px",
+                fontFamily: mono, fontSize: mobile ? "10px" : "13px", letterSpacing: mobile ? "0px" : "1px",
                 cursor: "pointer", textTransform: "uppercase", transition: "all 0.15s",
               }}>
                 <div style={{ fontWeight: "bold" }}>{tab.label}</div>
@@ -2608,7 +2780,8 @@
              activeTab === "roc"      ? <RateOfClimbTab   {...tabProps("roc")}      /> :
              activeTab === "tfd"      ? <TimeFuelDistTab  {...tabProps("tfd")}      /> :
              activeTab === "cruise"   ? <CruiseTab        {...tabProps("cruise")}   /> :
-             activeTab === "glide"    ? <GlideTab         {...tabProps("glide")}    /> : null}
+             activeTab === "glide"    ? <GlideTab         {...tabProps("glide")}    /> :
+             activeTab === "speeds"   ? <ArcherSpeedsTab  {...tabProps("speeds")}   /> : null}
           </div>
           <div style={{ marginTop: "24px", fontSize: "12px", color: C.dim, letterSpacing: "2px" }}>PA-28-181 ARCHER III · VB-2749 · ISSUED DEC 2017</div>
         </div>
@@ -3470,7 +3643,9 @@
         const weightVal = parseFloat(weight) || 2550;
         if (isNaN(altVal) || isNaN(oatC)) { setError("Please fill in altitude and OAT."); return; }
         if (tempUnit === "F") oatC = (oatC-32)*5/9;
-        if (altVal < 0 || altVal > 8000) { setError("Altitude must be 0 – 8,000 ft."); return; }
+        if (altVal > 8000) { setError("Altitude must be at or below 8,000 ft."); return; }
+        const altCalc = Math.max(0, altVal);
+        const altWasClamped = altVal < 0;
         if (weightVal < 2200 || weightVal > 2550) { setError("Weight must be 2,200 – 2,550 lbs."); return; }
         if (isNaN(rwyNum)||rwyNum<1||rwyNum>36) { setError("Please enter a valid runway number (01–36)."); return; }
         if (isNaN(windHdg)||windHdg<0||windHdg>360) { setError("Please enter a valid wind direction (0–360°)."); return; }
@@ -3482,8 +3657,8 @@
         const windClamped = wDir === "tail" ? Math.min(windActual, MAX_TAIL) : windActual;
         const windWasClamped = windActual > windClamped;
         setResult({
-          ...calculateC172Takeoff(altVal, oatC, weightVal, windClamped, wDir),
-          windComponents: wc, windSpd, windActual, windClamped, windWasClamped, windDir: wDir, rwyNum, weightLbs: weightVal,
+          ...calculateC172Takeoff(altCalc, oatC, weightVal, windClamped, wDir),
+          windComponents: wc, windSpd, windActual, windClamped, windWasClamped, windDir: wDir, rwyNum, weightLbs: weightVal, altWasClamped, altVal,
           densityAlt: getDensityAlt(altVal, oatC),
         });
       }, [alt, oat, tempUnit, weight, runway, windHeading, windSpeed, windComponents, windSpd, rwyNum, windHdg]);
@@ -3616,6 +3791,19 @@
                   </div>
                 </div>
               )}
+              {result.altWasClamped && (
+                <div style={{ background:C.errorBg, border:`1px solid ${C.warm}`, borderRadius:"3px", padding:"10px 14px", marginBottom:"12px", display:"flex", alignItems:"center", gap:"10px" }}>
+                  <div style={{ color:C.warm, fontSize:"16px" }}>!</div>
+                  <div>
+                    <div style={{ fontSize:"12px", letterSpacing:"2px", color:C.warm, marginBottom:"2px" }}>PRESSURE ALT BELOW SEA LEVEL</div>
+                    <div style={{ fontSize:"12px", color:C.note, letterSpacing:"1px" }}>
+                      Entered: <strong style={{color:C.text}}>{result.altVal} ft</strong>
+                      {" · "}Calculated using <strong style={{color:C.warm}}>0 ft (SL)</strong>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Density altitude */}
               {(() => {
                 const da=result.densityAlt, daColor=da>5000?C.error:da>3000?C.warm:C.green;
@@ -3968,7 +4156,9 @@
         let oatC=parseFloat(oat);
         if (isNaN(altVal)||isNaN(oatC)) { setError("Please fill in altitude and OAT."); return; }
         if (tempUnit==="F") oatC=(oatC-32)*5/9;
-        if (altVal<0||altVal>8000) { setError("Altitude must be 0 – 8,000 ft."); return; }
+        if (altVal>8000) { setError("Altitude must be at or below 8,000 ft."); return; }
+        const altCalc = Math.max(0, altVal);
+        const altWasClamped = altVal < 0;
         if (isNaN(rwyNum)||rwyNum<1||rwyNum>36) { setError("Please enter a valid runway number (01–36)."); return; }
         if (isNaN(windHdg)||windHdg<0||windHdg>360) { setError("Please enter a valid wind direction (0–360°)."); return; }
         const wc = windComponents||{headwind:0,crosswind:0,crossDir:"R",angle:0};
@@ -3977,9 +4167,10 @@
         const windClamped=wDir==="tail"?Math.min(windActual,10):windActual;
         const windWasClamped=windActual>windClamped;
         baseRef.current = { altVal, oatC, windClamped, wDir, wc, windSpd, windActual, windWasClamped, rwyNum, densityAlt: getDensityAlt(altVal,oatC) };
+        const altWasClamped_used = altWasClamped;
         setResult({
-          ...calculateC172Landing(altVal, oatC, windClamped, wDir, surface, flaps),
-          windComponents:wc, windSpd, windActual, windClamped, windWasClamped, windDir:wDir, rwyNum,
+          ...calculateC172Landing(altCalc, oatC, windClamped, wDir, surface, flaps),
+          windComponents:wc, windSpd, windActual, windClamped, windWasClamped, windDir:wDir, rwyNum, altWasClamped, altVal,
           densityAlt:getDensityAlt(altVal,oatC), surface, flaps,
         });
       }, [alt,oat,tempUnit,runway,windHeading,windSpeed,surface,flaps,windComponents,windSpd,rwyNum,windHdg]);
@@ -4132,6 +4323,18 @@
                   <div style={{ fontSize:"12px", color:C.note, letterSpacing:"1px" }}>Tailwind clamped to <strong style={{color:C.warm}}>{result.windClamped} kt</strong> (chart max 10 kt)</div>
                 </div>
               )}
+              {result.altWasClamped && (
+                <div style={{ background:C.errorBg, border:`1px solid ${C.warm}`, borderRadius:"3px", padding:"10px 14px", marginBottom:"12px", display:"flex", alignItems:"center", gap:"10px" }}>
+                  <div style={{ color:C.warm, fontSize:"16px" }}>!</div>
+                  <div>
+                    <div style={{ fontSize:"12px", letterSpacing:"2px", color:C.warm, marginBottom:"2px" }}>PRESSURE ALT BELOW SEA LEVEL</div>
+                    <div style={{ fontSize:"12px", color:C.note, letterSpacing:"1px" }}>
+                      Entered: <strong style={{color:C.text}}>{result.altVal} ft</strong>
+                      {" · "}Calculated using <strong style={{color:C.warm}}>0 ft (SL)</strong>
+                    </div>
+                  </div>
+                </div>
+              )}
               {/* Density altitude */}
               {(() => {
                 const da=result.densityAlt, daColor=da>5000?C.error:da>3000?C.warm:C.green;
@@ -4234,6 +4437,189 @@
       );
     }
 
+    // Stall speeds from Fig 5-3, KIAS only, 2550 lb, idle power
+    const stallData = {
+      "up":   { 0: 48, 30: 52, 45: 57, 60: 68 },
+      "10":   { 0: 42, 30: 45, 45: 50, 60: 59 },
+      "full": { 0: 40, 30: 43, 45: 48, 60: 57 },
+    };
+    const stallDataFwd = {
+      "up":   { 0: 48, 30: 52, 45: 57, 60: 68 },
+      "10":   { 0: 43, 30: 46, 45: 51, 60: 61 },
+      "full": { 0: 40, 30: 43, 45: 48, 60: 57 },
+    };
+
+    function C172SpeedsTab({ savedState, onStateChange }) {
+      const C = useC();
+      const mono = "'Courier New', monospace";
+      const [flaps, setFlaps] = React.useState(savedState.flaps || "up");
+      const [bank, setBank] = React.useState(savedState.bank !== undefined ? savedState.bank : 0);
+      const [cgPos, setCgPos] = React.useState(savedState.cgPos || "rearward");
+      const [weight, setWeight] = React.useState(savedState.weight || "");
+
+      React.useEffect(() => {
+        onStateChange({ flaps, bank, cgPos, weight });
+      }, [flaps, bank, cgPos, weight]);
+
+      const data = cgPos === "rearward" ? stallData : stallDataFwd;
+      const vsBase0 = data[flaps][0]; // base stall speed at 0° bank from table
+      const bankRad = bank * Math.PI / 180;
+      const vs = bank === 0 ? vsBase0 : Math.round(vsBase0 * Math.sqrt(1 / Math.cos(bankRad)));
+      const bankOptions = [0, 30, 45, 60];
+      const flapsOptions = [
+        { val: "up",   label: "FLAPS UP"   },
+        { val: "10",   label: "FLAPS 10°"  },
+        { val: "full", label: "FLAPS FULL" },
+      ];
+      const bankColor = bank <= 30 ? C.green : bank <= 45 ? C.warm : C.error;
+      const bankLabel = bank === 0 ? "WINGS LEVEL" : bank <= 20 ? "SHALLOW TURN" : bank <= 40 ? "MEDIUM TURN" : bank <= 55 ? "STEEP TURN" : "EXTREME BANK";
+
+      // Maneuvering speed
+      const VA_MAX = 105;
+      const weightVal = parseFloat(weight);
+      const va = (!isNaN(weightVal) && weightVal >= 1000 && weightVal <= 2550)
+        ? Math.round(VA_MAX * Math.sqrt(weightVal / 2550))
+        : null;
+
+      return (
+        <Card>
+          <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.green, marginBottom: "24px" }}>SPEEDS REFERENCE</div>
+
+          {/* ── MANEUVERING SPEED ── */}
+          <div style={{ marginBottom: "28px" }}>
+            <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "14px", borderBottom: "1px solid " + C.border, paddingBottom: "8px" }}>MANEUVERING SPEED (Va)</div>
+            <div style={{ fontSize: "12px", color: C.dim, letterSpacing: "1px", marginBottom: "12px" }}>Va = 105 KIAS at 2,550 lb · scales with √(W/2550)</div>
+            <div style={{ display: "flex", gap: "10px", alignItems: "flex-end", marginBottom: "12px" }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>GROSS WEIGHT</div>
+                <input
+                  type="number"
+                  value={weight}
+                  onChange={e => setWeight(e.target.value)}
+                  placeholder="e.g. 2200"
+                  style={{ width: "100%", boxSizing: "border-box", background: C.input, border: "1px solid " + C.border, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }}
+                />
+              </div>
+              <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, paddingBottom: "14px" }}>LBS</div>
+            </div>
+            {va !== null ? (
+              <div style={{ background: C.input, border: "2px solid " + C.cool, borderRadius: "4px", padding: "20px", textAlign: "center" }}>
+                <div style={{ fontSize: "11px", letterSpacing: "3px", color: C.cool, marginBottom: "6px" }}>MANEUVERING SPEED</div>
+                <div style={{ fontSize: "64px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{va}</div>
+                <div style={{ fontSize: "16px", letterSpacing: "4px", color: C.dim, marginTop: "6px" }}>KIAS</div>
+                <div style={{ fontSize: "11px", color: C.dim, marginTop: "8px" }}>Do not make full or abrupt control inputs above this speed</div>
+              </div>
+            ) : (
+              <div style={{ background: C.input, border: "1px solid " + C.border, borderRadius: "3px", padding: "16px", textAlign: "center", color: C.dim, fontSize: "12px", letterSpacing: "1px" }}>
+                Enter weight above to calculate Va · Max 2,550 lb
+              </div>
+            )}
+            {va !== null && weightVal < 2550 && (
+              <div style={{ fontSize: "11px", color: C.dim, marginTop: "6px", letterSpacing: "1px" }}>
+                At max gross (2,550 lb): <strong style={{ color: C.text }}>105 KIAS</strong>
+              </div>
+            )}
+          </div>
+
+          {/* ── STALL SPEEDS ── */}
+          <div>
+            <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "14px", borderBottom: "1px solid " + C.border, paddingBottom: "8px" }}>STALL SPEEDS (Vs) · FIG 5-3</div>
+            <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "1px", marginBottom: "14px" }}>2,550 lb · Idle power · KIAS</div>
+
+            <div style={{ marginBottom: "14px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>CG POSITION</div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                {[{val:"rearward",label:"MOST REARWARD"},{val:"forward",label:"MOST FORWARD"}].map(opt => (
+                  <button key={opt.val} onClick={() => setCgPos(opt.val)} style={{
+                    flex: 1, padding: "9px", background: cgPos === opt.val ? C.green : C.input,
+                    border: "1px solid " + (cgPos === opt.val ? C.green : C.border),
+                    borderRadius: "3px", color: cgPos === opt.val ? C.btnText : C.dim,
+                    fontFamily: mono, fontSize: "11px", letterSpacing: "1px", cursor: "pointer",
+                  }}>{opt.label}</button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "14px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>FLAP SETTING</div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                {flapsOptions.map(opt => (
+                  <button key={opt.val} onClick={() => setFlaps(opt.val)} style={{
+                    flex: 1, padding: "9px", background: flaps === opt.val ? C.green : C.input,
+                    border: "1px solid " + (flaps === opt.val ? C.green : C.border),
+                    borderRadius: "3px", color: flaps === opt.val ? C.btnText : C.dim,
+                    fontFamily: mono, fontSize: "11px", letterSpacing: "1px", cursor: "pointer",
+                  }}>{opt.label}</button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "16px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>ANGLE OF BANK</div>
+              <input
+                type="range"
+                min="0" max="60" step="1"
+                value={bank}
+                onChange={e => setBank(parseInt(e.target.value))}
+                style={{ width: "100%", accentColor: C.green, marginBottom: "4px" }}
+              />
+              <div style={{ position: "relative", height: "16px" }}>
+                {[0, 15, 30, 45, 60].map(v => (
+                  <span key={v} style={{
+                    position: "absolute",
+                    left: "calc(" + (v/60*100) + "% - " + (v === 0 ? "0px" : v === 60 ? "16px" : "8px") + ")",
+                    fontSize: "11px",
+                    color: bank === v ? bankColor : C.dim,
+                    letterSpacing: "1px",
+                  }}>{v}°</span>
+                ))}
+              </div>
+              <div style={{ textAlign: "center", fontSize: "22px", fontWeight: "bold", color: bankColor, marginTop: "4px", letterSpacing: "2px" }}>{bank}°</div>
+            </div>
+
+            <div style={{ background: C.input, border: "2px solid " + bankColor, borderRadius: "4px", padding: "20px", textAlign: "center", marginBottom: "16px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "3px", color: bankColor, marginBottom: "6px" }}>{bankLabel} · {bank}° AOB</div>
+              <div style={{ fontSize: "64px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{vs}</div>
+              <div style={{ fontSize: "16px", letterSpacing: "4px", color: C.dim, marginTop: "6px" }}>KIAS</div>
+              <div style={{ fontSize: "11px", color: C.dim, marginTop: "8px" }}>
+                {flaps === "up" ? "FLAPS UP" : flaps === "10" ? "FLAPS 10°" : "FLAPS FULL"} · {cgPos === "rearward" ? "REARWARD CG" : "FORWARD CG"}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "16px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "8px" }}>ALL CONFIGURATIONS · {cgPos === "rearward" ? "REARWARD" : "FORWARD"} CG</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: "3px", fontSize: "11px" }}>
+                {["", "0°", "30°", "45°", "60°"].map((h, i) => (
+                  <div key={i} style={{ padding: "5px 3px", textAlign: "center", color: C.dim, letterSpacing: "1px", borderBottom: "1px solid " + C.border }}>{h}</div>
+                ))}
+                {[["up","FLAPS UP"],["10","FLAPS 10"],["full","FLAPS FULL"]].map(([f, label]) => (
+                  [
+                    <div key={f+"l"} style={{ padding: "7px 3px", color: f === flaps ? C.green : C.dim, fontWeight: f === flaps ? "bold" : "normal", fontSize: "10px" }}>{label}</div>,
+                    ...[0,30,45,60].map(b => {
+                      const v = data[f][b];
+                      const isActive = f === flaps && b === bank;
+                      return (
+                        <div key={f+b} style={{
+                          padding: "7px 3px", textAlign: "center",
+                          background: isActive ? C.green : "transparent",
+                          borderRadius: "3px",
+                          color: isActive ? C.btnText : f === flaps ? C.text : C.dim,
+                          fontWeight: isActive ? "bold" : "normal",
+                          cursor: "pointer",
+                        }} onClick={() => { setFlaps(f); setBank(b); }}>{v}</div>
+                      );
+                    })
+                  ]
+                ))}
+              </div>
+            </div>
+
+            <NoteBox text="Idle power, 2,550 lb gross weight. Altitude loss during stall recovery may be as much as 230 ft. Always verify against official POH." />
+          </div>
+        </Card>
+      );
+    }
+
     function C172App({ onBack, theme, toggleTheme }) {
       const C = useC();
       const [activeTab, setActiveTab] = useState("takeoff");
@@ -4250,6 +4636,7 @@
         { id: "tfd",      label: "TIME·FUEL·DIST",   fig: "5-7"  },
         { id: "cruise",   label: "CRUISE",           fig: "5-8"  },
         { id: "landing",  label: "LANDING",          fig: "5-11" },
+        { id: "speeds",   label: "SPEEDS",           fig: "5-3"  },
       ];
       const tabProps = (id) => ({ savedState: tabStates[id] || {}, onStateChange: (s) => saveTabState(id, s) });
 
@@ -4291,6 +4678,7 @@
                activeTab === "roc"     ? <C172RateOfClimbTab  {...tabProps("roc")}     /> :
                activeTab === "tfd"     ? <C172TimeFuelDistTab {...tabProps("tfd")}     /> :
                activeTab === "cruise"  ? <C172CruiseTab       {...tabProps("cruise")}  /> :
+               activeTab === "speeds"  ? <C172SpeedsTab       {...tabProps("speeds")}  /> :
 null}
             </div>
             <div style={{ marginTop: "24px", fontSize: "12px", color: C.dim, letterSpacing: "2px" }}>CESSNA 172S NAV III · GFC 700 AFCS</div>
@@ -4308,7 +4696,7 @@ null}
           name: "PA-28-181",
           sub: "Archer III",
           desc: "VB-2749 · Issued Dec 2017",
-          tags: ["Takeoff", "Landing", "Cruise", "Climb", "Glide", "TFD"],
+          tags: ["Takeoff", "Landing", "Climb", "Time·Fuel·Dist", "Cruise", "Glide", "Speeds"],
           available: true,
         },
         {
@@ -4316,7 +4704,7 @@ null}
           name: "C172S",
           sub: "Skyhawk SP",
           desc: "NAV III · GFC 700 AFCS",
-          tags: ["Takeoff", "Landing", "Climb", "Time·Fuel·Dist", "Cruise"],
+          tags: ["Takeoff", "Landing", "Climb", "Time·Fuel·Dist", "Cruise", "Speeds"],
           available: true,
         },
       ];
