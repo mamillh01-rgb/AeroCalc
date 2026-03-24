@@ -514,33 +514,33 @@
       const C = useC();
       const mobile = useIsMobileInner();
       return (
-        <div style={{ background: C.input, border: `1px solid ${C.border}`, borderRadius: "4px", padding: "14px 16px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr", gap: "16px" }}>
-            <div>
+        <div style={{ background: C.input, border: `1px solid ${C.border}`, borderRadius: "4px", overflow: "hidden" }}>
+          <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr" }}>
+            <div style={{ padding: "12px 14px", borderRight: mobile ? "none" : `1px solid ${C.borderDim}`, borderBottom: mobile ? `1px solid ${C.borderDim}` : "none" }}>
               <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
                 {altLabel}
                 {altFilled && <span style={{ fontSize: "10px", background: C.green, color: C.btnText, borderRadius: "2px", padding: "1px 5px", letterSpacing: "1px", fontWeight: "bold" }}>METAR</span>}
               </div>
               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                 <input type="number" value={altValue} onChange={e => onAltChange(e.target.value)} placeholder={altPlaceholder || "e.g. 4000"}
-                  style={{ flex: 1, background: C.bg, border: `1px solid ${altFilled ? C.green : C.borderDim}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
-                <div style={{ padding: "10px 10px", background: C.bg, border: `1px solid ${C.borderDim}`, borderRadius: "3px", color: C.dim, fontSize: "12px", letterSpacing: "1px" }}>FT</div>
+                  style={{ flex: 1, minWidth: 0, background: C.bg, border: `1px solid ${altFilled ? C.green : C.borderDim}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                <div style={{ padding: "10px 8px", background: C.bg, border: `1px solid ${C.borderDim}`, borderRadius: "3px", color: C.dim, fontSize: "11px", letterSpacing: "1px", flexShrink: 0 }}>FT</div>
               </div>
               {altHint && <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "4px" }}>{altHint}</div>}
             </div>
-            <div>
+            <div style={{ padding: "12px 14px" }}>
               <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
                 OAT
                 {oatFilled && <span style={{ fontSize: "10px", background: C.green, color: C.btnText, borderRadius: "2px", padding: "1px 5px", letterSpacing: "1px", fontWeight: "bold" }}>METAR</span>}
               </div>
               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                 <input type="number" value={oatValue} onChange={e => onOatChange(e.target.value)} placeholder="e.g. 15"
-                  style={{ flex: 1, background: C.bg, border: `1px solid ${oatFilled ? C.green : C.borderDim}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                  style={{ flex: 1, minWidth: 0, background: C.bg, border: `1px solid ${oatFilled ? C.green : C.borderDim}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
                 {["C","F"].map(u => (
                   <button key={u} onClick={() => onUnitChange(u)} style={{
-                    padding: "10px 12px", background: unit === u ? C.green : C.bg,
+                    padding: "10px 10px", background: unit === u ? C.green : C.bg, flexShrink: 0,
                     border: `1px solid ${unit === u ? C.green : C.borderDim}`, borderRadius: "3px",
-                    color: unit === u ? C.btnText : C.dim, fontFamily: mono, fontSize: "14px", cursor: "pointer",
+                    color: unit === u ? C.btnText : C.dim, fontFamily: mono, fontSize: "13px", cursor: "pointer",
                   }}>°{u}</button>
                 ))}
               </div>
@@ -656,22 +656,16 @@
       return (
         <Card>
           <div style={{ marginBottom: "28px", paddingBottom: "20px", borderBottom: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: "12px", letterSpacing: "4px", color: C.green, marginBottom: "6px" }}>CLIMB · FIG 5-17</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", alignItems: "end" }}>
-                <InputField label="DEPARTURE ALT." unit="FT" value={departAlt} onChange={setDepartAlt} placeholder="e.g. 800" hint="0 – 12,000 ft" />
-                <TempField label="OAT AT DEPARTURE" value={oatDep} onChange={setOatDep} unit={tempUnit} onUnitChange={setTempUnit} />
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", alignItems: "end" }}>
-                <InputField label="CRUISE ALT." unit="FT" value={cruiseAlt} onChange={setCruiseAlt} placeholder="e.g. 6000" hint="Above departure" />
-                <TempField label="OAT AT CRUISE" value={oatCruise} onChange={setOatCruise} unit={tempUnit} onUnitChange={setTempUnit} />
-              </div>
+            <div style={{ fontSize: "12px", letterSpacing: "4px", color: C.green, marginBottom: "10px" }}>CLIMB · FIG 5-17</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <AltOATRow altLabel="DEPARTURE ALT." altValue={departAlt} onAltChange={setDepartAlt} altHint="0 – 12,000 ft" altPlaceholder="e.g. 800" oatValue={oatDep} onOatChange={setOatDep} unit={tempUnit} onUnitChange={setTempUnit} />
+              <AltOATRow altLabel="CRUISE ALT." altValue={cruiseAlt} onAltChange={setCruiseAlt} altHint="Above departure" altPlaceholder="e.g. 6000" oatValue={oatCruise} onOatChange={setOatCruise} unit={tempUnit} onUnitChange={setTempUnit} />
             </div>
           </div>
           <div style={{ marginBottom: "28px" }}>
             <button onClick={() => setShowDescent(s => !s)} style={{
               display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none",
-              cursor: "pointer", padding: "0", marginBottom: showDescent ? "16px" : "0",
+              cursor: "pointer", padding: "0", marginBottom: showDescent ? "14px" : "0",
             }}>
               <div style={{
                 width: "18px", height: "18px", borderRadius: "50%",
@@ -684,10 +678,7 @@
               </div>
             </button>
             {showDescent && (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", alignItems: "end" }}>
-                <InputField label="DESTINATION ALT." unit="FT" value={destAlt} onChange={setDestAlt} placeholder="e.g. 1000" hint="Below cruise alt" />
-                <TempField label="OAT AT DESTINATION" value={oatDest} onChange={setOatDest} unit={tempUnit} onUnitChange={setTempUnit} />
-              </div>
+              <AltOATRow altLabel="DESTINATION ALT." altValue={destAlt} onAltChange={setDestAlt} altHint="Below cruise alt" altPlaceholder="e.g. 1000" oatValue={oatDest} onOatChange={setOatDest} unit={tempUnit} onUnitChange={setTempUnit} />
             )}
           </div>
           {error && <ErrorBox msg={error} />}
