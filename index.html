@@ -510,6 +510,45 @@
         </div>
       );
     }
+    function AltOATRow({ altLabel, altValue, onAltChange, altHint, altPlaceholder, oatValue, onOatChange, unit, onUnitChange, altFilled, oatFilled }) {
+      const C = useC();
+      const mobile = useIsMobileInner();
+      return (
+        <div style={{ background: C.input, border: `1px solid ${C.border}`, borderRadius: "4px", padding: "14px 16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr", gap: "16px" }}>
+            <div>
+              <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
+                {altLabel}
+                {altFilled && <span style={{ fontSize: "10px", background: C.green, color: C.btnText, borderRadius: "2px", padding: "1px 5px", letterSpacing: "1px", fontWeight: "bold" }}>METAR</span>}
+              </div>
+              <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                <input type="number" value={altValue} onChange={e => onAltChange(e.target.value)} placeholder={altPlaceholder || "e.g. 4000"}
+                  style={{ flex: 1, background: C.bg, border: `1px solid ${altFilled ? C.green : C.borderDim}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                <div style={{ padding: "10px 10px", background: C.bg, border: `1px solid ${C.borderDim}`, borderRadius: "3px", color: C.dim, fontSize: "12px", letterSpacing: "1px" }}>FT</div>
+              </div>
+              {altHint && <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "4px" }}>{altHint}</div>}
+            </div>
+            <div>
+              <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
+                OAT
+                {oatFilled && <span style={{ fontSize: "10px", background: C.green, color: C.btnText, borderRadius: "2px", padding: "1px 5px", letterSpacing: "1px", fontWeight: "bold" }}>METAR</span>}
+              </div>
+              <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                <input type="number" value={oatValue} onChange={e => onOatChange(e.target.value)} placeholder="e.g. 15"
+                  style={{ flex: 1, background: C.bg, border: `1px solid ${oatFilled ? C.green : C.borderDim}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                {["C","F"].map(u => (
+                  <button key={u} onClick={() => onUnitChange(u)} style={{
+                    padding: "10px 12px", background: unit === u ? C.green : C.bg,
+                    border: `1px solid ${unit === u ? C.green : C.borderDim}`, borderRadius: "3px",
+                    color: unit === u ? C.btnText : C.dim, fontFamily: mono, fontSize: "14px", cursor: "pointer",
+                  }}>°{u}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
     function CalcButton({ onClick }) {
       const C = useC();
       const [hovered, setHovered] = useState(false);
@@ -587,12 +626,13 @@
       const [oatCruise, setOatCruise] = useState(savedState.oatCruise || "");
       const [oatDest, setOatDest] = useState(savedState.oatDest || "");
       const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
+      const [showDescent, setShowDescent] = useState(savedState.showDescent || false);
       const [result, setResult] = useState(savedState.result || null);
       const [error, setError] = useState("");
 
       useEffect(() => {
-        onStateChange({ departAlt, cruiseAlt, destAlt, oatDep, oatCruise, oatDest, tempUnit, result });
-      }, [departAlt, cruiseAlt, destAlt, oatDep, oatCruise, oatDest, tempUnit, result]);
+        onStateChange({ departAlt, cruiseAlt, destAlt, oatDep, oatCruise, oatDest, tempUnit, showDescent, result });
+      }, [departAlt, cruiseAlt, destAlt, oatDep, oatCruise, oatDest, tempUnit, showDescent, result]);
 
       const handleCalculate = useCallback(() => {
         setError(""); setResult(null);
@@ -607,29 +647,48 @@
         if (oatDepC < -25 || oatDepC > 50 || oatCruiseC < -25 || oatCruiseC > 50) { setError("OAT out of chart range (approx −25°C to 50°C)."); return; }
         const climb = calculateTimeFuelDist(dep, cruise, oatDepC, oatCruiseC);
         let descent = null;
-        if (!isNaN(oatDestC) && !isNaN(dest) && dest < cruise) {
+        if (showDescent && !isNaN(oatDestC) && !isNaN(dest) && dest < cruise) {
           descent = calculateDescent(cruise, dest, oatCruiseC, oatDestC);
         }
         setResult({ ...climb, descent });
-      }, [departAlt, cruiseAlt, destAlt, oatDep, oatCruise, oatDest, tempUnit]);
+      }, [departAlt, cruiseAlt, destAlt, oatDep, oatCruise, oatDest, tempUnit, showDescent]);
 
       return (
         <Card>
           <div style={{ marginBottom: "28px", paddingBottom: "20px", borderBottom: `1px solid ${C.border}` }}>
             <div style={{ fontSize: "12px", letterSpacing: "4px", color: C.green, marginBottom: "6px" }}>CLIMB · FIG 5-17</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <InputField label="DEPARTURE PRESS. ALT." unit="FT" value={departAlt} onChange={setDepartAlt} placeholder="e.g. 2000" hint="0 – 12,000 ft" />
-              <InputField label="CRUISE PRESS. ALT." unit="FT" value={cruiseAlt} onChange={setCruiseAlt} placeholder="e.g. 6000" hint="Above departure" />
-              <TempField label="OAT AT DEPARTURE" value={oatDep} onChange={setOatDep} unit={tempUnit} onUnitChange={setTempUnit} />
-              <TempField label="OAT AT CRUISE ALT." value={oatCruise} onChange={setOatCruise} unit={tempUnit} onUnitChange={setTempUnit} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", alignItems: "end" }}>
+                <InputField label="DEPARTURE ALT." unit="FT" value={departAlt} onChange={setDepartAlt} placeholder="e.g. 800" hint="0 – 12,000 ft" />
+                <TempField label="OAT AT DEPARTURE" value={oatDep} onChange={setOatDep} unit={tempUnit} onUnitChange={setTempUnit} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", alignItems: "end" }}>
+                <InputField label="CRUISE ALT." unit="FT" value={cruiseAlt} onChange={setCruiseAlt} placeholder="e.g. 6000" hint="Above departure" />
+                <TempField label="OAT AT CRUISE" value={oatCruise} onChange={setOatCruise} unit={tempUnit} onUnitChange={setTempUnit} />
+              </div>
             </div>
           </div>
           <div style={{ marginBottom: "28px" }}>
-            <div style={{ fontSize: "12px", letterSpacing: "4px", color: C.cool, marginBottom: "16px" }}>DESCENT · FIG 5-37 <span style={{ fontSize: "11px", color: C.dimmest }}>(optional)</span></div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <InputField label="DESTINATION PRESS. ALT." unit="FT" value={destAlt} onChange={setDestAlt} placeholder="e.g. 1000" hint="Below cruise alt (leave blank to skip)" />
-              <TempField label="OAT AT DESTINATION" value={oatDest} onChange={setOatDest} unit={tempUnit} onUnitChange={setTempUnit} />
-            </div>
+            <button onClick={() => setShowDescent(s => !s)} style={{
+              display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none",
+              cursor: "pointer", padding: "0", marginBottom: showDescent ? "16px" : "0",
+            }}>
+              <div style={{
+                width: "18px", height: "18px", borderRadius: "50%",
+                border: `1px solid ${showDescent ? C.cool : C.borderDim}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: showDescent ? C.cool : C.dim, fontSize: "14px", lineHeight: 1, flexShrink: 0,
+              }}>{showDescent ? "−" : "+"}</div>
+              <div style={{ fontSize: "12px", letterSpacing: "3px", color: showDescent ? C.cool : C.dim }}>
+                DESCENT · FIG 5-37
+              </div>
+            </button>
+            {showDescent && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", alignItems: "end" }}>
+                <InputField label="DESTINATION ALT." unit="FT" value={destAlt} onChange={setDestAlt} placeholder="e.g. 1000" hint="Below cruise alt" />
+                <TempField label="OAT AT DESTINATION" value={oatDest} onChange={setOatDest} unit={tempUnit} onUnitChange={setTempUnit} />
+              </div>
+            )}
           </div>
           {error && <ErrorBox msg={error} />}
           <CalcButton onClick={handleCalculate} />
@@ -733,8 +792,7 @@
       return (
         <Card>
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "28px" }}>
-            <InputField label="PRESSURE ALTITUDE" unit="FT" value={alt} onChange={setAlt} placeholder="e.g. 4000" hint="0 – 14,000 ft" />
-            <TempField label="OAT AT ALTITUDE" value={oat} onChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
+            <AltOATRow altLabel="PRESS. ALT." altValue={alt} onAltChange={setAlt} altHint="0 – 14,000 ft" altPlaceholder="e.g. 4000" oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
           </div>
           {error && <ErrorBox msg={error} />}
           <CalcButton onClick={handleCalculate} />
@@ -803,8 +861,7 @@
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "28px" }}>
             <ToggleRow label="POWER SETTING" value={power} onChange={setPower}
               options={[{ val: "75", label: "75% · 11.0 GPH" }, { val: "65", label: "65% · 9.5 GPH" }, { val: "55", label: "55% · 8.2 GPH" }]} />
-            <InputField label="PRESSURE ALTITUDE" unit="FT" value={alt} onChange={setAlt} placeholder="e.g. 6000" hint={`0 – ${cfg.maxAlt.toLocaleString()} ft · Fig ${cfg.fig}`} />
-            <TempField label="OAT AT CRUISE ALTITUDE" value={oat} onChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
+            <AltOATRow altLabel="CRUISE PRESS. ALT." altValue={alt} onAltChange={setAlt} altHint={`0 – ${cfg.maxAlt.toLocaleString()} ft · Fig ${cfg.fig}`} altPlaceholder="e.g. 6000" oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
             <ToggleRow label="WHEEL PANTS" value={wheelPants} onChange={setWheelPants}
               options={[{ val: true, label: "INSTALLED" }, { val: false, label: "REMOVED" }]} />
             <ToggleRow label="FUEL RESERVE" value={reserve} onChange={setReserve}
@@ -1308,6 +1365,7 @@
       const [airportRunways, setAirportRunways] = useState([]);
       const [windDir, setWindDir] = useState(savedState.windDir || "head");
       const [runway, setRunway] = useState(savedState.runway || "");
+      const [runwayFull, setRunwayFull] = useState(savedState.runwayFull || "");
       const [windHeading, setWindHeading] = useState(savedState.windHeading || "");
       const [windSpeed, setWindSpeed] = useState(savedState.windSpeed || "");
       const [result, setResult] = useState(savedState.result || null);
@@ -1408,7 +1466,7 @@
                           const border = isSelected ? C.green : isBest ? C.green : C.border;
                           const color = isSelected ? C.btnText : isBest ? C.green : C.dim;
                           return (
-                            <button key={r.num} onClick={() => setRunway(String(parseInt(r.num)))} style={{
+                            <button key={r.num} onClick={() => { setRunway(String(parseInt(r.num))); setRunwayFull(r.num); }} style={{
                               padding:"8px 12px", background:bg, border:`1px solid ${border}`,
                               borderRadius:"3px", color, fontFamily:mono, fontSize:"15px", letterSpacing:"1px", cursor:"pointer",
                             }}>
@@ -1422,7 +1480,7 @@
                       })()}
                     </div>
                   ) : (
-                    <input type="number" value={runway} onChange={e => setRunway(e.target.value.slice(0,2))} placeholder="e.g. 28"
+                    <input type="number" value={runway} onChange={e => { setRunway(e.target.value.slice(0,2)); setRunwayFull(""); }} placeholder="e.g. 28"
                       style={{ width: "100%", boxSizing: "border-box", background: C.input, border: `1px solid ${C.border}`, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
                   )}
                 </div>
@@ -1461,7 +1519,7 @@
           </div>
           {error && <ErrorBox msg={error} />}
           <CalcButton onClick={handleCalculate} />
-          {result && <RunwayViz result={result} airportRunways={airportRunways} runway={runway} />}
+          {result && <RunwayViz result={result} airportRunways={airportRunways} runway={runway} runwayFull={runwayFull} />}
         </Card>
       );
     }
@@ -1510,7 +1568,7 @@
       );
     }
 
-    function RunwayViz({ result, airportRunways, runway }) {
+    function RunwayViz({ result, airportRunways, runway, runwayFull }) {
       const C = useC();
       const dist50 = result.dist50Ft;
       const distGr = result.groundRollFt;
@@ -1630,16 +1688,20 @@
 
 
 
-          {/* Density altitude */}
+          {/* Density altitude — only show if DA > 0 and meaningfully above pressure alt */}
           {(() => {
             const da = result.densityAlt;
-            const daColor = da > 5000 ? C.error : da > 3000 ? C.warm : C.green;
-            const daLabel = da > 5000 ? "HIGH DA — PERFORMANCE SIGNIFICANTLY DEGRADED" : da > 3000 ? "ELEVATED DA — EXPECT REDUCED PERFORMANCE" : "NORMAL DA";
+            const pa = result.altVal != null ? Math.max(0, result.altVal) : null;
+            const diff = pa != null ? da - pa : da;
+            if (da <= 0 || diff < 500) return null;
+            const daColor = diff > 2000 ? C.error : C.warm;
+            const daLabel = diff > 2000 ? "HIGH DA — PERFORMANCE SIGNIFICANTLY DEGRADED" : "ELEVATED DA — EXPECT REDUCED PERFORMANCE";
             return (
               <div style={{ background: C.input, border: `1px solid ${daColor}55`, borderRadius: "3px", padding: "10px 16px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: "11px", letterSpacing: "3px", color: C.dim, marginBottom: "2px" }}>DENSITY ALTITUDE</div>
                   <div style={{ fontSize: "11px", letterSpacing: "1px", color: daColor }}>{daLabel}</div>
+                  <div style={{ fontSize: "11px", color: C.dim, marginTop: "2px" }}>+{diff.toLocaleString()} ft above pressure alt</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <span style={{ fontSize: "32px", fontWeight: "bold", color: daColor }}>{da.toLocaleString()}</span>
@@ -1802,7 +1864,8 @@
             if (!airportRunways || !runway) return null;
             var rwy = null;
             for (var i = 0; i < airportRunways.length; i++) {
-              if (String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
+              var matchFull = typeof runwayFull === "string" && runwayFull.length > 0;
+              if (matchFull ? airportRunways[i].num === runwayFull : String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
             }
             if (!rwy || !rwy.length) return null;
             var len = rwy.length;
@@ -1814,28 +1877,35 @@
             var ok = gr15ok && d50ok;
             var col = ok ? C.green : C.error;
             return (
-              <div style={{ marginBottom: "12px", padding: "14px 16px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px" }}>
-                <div style={{ fontSize: "15px", letterSpacing: "2px", color: col, marginBottom: "10px", fontWeight: "bold", textAlign: "center" }}>
-                  {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
-                </div>
-                <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", marginBottom: "10px", justifyContent: "center" }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>AVAILABLE</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: C.text }}>{len.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "2px" }}>RWY {rwy.num}</div>
+              <div style={{ marginBottom: "12px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid " + col + "44", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                  <div style={{ fontSize: "18px", letterSpacing: "3px", color: col, fontWeight: "bold" }}>
+                    {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
                   </div>
-                  {gr > 0 && <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>GR x1.5</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: gr15ok ? C.text : C.error }}>{gr15.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "13px", color: gr15ok ? C.warm : C.error, marginTop: "2px", fontWeight: "bold" }}>{Math.round(gr15/len*100)}%</div>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                </div>
+                <div style={{ display: "flex", borderBottom: "1px solid " + col + "22" }}>
+                  <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: "1px solid " + col + "22" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>RWY {rwy.num} AVAILABLE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{len.toLocaleString()}</div>
+                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "3px", letterSpacing: "1px" }}>FT</div>
+                  </div>
+                  {gr > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: d50 > 0 ? "1px solid " + col + "22" : "none" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>GND ROLL x1.5</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: gr15ok ? C.text : C.error, lineHeight: 1 }}>{gr15.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: gr15ok ? C.warm : C.error, marginTop: "3px" }}>{Math.round(gr15/len*100)}% of runway</div>
                   </div>}
-                  {d50 > 0 && <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>50FT DIST</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: d50ok ? C.text : C.error }}>{d50.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "13px", color: d50ok ? C.warm : C.error, marginTop: "2px", fontWeight: "bold" }}>{Math.round(d50/len*100)}%</div>
+                  {d50 > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>50FT DISTANCE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: d50ok ? C.text : C.error, lineHeight: 1 }}>{d50.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: d50ok ? C.warm : C.error, marginTop: "3px" }}>{Math.round(d50/len*100)}% of runway</div>
                   </div>}
                 </div>
-                <div style={{ marginTop: "8px", padding: "8px 10px", background: C.warm + "22", border: "1px solid " + C.warm, borderRadius: "3px" }}><span style={{ fontSize: "12px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", marginRight: "8px" }}>ADVISORY ONLY</span><span style={{ fontSize: "12px", color: C.text }}>Runway lengths sourced from OurAirports open data and may not reflect current conditions. Always verify with official AFD, NOTAMs, and airport authority before flight. Do not use as sole basis for go/no-go decision.</span></div>
+                <div style={{ padding: "8px 14px", display: "flex", alignItems: "center", gap: "8px", background: C.warm + "18", borderTop: "1px solid " + C.warm }}>
+                  <span style={{ fontSize: "10px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", flexShrink: 0 }}>ADVISORY ONLY</span>
+                  <span style={{ fontSize: "10px", color: C.text }}>Runway lengths from OurAirports data. Always verify with AFD and NOTAMs before flight.</span>
+                </div>
               </div>
             );
           })()}
@@ -2094,6 +2164,7 @@
       const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
       const [weight, setWeight] = useState(savedState.weight || "");
       const [runway, setRunway] = useState(savedState.runway || "");
+      const [runwayFull, setRunwayFull] = useState(savedState.runwayFull || "");
       const [windHeading, setWindHeading] = useState(savedState.windHeading || "");
       const [windSpeed, setWindSpeed] = useState(savedState.windSpeed || "");
       const [surface, setSurface] = useState(savedState.surface || "paved");
@@ -2209,7 +2280,7 @@
                           const border = isSelected ? C.green : isBest ? C.green : C.border;
                           const color = isSelected ? C.btnText : isBest ? C.green : C.dim;
                           return (
-                            <button key={r.num} onClick={() => setRunway(String(parseInt(r.num)))} style={{
+                            <button key={r.num} onClick={() => { setRunway(String(parseInt(r.num))); setRunwayFull(r.num); }} style={{
                               padding:"8px 12px", background:bg, border:`1px solid ${border}`,
                               borderRadius:"3px", color, fontFamily:mono, fontSize:"15px", letterSpacing:"1px", cursor:"pointer",
                             }}>
@@ -2223,7 +2294,7 @@
                       })()}
                     </div>
                   ) : (
-                    <input type="number" value={runway} onChange={e => setRunway(e.target.value.slice(0,2))} placeholder="e.g. 28"
+                    <input type="number" value={runway} onChange={e => { setRunway(e.target.value.slice(0,2)); setRunwayFull(""); }} placeholder="e.g. 28"
                       style={{ width: "100%", boxSizing: "border-box", background: C.input, border: `1px solid ${C.border}`, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
                   )}
                 </div>
@@ -2263,12 +2334,12 @@
 
           {error && <ErrorBox msg={error} />}
           <CalcButton onClick={handleCalculate} />
-          {result && <LandingViz result={result} airportRunways={airportRunways} runway={runway} />}
+          {result && <LandingViz result={result} airportRunways={airportRunways} runway={runway} runwayFull={runwayFull} />}
         </Card>
       );
     }
 
-    function LandingViz({ result, airportRunways, runway }) {
+    function LandingViz({ result, airportRunways, runway, runwayFull }) {
       const C = useC();
       const dist50 = result.distFt;
       const distGr = result.groundRollFt;
@@ -2558,7 +2629,8 @@
             if (!airportRunways || !runway) return null;
             var rwy = null;
             for (var i = 0; i < airportRunways.length; i++) {
-              if (String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
+              var matchFull = typeof runwayFull === "string" && runwayFull.length > 0;
+              if (matchFull ? airportRunways[i].num === runwayFull : String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
             }
             if (!rwy || !rwy.length) return null;
             var len = rwy.length;
@@ -2570,28 +2642,35 @@
             var ok = gr15ok && d50ok;
             var col = ok ? C.green : C.error;
             return (
-              <div style={{ marginBottom: "12px", padding: "14px 16px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px" }}>
-                <div style={{ fontSize: "15px", letterSpacing: "2px", color: col, marginBottom: "10px", fontWeight: "bold", textAlign: "center" }}>
-                  {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
-                </div>
-                <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", marginBottom: "10px", justifyContent: "center" }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>AVAILABLE</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: C.text }}>{len.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "2px" }}>RWY {rwy.num}</div>
+              <div style={{ marginBottom: "12px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid " + col + "44", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                  <div style={{ fontSize: "18px", letterSpacing: "3px", color: col, fontWeight: "bold" }}>
+                    {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
                   </div>
-                  {gr > 0 && <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>GR x1.5</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: gr15ok ? C.text : C.error }}>{gr15.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "13px", color: gr15ok ? C.warm : C.error, marginTop: "2px", fontWeight: "bold" }}>{Math.round(gr15/len*100)}%</div>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                </div>
+                <div style={{ display: "flex", borderBottom: "1px solid " + col + "22" }}>
+                  <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: "1px solid " + col + "22" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>RWY {rwy.num} AVAILABLE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{len.toLocaleString()}</div>
+                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "3px", letterSpacing: "1px" }}>FT</div>
+                  </div>
+                  {gr > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: d50 > 0 ? "1px solid " + col + "22" : "none" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>GND ROLL x1.5</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: gr15ok ? C.text : C.error, lineHeight: 1 }}>{gr15.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: gr15ok ? C.warm : C.error, marginTop: "3px" }}>{Math.round(gr15/len*100)}% of runway</div>
                   </div>}
-                  {d50 > 0 && <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>50FT DIST</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: d50ok ? C.text : C.error }}>{d50.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "13px", color: d50ok ? C.warm : C.error, marginTop: "2px", fontWeight: "bold" }}>{Math.round(d50/len*100)}%</div>
+                  {d50 > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>50FT DISTANCE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: d50ok ? C.text : C.error, lineHeight: 1 }}>{d50.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: d50ok ? C.warm : C.error, marginTop: "3px" }}>{Math.round(d50/len*100)}% of runway</div>
                   </div>}
                 </div>
-                <div style={{ marginTop: "8px", padding: "8px 10px", background: C.warm + "22", border: "1px solid " + C.warm, borderRadius: "3px" }}><span style={{ fontSize: "12px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", marginRight: "8px" }}>ADVISORY ONLY</span><span style={{ fontSize: "12px", color: C.text }}>Runway lengths sourced from OurAirports open data and may not reflect current conditions. Always verify with official AFD, NOTAMs, and airport authority before flight. Do not use as sole basis for go/no-go decision.</span></div>
+                <div style={{ padding: "8px 14px", display: "flex", alignItems: "center", gap: "8px", background: C.warm + "18", borderTop: "1px solid " + C.warm }}>
+                  <span style={{ fontSize: "10px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", flexShrink: 0 }}>ADVISORY ONLY</span>
+                  <span style={{ fontSize: "10px", color: C.text }}>Runway lengths from OurAirports data. Always verify with AFD and NOTAMs before flight.</span>
+                </div>
               </div>
             );
           })()}
@@ -3019,8 +3098,7 @@
             <div style={{ fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" }}>FLAPS UP · FULL THROTTLE · 2,550 LB · FIG 5-6</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "28px" }}>
-            <InputField label="PRESSURE ALTITUDE" unit="FT" value={alt} onChange={setAlt} placeholder="e.g. 4000" hint="0 – 12,000 ft" />
-            <TempField label="OAT AT ALTITUDE" value={oat} onChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} hint="−20°C to 40°C chart range" />
+            <AltOATRow altLabel="PRESS. ALT." altValue={alt} onAltChange={setAlt} altHint="0 – 12,000 ft" altPlaceholder="e.g. 4000" oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
           </div>
           {error && <ErrorBox msg={error} />}
           <CalcButton onClick={handleCalculate} />
@@ -3140,11 +3218,9 @@
             <div style={{ fontSize: "28px", fontWeight: "bold", letterSpacing: "2px" }}>CLIMB PLANNING</div>
             <div style={{ fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" }}>FLAPS UP · FULL THROTTLE · 2,550 LB · FIG 5-7</div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "28px" }}>
-            <InputField label="DEPARTURE PRESS. ALT." unit="FT" value={departAlt} onChange={setDepartAlt} placeholder="e.g. 1000" hint="0 – 12,000 ft" />
-            <InputField label="CRUISE PRESS. ALT." unit="FT" value={cruiseAlt} onChange={setCruiseAlt} placeholder="e.g. 6000" hint="Above departure" />
-            <TempField label="OAT AT DEPARTURE" value={oatDep} onChange={setOatDep} unit={tempUnit} onUnitChange={setTempUnit} hint="For temperature correction" />
-            <TempField label="OAT AT CRUISE ALT." value={oatCruise} onChange={setOatCruise} unit={tempUnit} onUnitChange={setTempUnit} hint="For temperature correction" />
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "28px" }}>
+            <AltOATRow altLabel="DEPARTURE PRESS. ALT." altValue={departAlt} onAltChange={setDepartAlt} altHint="0 – 12,000 ft" altPlaceholder="e.g. 1000" oatValue={oatDep} onOatChange={setOatDep} unit={tempUnit} onUnitChange={setTempUnit} />
+            <AltOATRow altLabel="CRUISE PRESS. ALT." altValue={cruiseAlt} onAltChange={setCruiseAlt} altHint="Must be above departure" altPlaceholder="e.g. 6000" oatValue={oatCruise} onOatChange={setOatCruise} unit={tempUnit} onUnitChange={setTempUnit} />
           </div>
           {error && <ErrorBox msg={error} />}
           <CalcButton onClick={handleCalculate} />
@@ -3369,9 +3445,8 @@
             <div style={{ fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" }}>REC. LEAN MIXTURE · 2,550 LB · FIG 5-8</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "28px" }}>
-            <InputField label="PRESSURE ALTITUDE" unit="FT" value={alt} onChange={setAlt} placeholder="e.g. 6000" hint="2,000 – 12,000 ft" />
+            <AltOATRow altLabel="CRUISE PRESS. ALT." altValue={alt} onAltChange={setAlt} altHint="2,000 – 12,000 ft" altPlaceholder="e.g. 6000" oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
             <InputField label="RPM" unit="RPM" value={rpm} onChange={setRpm} placeholder="e.g. 2500" hint="2,100 – 2,700 RPM" />
-            <TempField label="OAT AT CRUISE ALT." value={oat} onChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} hint="ISA −20°C to ISA +20°C" />
             <div>
               <div style={{ fontSize: "12px", letterSpacing: "3px", color: C.green, marginBottom: "8px" }}>SPEED FAIRINGS</div>
               <div style={{ display: "flex", gap: "8px" }}>
@@ -3581,7 +3656,7 @@
       };
     }
 
-    function C172RunwayViz({ result, airportRunways, runway }) {
+    function C172RunwayViz({ result, airportRunways, runway, runwayFull }) {
       const C = useC();
       const [t, setT] = useState(0);
       const animRef = useRef(null);
@@ -3740,6 +3815,7 @@
       const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
       const [weight, setWeight] = useState(savedState.weight || "");
       const [runway, setRunway] = useState(savedState.runway || "");
+      const [runwayFull, setRunwayFull] = useState(savedState.runwayFull || "");
       const [windHeading, setWindHeading] = useState(savedState.windHeading || "");
       const [windSpeed, setWindSpeed] = useState(savedState.windSpeed || "");
       const [surface, setSurface] = useState(savedState.surface || "paved");
@@ -3845,7 +3921,7 @@
                           const border = isSelected ? C.green : isBest ? C.green : C.border;
                           const color = isSelected ? C.btnText : isBest ? C.green : C.dim;
                           return (
-                            <button key={r.num} onClick={() => setRunway(String(parseInt(r.num)))} style={{
+                            <button key={r.num} onClick={() => { setRunway(String(parseInt(r.num))); setRunwayFull(r.num); }} style={{
                               padding:"8px 12px", background:bg, border:`1px solid ${border}`,
                               borderRadius:"3px", color, fontFamily:mono, fontSize:"15px", letterSpacing:"1px", cursor:"pointer",
                             }}>
@@ -3859,7 +3935,7 @@
                       })()}
                     </div>
                   ) : (
-                    <input type="number" value={runway} onChange={e => setRunway(e.target.value.slice(0,2))} placeholder="e.g. 28"
+                    <input type="number" value={runway} onChange={e => { setRunway(e.target.value.slice(0,2)); setRunwayFull(""); }} placeholder="e.g. 28"
                       style={{ width:"100%", boxSizing:"border-box", background:C.input, border:`1px solid ${C.border}`, borderRadius:"3px", padding:"11px 14px", color:C.text, fontFamily:mono, fontSize:"18px" }} />
                   )}
                 </div>
@@ -3912,8 +3988,31 @@
             <div style={{ marginTop:"28px" }}>
               <ISABadgeRow label="RESULTS" isaLabel={formatISA(result.isaDeviation)} isaDeviation={result.isaDeviation} isaTemp={result.isaTemp} />
 
+              {/* Density altitude — only show if DA > 0 and meaningfully above pressure alt */}
+              {(() => {
+                const da=result.densityAlt;
+                const pa = result.altVal != null ? Math.max(0, result.altVal) : null;
+                const diff = pa != null ? da - pa : da;
+                if (da <= 0 || diff < 500) return null;
+                const daColor = diff > 2000 ? C.error : C.warm;
+                const daLabel = diff > 2000 ? "HIGH DA — PERFORMANCE SIGNIFICANTLY DEGRADED" : "ELEVATED DA — EXPECT REDUCED PERFORMANCE";
+                return (
+                  <div style={{ background:C.input, border:`1px solid ${daColor}55`, borderRadius:"3px", padding:"10px 16px", marginBottom:"12px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                    <div>
+                      <div style={{ fontSize:"11px", letterSpacing:"3px", color:C.dim, marginBottom:"2px" }}>DENSITY ALTITUDE</div>
+                      <div style={{ fontSize:"11px", letterSpacing:"1px", color:daColor }}>{daLabel}</div>
+                      <div style={{ fontSize:"11px", color:C.dim, marginTop:"2px" }}>+{diff.toLocaleString()} ft above pressure alt</div>
+                    </div>
+                    <div style={{ textAlign:"right" }}>
+                      <span style={{ fontSize:"32px", fontWeight:"bold", color:daColor }}>{da.toLocaleString()}</span>
+                      <span style={{ fontSize:"13px", color:C.dim, marginLeft:"6px" }}>FT</span>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Runway visualization */}
-              <C172RunwayViz result={result} airportRunways={airportRunways} runway={runway} />
+              <C172RunwayViz result={result} airportRunways={airportRunways} runway={runway} runwayFull={runwayFull} />
 
               {result.windWasClamped && (
                 <div style={{ background:C.errorBg, border:`1px solid ${C.warm}`, borderRadius:"3px", padding:"10px 14px", marginBottom:"12px", display:"flex", alignItems:"center", gap:"10px" }}>
@@ -3936,23 +4035,7 @@
                 </div>
               )}
 
-              {/* Density altitude */}
-              {(() => {
-                const da=result.densityAlt, daColor=da>5000?C.error:da>3000?C.warm:C.green;
-                const daLabel=da>5000?"HIGH DA — PERFORMANCE SIGNIFICANTLY DEGRADED":da>3000?"ELEVATED DA — EXPECT REDUCED PERFORMANCE":"NORMAL DA";
-                return (
-                  <div style={{ background:C.input, border:`1px solid ${daColor}55`, borderRadius:"3px", padding:"10px 16px", marginBottom:"12px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                    <div>
-                      <div style={{ fontSize:"11px", letterSpacing:"3px", color:C.dim, marginBottom:"2px" }}>DENSITY ALTITUDE</div>
-                      <div style={{ fontSize:"11px", letterSpacing:"1px", color:daColor }}>{daLabel}</div>
-                    </div>
-                    <div style={{ textAlign:"right" }}>
-                      <span style={{ fontSize:"32px", fontWeight:"bold", color:daColor }}>{da.toLocaleString()}</span>
-                      <span style={{ fontSize:"13px", color:C.dim, marginLeft:"6px" }}>FT</span>
-                    </div>
-                  </div>
-                );
-              })()}
+              {/* Density altitude placeholder removed — now above viz */}
               <Grid2 style={{ marginBottom:"12px" }}>
                 {(() => {
                   const grassAdj = surface === "grass" ? Math.round(result.groundRollFt * 0.15) : 0;
@@ -3998,7 +4081,8 @@
             if (!airportRunways || !runway) return null;
             var rwy = null;
             for (var i = 0; i < airportRunways.length; i++) {
-              if (String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
+              var matchFull = typeof runwayFull === "string" && runwayFull.length > 0;
+              if (matchFull ? airportRunways[i].num === runwayFull : String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
             }
             if (!rwy || !rwy.length) return null;
             var len = rwy.length;
@@ -4010,28 +4094,35 @@
             var ok = gr15ok && d50ok;
             var col = ok ? C.green : C.error;
             return (
-              <div style={{ marginBottom: "12px", padding: "14px 16px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px" }}>
-                <div style={{ fontSize: "15px", letterSpacing: "2px", color: col, marginBottom: "10px", fontWeight: "bold", textAlign: "center" }}>
-                  {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
-                </div>
-                <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", marginBottom: "10px", justifyContent: "center" }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>AVAILABLE</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: C.text }}>{len.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "2px" }}>RWY {rwy.num}</div>
+              <div style={{ marginBottom: "12px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid " + col + "44", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                  <div style={{ fontSize: "18px", letterSpacing: "3px", color: col, fontWeight: "bold" }}>
+                    {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
                   </div>
-                  {gr > 0 && <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>GR x1.5</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: gr15ok ? C.text : C.error }}>{gr15.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "13px", color: gr15ok ? C.warm : C.error, marginTop: "2px", fontWeight: "bold" }}>{Math.round(gr15/len*100)}%</div>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                </div>
+                <div style={{ display: "flex", borderBottom: "1px solid " + col + "22" }}>
+                  <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: "1px solid " + col + "22" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>RWY {rwy.num} AVAILABLE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{len.toLocaleString()}</div>
+                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "3px", letterSpacing: "1px" }}>FT</div>
+                  </div>
+                  {gr > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: d50 > 0 ? "1px solid " + col + "22" : "none" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>GND ROLL x1.5</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: gr15ok ? C.text : C.error, lineHeight: 1 }}>{gr15.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: gr15ok ? C.warm : C.error, marginTop: "3px" }}>{Math.round(gr15/len*100)}% of runway</div>
                   </div>}
-                  {d50 > 0 && <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>50FT DIST</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: d50ok ? C.text : C.error }}>{d50.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "13px", color: d50ok ? C.warm : C.error, marginTop: "2px", fontWeight: "bold" }}>{Math.round(d50/len*100)}%</div>
+                  {d50 > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>50FT DISTANCE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: d50ok ? C.text : C.error, lineHeight: 1 }}>{d50.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: d50ok ? C.warm : C.error, marginTop: "3px" }}>{Math.round(d50/len*100)}% of runway</div>
                   </div>}
                 </div>
-                <div style={{ marginTop: "8px", padding: "8px 10px", background: C.warm + "22", border: "1px solid " + C.warm, borderRadius: "3px" }}><span style={{ fontSize: "12px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", marginRight: "8px" }}>ADVISORY ONLY</span><span style={{ fontSize: "12px", color: C.text }}>Runway lengths sourced from OurAirports open data and may not reflect current conditions. Always verify with official AFD, NOTAMs, and airport authority before flight. Do not use as sole basis for go/no-go decision.</span></div>
+                <div style={{ padding: "8px 14px", display: "flex", alignItems: "center", gap: "8px", background: C.warm + "18", borderTop: "1px solid " + C.warm }}>
+                  <span style={{ fontSize: "10px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", flexShrink: 0 }}>ADVISORY ONLY</span>
+                  <span style={{ fontSize: "10px", color: C.text }}>Runway lengths from OurAirports data. Always verify with AFD and NOTAMs before flight.</span>
+                </div>
               </div>
             );
           })()}
@@ -4135,7 +4226,7 @@
       };
     }
 
-    function C172LandingViz({ result, airportRunways, runway }) {
+    function C172LandingViz({ result, airportRunways, runway, runwayFull }) {
       const C = useC();
       const [t, setT] = useState(0);
       const animRef = useRef(null);
@@ -4250,6 +4341,7 @@
       const [oat, setOat] = useState(savedState.oat || "");
       const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
       const [runway, setRunway] = useState(savedState.runway || "");
+      const [runwayFull, setRunwayFull] = useState(savedState.runwayFull || "");
       const [windHeading, setWindHeading] = useState(savedState.windHeading || "");
       const [windSpeed, setWindSpeed] = useState(savedState.windSpeed || "");
       const [surface, setSurface] = useState(savedState.surface || "paved");
@@ -4369,7 +4461,7 @@
                           const border = isSelected ? C.green : isBest ? C.green : C.border;
                           const color = isSelected ? C.btnText : isBest ? C.green : C.dim;
                           return (
-                            <button key={r.num} onClick={() => setRunway(String(parseInt(r.num)))} style={{
+                            <button key={r.num} onClick={() => { setRunway(String(parseInt(r.num))); setRunwayFull(r.num); }} style={{
                               padding:"8px 12px", background:bg, border:`1px solid ${border}`,
                               borderRadius:"3px", color, fontFamily:mono, fontSize:"15px", letterSpacing:"1px", cursor:"pointer",
                             }}>
@@ -4383,7 +4475,7 @@
                       })()}
                     </div>
                   ) : (
-                    <input type="number" value={runway} onChange={e=>setRunway(e.target.value.slice(0,2))} placeholder="e.g. 28"
+                    <input type="number" value={runway} onChange={e=>{ setRunway(e.target.value.slice(0,2)); setRunwayFull(""); }} placeholder="e.g. 28"
                       style={{ width:"100%", boxSizing:"border-box", background:C.input, border:`1px solid ${C.border}`, borderRadius:"3px", padding:"11px 14px", color:C.text, fontFamily:mono, fontSize:"18px" }}/>
                   )}
                 </div>
@@ -4448,7 +4540,7 @@
           {result && (
             <div style={{ marginTop:"28px" }}>
               <ISABadgeRow label="RESULTS" isaLabel={formatISA(result.isaDeviation)} isaDeviation={result.isaDeviation} isaTemp={result.isaTemp} />
-              <C172LandingViz result={result} airportRunways={airportRunways} runway={runway} />
+              <C172LandingViz result={result} airportRunways={airportRunways} runway={runway} runwayFull={runwayFull} />
               {result.windWasClamped && (
                 <div style={{ background:C.errorBg, border:`1px solid ${C.warm}`, borderRadius:"3px", padding:"10px 14px", marginBottom:"12px", display:"flex", alignItems:"center", gap:"10px" }}>
                   <div style={{ color:C.warm, fontSize:"16px" }}>⚠</div>
@@ -4467,14 +4559,19 @@
                   </div>
                 </div>
               )}
-              {/* Density altitude */}
+              {/* Density altitude — only show if DA > 0 and meaningfully above pressure alt */}
               {(() => {
-                const da=result.densityAlt, daColor=da>5000?C.error:da>3000?C.warm:C.green;
+                const da=result.densityAlt;
+                const pa = result.altVal != null ? Math.max(0, result.altVal) : null;
+                const diff = pa != null ? da - pa : da;
+                if (da <= 0 || diff < 500) return null;
+                const daColor = diff > 2000 ? C.error : C.warm;
                 return (
                   <div style={{ background:C.input, border:`1px solid ${daColor}55`, borderRadius:"3px", padding:"10px 16px", marginBottom:"12px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                     <div>
                       <div style={{ fontSize:"11px", letterSpacing:"3px", color:C.dim, marginBottom:"2px" }}>DENSITY ALTITUDE</div>
-                      <div style={{ fontSize:"11px", color:daColor }}>{da>5000?"HIGH DA — PERF. SIGNIFICANTLY DEGRADED":da>3000?"ELEVATED DA — REDUCED PERFORMANCE":"NORMAL DA"}</div>
+                      <div style={{ fontSize:"11px", color:daColor }}>{diff>2000?"HIGH DA — PERF. SIGNIFICANTLY DEGRADED":"ELEVATED DA — REDUCED PERFORMANCE"}</div>
+                      <div style={{ fontSize:"11px", color:C.dim, marginTop:"2px" }}>+{diff.toLocaleString()} ft above pressure alt</div>
                     </div>
                     <div style={{ textAlign:"right" }}>
                       <span style={{ fontSize:"32px", fontWeight:"bold", color:daColor }}>{da.toLocaleString()}</span>
@@ -4524,7 +4621,8 @@
             if (!airportRunways || !runway) return null;
             var rwy = null;
             for (var i = 0; i < airportRunways.length; i++) {
-              if (String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
+              var matchFull = typeof runwayFull === "string" && runwayFull.length > 0;
+              if (matchFull ? airportRunways[i].num === runwayFull : String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
             }
             if (!rwy || !rwy.length) return null;
             var len = rwy.length;
@@ -4536,28 +4634,35 @@
             var ok = gr15ok && d50ok;
             var col = ok ? C.green : C.error;
             return (
-              <div style={{ marginBottom: "12px", padding: "14px 16px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px" }}>
-                <div style={{ fontSize: "15px", letterSpacing: "2px", color: col, marginBottom: "10px", fontWeight: "bold", textAlign: "center" }}>
-                  {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
-                </div>
-                <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", marginBottom: "10px", justifyContent: "center" }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>AVAILABLE</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: C.text }}>{len.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "2px" }}>RWY {rwy.num}</div>
+              <div style={{ marginBottom: "12px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid " + col + "44", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                  <div style={{ fontSize: "18px", letterSpacing: "3px", color: col, fontWeight: "bold" }}>
+                    {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
                   </div>
-                  {gr > 0 && <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>GR x1.5</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: gr15ok ? C.text : C.error }}>{gr15.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "13px", color: gr15ok ? C.warm : C.error, marginTop: "2px", fontWeight: "bold" }}>{Math.round(gr15/len*100)}%</div>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                </div>
+                <div style={{ display: "flex", borderBottom: "1px solid " + col + "22" }}>
+                  <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: "1px solid " + col + "22" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>RWY {rwy.num} AVAILABLE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{len.toLocaleString()}</div>
+                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "3px", letterSpacing: "1px" }}>FT</div>
+                  </div>
+                  {gr > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: d50 > 0 ? "1px solid " + col + "22" : "none" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>GND ROLL x1.5</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: gr15ok ? C.text : C.error, lineHeight: 1 }}>{gr15.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: gr15ok ? C.warm : C.error, marginTop: "3px" }}>{Math.round(gr15/len*100)}% of runway</div>
                   </div>}
-                  {d50 > 0 && <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" }}>50FT DIST</div>
-                    <div style={{ fontSize: "26px", fontWeight: "bold", color: d50ok ? C.text : C.error }}>{d50.toLocaleString()}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>FT</span></div>
-                    <div style={{ fontSize: "13px", color: d50ok ? C.warm : C.error, marginTop: "2px", fontWeight: "bold" }}>{Math.round(d50/len*100)}%</div>
+                  {d50 > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>50FT DISTANCE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: d50ok ? C.text : C.error, lineHeight: 1 }}>{d50.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: d50ok ? C.warm : C.error, marginTop: "3px" }}>{Math.round(d50/len*100)}% of runway</div>
                   </div>}
                 </div>
-                <div style={{ marginTop: "8px", padding: "8px 10px", background: C.warm + "22", border: "1px solid " + C.warm, borderRadius: "3px" }}><span style={{ fontSize: "12px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", marginRight: "8px" }}>ADVISORY ONLY</span><span style={{ fontSize: "12px", color: C.text }}>Runway lengths sourced from OurAirports open data and may not reflect current conditions. Always verify with official AFD, NOTAMs, and airport authority before flight. Do not use as sole basis for go/no-go decision.</span></div>
+                <div style={{ padding: "8px 14px", display: "flex", alignItems: "center", gap: "8px", background: C.warm + "18", borderTop: "1px solid " + C.warm }}>
+                  <span style={{ fontSize: "10px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", flexShrink: 0 }}>ADVISORY ONLY</span>
+                  <span style={{ fontSize: "10px", color: C.text }}>Runway lengths from OurAirports data. Always verify with AFD and NOTAMs before flight.</span>
+                </div>
               </div>
             );
           })()}
