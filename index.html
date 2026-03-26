@@ -1044,6 +1044,116 @@
       return { liftoff: TO_SPEEDS[TO_SPEEDS.length-1].liftoff, barrier: TO_SPEEDS[TO_SPEEDS.length-1].barrier };
     }
 
+    // FIG 5-7: FLAPS UP OVER 50FT BARRIER — Panel 1
+    const fuPanel1 = {
+      "SL":   [[0, 1725],   [15, 2000],  [35, 2430],  [50, 2760]],
+      "2000": [[-4, 1950],  [10, 2260],  [30, 2740],  [46, 3170]],
+      "4000": [[-7.8, 2210],[10, 2690],  [30, 3250],  [42, 3610]],
+      "6000": [[-12, 2530], [5, 3020],   [25, 3690],  [37.8, 4150]],
+      "8000": [[-16, 2885], [0, 3415],   [20, 4190],  [34, 4780]],
+    };
+
+    // FIG 5-7: FLAPS UP OVER 50FT BARRIER — Panel 2
+    const fuPanel2 = {
+      1500: [[2000,1000],[2150,1000],[2250,1040],[2350,1180],[2450,1310],[2550,1500]],
+      2000: [[2000,1100],[2150,1240],[2250,1390],[2350,1560],[2450,1760],[2550,2000]],
+      2500: [[2000,1330],[2150,1570],[2250,1740],[2350,1940],[2450,2190],[2550,2500]],
+      3000: [[2000,1600],[2150,1890],[2250,2100],[2350,2320],[2450,2610],[2550,3000]],
+      3500: [[2000,1850],[2150,2200],[2250,2440],[2350,2700],[2450,3050],[2550,3500]],
+      4000: [[2000,2100],[2150,2510],[2250,2795],[2350,3100],[2450,3490],[2550,4000]],
+      4500: [[2000,2370],[2150,2840],[2250,3130],[2350,3490],[2450,3910],[2550,4500]],
+      5000: [[2000,2620],[2150,3150],[2250,3490],[2350,3880],[2450,4350],[2550,5000]],
+    };
+
+    // FIG 5-7: FLAPS UP OVER 50FT BARRIER — Panel 3
+    const fuPanel3 = {
+      1000: [[-15,1000],[-10,1000],[-5,1000],[0,1000],[5,1210]],
+      1500: [[-15,1220],[-10,1310],[-5,1410],[0,1500],[5,1800]],
+      2000: [[-15,1680],[-10,1790],[-5,1900],[0,2000],[5,2350]],
+      2500: [[-15,2120],[-10,2250],[-5,2380],[0,2500],[5,2900]],
+      3000: [[-15,2560],[-10,2700],[-5,2850],[0,3000],[5,3490]],
+      3500: [[-15,3000],[-10,3160],[-5,3330],[0,3500],[5,4040]],
+      4000: [[-15,3450],[-10,3640],[-5,3810],[0,4000],[5,4600]],
+      4500: [[-15,3900],[-10,4100],[-5,4300],[0,4500],[3.7,5000],[5,5000]],
+      5000: [[-15,4330],[-10,4550],[-5,4780],[0,5000],[5,5000]],
+    };
+
+    // Flaps UP takeoff speeds from POH table (Fig 5-7)
+    const FU_SPEEDS = [
+      { wt: 2250, liftoff: 56, barrier: 61 },
+      { wt: 2350, liftoff: 57, barrier: 63 },
+      { wt: 2450, liftoff: 58, barrier: 64 },
+      { wt: 2550, liftoff: 60, barrier: 65 },
+    ];
+    function getFlapsUpSpeeds(weightLbs) {
+      const w = Math.max(2250, Math.min(2550, weightLbs));
+      for (let i = 0; i < FU_SPEEDS.length - 1; i++) {
+        if (w >= FU_SPEEDS[i].wt && w <= FU_SPEEDS[i+1].wt) {
+          const t = (w - FU_SPEEDS[i].wt) / (FU_SPEEDS[i+1].wt - FU_SPEEDS[i].wt);
+          return {
+            liftoff: Math.round(FU_SPEEDS[i].liftoff + t * (FU_SPEEDS[i+1].liftoff - FU_SPEEDS[i].liftoff)),
+            barrier: Math.round(FU_SPEEDS[i].barrier + t * (FU_SPEEDS[i+1].barrier - FU_SPEEDS[i].barrier)),
+          };
+        }
+      }
+      return { liftoff: FU_SPEEDS[FU_SPEEDS.length-1].liftoff, barrier: FU_SPEEDS[FU_SPEEDS.length-1].barrier };
+    }
+
+    // FIG 5-11: FLAPS UP GROUND ROLL — Panel 1
+    const fuGrPanel1 = {
+      "SL":   [[0, 920],    [15, 1075],  [35, 1300],  [50, 1480]],
+      "2000": [[-4, 1050],  [10, 1200],  [30, 1470],  [46, 1700]],
+      "4000": [[-7.8, 1200],[10, 1440],  [30, 1760],  [42, 1960]],
+      "6000": [[-12, 1365], [5, 1645],   [20, 1900],  [37.8, 2260]],
+      "8000": [[-16, 1570], [0, 1875],   [20, 2290],  [34, 2610]],
+    };
+
+    // FIG 5-11: FLAPS UP GROUND ROLL — Panel 2
+    const fuGrPanel2 = {
+       800: [[2000,450],  [2150,540],  [2250,600],  [2350,660],  [2450,740],  [2550,800]],
+      1000: [[2000,540],  [2150,675],  [2250,750],  [2350,835],  [2450,875],  [2550,1000]],
+      1200: [[2000,680],  [2150,810],  [2250,900],  [2350,1000], [2450,1100], [2550,1200]],
+      1400: [[2000,800],  [2150,950],  [2250,1050], [2350,1165], [2450,1290], [2550,1400]],
+      1600: [[2000,900],  [2150,1080], [2250,1200], [2350,1340], [2450,1460], [2550,1600]],
+      1800: [[2000,1020], [2150,1200], [2250,1350], [2350,1500], [2450,1650], [2550,1800]],
+      2000: [[2000,1140], [2150,1350], [2250,1500], [2350,1670], [2450,1830], [2550,2000]],
+      2400: [[2000,1360], [2150,1620], [2250,1800], [2350,2000], [2450,2200], [2550,2400]],
+      2600: [[2000,1470], [2150,1750], [2250,1950], [2350,2160], [2450,2370], [2550,2600]],
+    };
+
+    // FIG 5-11: FLAPS UP GROUND ROLL — Panel 3
+    const fuGrPanel3 = {
+       400: [[-15,400],  [-10,400],  [-5,400],  [0,400],  [5,540]],
+       600: [[-15,479],  [-10,520],  [-5,560],  [0,600],  [5,745]],
+      1000: [[-15,800],  [-10,860],  [-5,930],  [0,1000], [5,1225]],
+      1400: [[-15,1110], [-10,1200], [-5,1300], [0,1400], [5,1720]],
+      1800: [[-15,1430], [-10,1550], [-5,1679], [0,1800], [5,2200]],
+      2200: [[-15,1750], [-10,1900], [-5,2050], [0,2200], [5,2700]],
+      2600: [[-15,2060], [-10,2240], [-5,2420], [0,2600], [2,2800], [5,2800]],
+    };
+
+    function calculateTakeoffFlapsUp(altFt, oatC, weightLbs, windKt, windDir) {
+      const windVal = windDir === "tail" ? windKt : -windKt;
+
+      // 50ft distance
+      const ref1_50 = calcPanel1(fuPanel1, altFt, oatC);
+      const ref2_50 = toInterpPanel(fuPanel2, ref1_50, weightLbs);
+      const dist50 = Math.min(5000, toInterpPanel(fuPanel3, ref2_50, windVal));
+
+      // Ground roll
+      const ref1_gr = calcPanel1(fuGrPanel1, altFt, oatC);
+      const ref2_gr = toInterpPanel(fuGrPanel2, ref1_gr, weightLbs);
+      const grWindVal = (windDir === "tail" && ref2_gr > 2400) ? 0 : windVal;
+      const distGr = toInterpPanel(fuGrPanel3, ref2_gr, grWindVal);
+
+      return {
+        dist50Ft: Math.round(dist50),
+        groundRollFt: Math.round(distGr),
+        isaDeviation: getISADeviation(altFt, oatC),
+        isaTemp: getISATemp(altFt),
+      };
+    }
+
     function calculateTakeoff(altFt, oatC, weightLbs, windKt, windDir, chartType) {
       const windVal = windDir === "tail" ? windKt : -windKt;
 
@@ -1359,12 +1469,13 @@
       const [runwayFull, setRunwayFull] = useState(savedState.runwayFull || "");
       const [windHeading, setWindHeading] = useState(savedState.windHeading || "");
       const [windSpeed, setWindSpeed] = useState(savedState.windSpeed || "");
+      const [flaps, setFlaps] = useState(savedState.flaps || "25");
       const [result, setResult] = useState(savedState.result || null);
       const [error, setError] = useState("");
 
       useEffect(() => {
-        onStateChange({ alt, oat, tempUnit, weight, wind, windDir, runway, windHeading, windSpeed, result });
-      }, [alt, oat, tempUnit, weight, wind, windDir, runway, windHeading, windSpeed, result]);
+        onStateChange({ alt, oat, tempUnit, weight, wind, windDir, runway, windHeading, windSpeed, flaps, result });
+      }, [alt, oat, tempUnit, weight, wind, windDir, runway, windHeading, windSpeed, flaps, result]);
 
       function getWindComponents(rwyNum, windHdg, windSpd) {
         const rwyHdg = (rwyNum * 10) % 360;
@@ -1404,16 +1515,32 @@
         const windClamped = wDir === "head" ? Math.min(windActual, MAX_HEAD) : Math.min(windActual, MAX_TAIL);
         const windWasClamped = windActual > windClamped;
 
-        const res = calculateTakeoff(altCalc, oatC, weightVal, windClamped, wDir, "50ft");
-        setResult({ ...res, windComponents: wc, windSpd, windActual, windClamped, windWasClamped, windDir: wDir, rwyNum, weightLbs: weightVal, densityAlt: getDensityAlt(altVal, oatC), altWasClamped, altVal });
-      }, [alt, oat, tempUnit, weight, runway, windHeading, windSpeed, windComponents, windSpd, rwyNum, windHdg]);
+        let res;
+        if (flaps === "up") {
+          res = calculateTakeoffFlapsUp(altCalc, oatC, weightVal, windClamped, wDir);
+        } else {
+          res = calculateTakeoff(altCalc, oatC, weightVal, windClamped, wDir, "50ft");
+        }
+        setResult({ ...res, flaps, windComponents: wc, windSpd, windActual, windClamped, windWasClamped, windDir: wDir, rwyNum, weightLbs: weightVal, densityAlt: getDensityAlt(altVal, oatC), altWasClamped, altVal });
+      }, [alt, oat, tempUnit, weight, runway, windHeading, windSpeed, flaps, windComponents, windSpd, rwyNum, windHdg]);
 
       return (
         <Card>
-          <div style={{ marginBottom: "28px", paddingBottom: "20px", borderBottom: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.green, marginBottom: "6px" }}>TAKEOFF PERFORMANCE</div>
-            <div style={{ fontSize: "36px", fontWeight: "bold", letterSpacing: "2px", color: C.text }}>FLAPS 25°</div>
-            <div style={{ fontSize: "15px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" }}>FULL THROTTLE · PAVED/LEVEL/DRY · A/C OFF · FIG 5-9 · FIG 5-13</div>
+          <div style={{ marginBottom: "20px", paddingBottom: "16px", borderBottom: `1px solid ${C.border}` }}>
+            <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.green, marginBottom: "10px" }}>TAKEOFF PERFORMANCE</div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {[{val:"up", label:"FLAPS UP", fig:"5-7"},{val:"25", label:"FLAPS 25°", fig:"5-9 · 5-13"}].map(opt => (
+                <button key={opt.val} onClick={() => { setFlaps(opt.val); setResult(null); }} style={{
+                  flex: 1, padding: "10px 8px", background: flaps === opt.val ? C.green : C.input,
+                  border: `1px solid ${flaps === opt.val ? C.green : C.border}`, borderRadius: "3px",
+                  color: flaps === opt.val ? C.btnText : C.dim, fontFamily: mono, cursor: "pointer",
+                }}>
+                  <div style={{ fontSize: "13px", letterSpacing: "2px", fontWeight: "bold" }}>{opt.label}</div>
+                  <div style={{ fontSize: "10px", color: flaps === opt.val ? C.btnText + "bb" : C.dimmest, marginTop: "2px" }}>FIG {opt.fig}</div>
+                </button>
+              ))}
+            </div>
+            {flaps === "up" && <div style={{ fontSize: "11px", color: C.dim, marginTop: "8px", letterSpacing: "1px" }}>Full throttle before brake release · 50ft dist: Fig 5-7 · Ground roll: Fig 5-11</div>}
           </div>
           <MetarFetch onFill={({ windDir: wd, windSpeed: ws, oat: o, pressureAlt: pa, runways: rws }) => {
               const filled = [];
@@ -1426,8 +1553,7 @@
             }} />
 
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "28px" }}>
-            <InputField label="PRESSURE ALTITUDE" unit="FT" value={alt} onChange={setAlt} placeholder="e.g. 2000" hint="0 – 8,000 ft" filled={metarFilled.includes("alt")} />
-            <TempField label="OAT" value={oat} onChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} hint="−10°C to 50°C chart range" filled={metarFilled.includes("oat")} />
+            <AltOATRow altLabel="PRESSURE ALTITUDE" altValue={alt} onAltChange={setAlt} altHint="0 – 8,000 ft" altPlaceholder="e.g. 2000" altFilled={metarFilled.includes("alt")} oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} oatFilled={metarFilled.includes("oat")} />
             <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 2400" hint="2,000 – 2,550 lbs (leave blank for 2,550)" />
             <div>
               <div style={{ fontSize: "12px", letterSpacing: "3px", color: C.green, marginBottom: "8px", display:"flex", alignItems:"center", gap:"8px" }}>WIND{metarFilled.includes("wind") && <span style={{ fontSize:"11px", background:C.green, color:C.btnText, borderRadius:"3px", padding:"2px 6px", letterSpacing:"1px", fontWeight:"bold" }}>✓ METAR</span>}</div>
@@ -1563,6 +1689,7 @@
       const C = useC();
       const dist50 = result.dist50Ft;
       const distGr = result.groundRollFt;
+      const flapsUp = result.flaps === "up";
       const markerColor50 = C.warm;
       const markerColorRoll = C.green;
       const centerlineColor = C.rwyStripe;
@@ -1828,25 +1955,27 @@
             <div style={{ background: C.input, border: `1px solid ${markerColorRoll}`, borderRadius: "3px", padding: "16px", textAlign: "center" }}>
               <div style={{ fontSize: "15px", letterSpacing: "2px", color: markerColorRoll, marginBottom: "8px" }}>GROUND ROLL</div>
               <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{distGr}</div>
-              <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET · FIG 5-13</div>
+              <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET · {flapsUp ? "FIG 5-11" : "FIG 5-13"}</div>
             </div>
             <div style={{ background: C.input, border: `1px solid ${markerColor50}`, borderRadius: "3px", padding: "16px", textAlign: "center" }}>
               <div style={{ fontSize: "15px", letterSpacing: "2px", color: markerColor50, marginBottom: "8px" }}>OVER 50 FT</div>
               <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{dist50}</div>
-              <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET · FIG 5-9</div>
+              <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET · {flapsUp ? "FIG 5-7" : "FIG 5-9"}</div>
             </div>
           </Grid2>
 
           {/* 1.5x safety buffer row */}
           <Grid2 style={{ marginBottom: "12px" }}>
-            {[{val: Math.round(distGr * 1.5), label: "GROUND ROLL x1.5", color: markerColorRoll},
-              {val: Math.round(dist50 * 1.5), label: "OVER 50 FT ×1.5",  color: markerColor50}].map(({val, label, color}) => (
-              <div key={label} style={{ background: C.input, border: `1px solid ${color}55`, borderRadius: "3px", padding: "12px 16px", textAlign: "center" }}>
-                <div style={{ fontSize: "12px", letterSpacing: "2px", color: `${color}99`, marginBottom: "6px" }}>{label}</div>
-                <div style={{ fontSize: "32px", color: `${color}cc`, lineHeight: 1, fontWeight: "bold" }}>{val}</div>
+            <div style={{ background: C.input, border: `1px solid ${markerColorRoll}55`, borderRadius: "3px", padding: "12px 16px", textAlign: "center" }}>
+                <div style={{ fontSize: "12px", letterSpacing: "2px", color: `${markerColorRoll}99`, marginBottom: "6px" }}>GROUND ROLL x1.5</div>
+                <div style={{ fontSize: "32px", color: `${markerColorRoll}cc`, lineHeight: 1, fontWeight: "bold" }}>{Math.round(distGr * 1.5)}</div>
                 <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "5px", letterSpacing: "2px" }}>FEET</div>
               </div>
-            ))}
+            <div style={{ background: C.input, border: `1px solid ${markerColor50}55`, borderRadius: "3px", padding: "12px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: "12px", letterSpacing: "2px", color: `${markerColor50}99`, marginBottom: "6px" }}>OVER 50 FT x1.5</div>
+              <div style={{ fontSize: "32px", color: `${markerColor50}cc`, lineHeight: 1, fontWeight: "bold" }}>{Math.round(dist50 * 1.5)}</div>
+              <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "5px", letterSpacing: "2px" }}>FEET</div>
+            </div>
           </Grid2>
 
           
@@ -1903,7 +2032,7 @@
 
           {/* Takeoff speeds */}
           {(() => {
-            const speeds = getTakeoffSpeeds(result.weightLbs || 2550);
+            const speeds = flapsUp ? getFlapsUpSpeeds(result.weightLbs || 2550) : getTakeoffSpeeds(result.weightLbs || 2550);
             return (
               <div style={{ background: C.input, border: `1px solid ${C.borderDim}`, borderRadius: "3px", padding: "12px 16px", marginBottom: "12px", display: "flex", justifyContent: "space-around", alignItems: "center" }}>
                 <div style={{ textAlign: "center" }}>
@@ -1919,7 +2048,7 @@
             );
           })()}
 
-          <NoteBox text="Flaps 25°, full throttle, paved/level/dry, A/C off. Always verify against official POH charts." />
+          <NoteBox text={flapsUp ? "Flaps UP, full throttle before brake release, paved/level/dry, A/C off. 50ft dist: Fig 5-7, Ground roll: Fig 5-11. Always verify against official POH." : "Flaps 25°, full throttle, paved/level/dry, A/C off. Always verify against official POH charts."} />
         </div>
       );
     }
@@ -2240,8 +2369,7 @@
             }} />
 
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "28px" }}>
-            <InputField label="PRESSURE ALTITUDE" unit="FT" value={alt} onChange={setAlt} placeholder="e.g. 2500" hint="0 – 7,000 ft" filled={metarFilled.includes("alt")} />
-            <TempField label="OAT" value={oat} onChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} hint="−10°C to 50°C chart range" filled={metarFilled.includes("oat")} />
+            <AltOATRow altLabel="PRESSURE ALTITUDE" altValue={alt} onAltChange={setAlt} altHint="0 – 7,000 ft" altPlaceholder="e.g. 2500" altFilled={metarFilled.includes("alt")} oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} oatFilled={metarFilled.includes("oat")} />
             <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 2400" hint="2,000 – 2,550 lbs (leave blank for 2,550)" />
             <div>
               <div style={{ fontSize: "12px", letterSpacing: "3px", color: C.green, marginBottom: "8px", display:"flex", alignItems:"center", gap:"8px" }}>WIND{metarFilled.includes("wind") && <span style={{ fontSize:"11px", background:C.green, color:C.btnText, borderRadius:"3px", padding:"2px 6px", letterSpacing:"1px", fontWeight:"bold" }}>✓ METAR</span>}</div>
@@ -3882,8 +4010,7 @@
             }} />
 
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "28px" }}>
-            <InputField label="PRESSURE ALTITUDE" unit="FT" value={alt} onChange={setAlt} placeholder="e.g. 2000" hint="0 – 8,000 ft" filled={metarFilled.includes("alt")} />
-            <TempField label="OAT" value={oat} onChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} hint="0°C to 40°C chart range" filled={metarFilled.includes("oat")} />
+            <AltOATRow altLabel="PRESSURE ALTITUDE" altValue={alt} onAltChange={setAlt} altHint="0 – 8,000 ft" altPlaceholder="e.g. 2000" altFilled={metarFilled.includes("alt")} oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} oatFilled={metarFilled.includes("oat")} />
             <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 2400" hint="2,200 – 2,550 lbs (leave blank for 2,550)" />
             <div>
               <div style={{ fontSize: "12px", letterSpacing: "3px", color: C.green, marginBottom: "8px", display:"flex", alignItems:"center", gap:"8px" }}>WIND{metarFilled.includes("wind") && <span style={{ fontSize:"11px", background:C.green, color:C.btnText, borderRadius:"3px", padding:"2px 6px", letterSpacing:"1px", fontWeight:"bold" }}>✓ METAR</span>}</div>
@@ -4422,8 +4549,7 @@
             }} />
 
           <div style={{ display:"flex", flexDirection:"column", gap:"20px", marginBottom:"28px" }}>
-            <InputField label="PRESSURE ALTITUDE" unit="FT" value={alt} onChange={setAlt} placeholder="e.g. 2000" hint="0 – 8,000 ft" filled={metarFilled.includes("alt")} />
-            <TempField label="OAT" value={oat} onChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} hint="0°C to 40°C chart range" filled={metarFilled.includes("oat")} />
+            <AltOATRow altLabel="PRESSURE ALTITUDE" altValue={alt} onAltChange={setAlt} altHint="0 – 8,000 ft" altPlaceholder="e.g. 2000" altFilled={metarFilled.includes("alt")} oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} oatFilled={metarFilled.includes("oat")} />
             <div>
               <div style={{ fontSize:"12px", letterSpacing:"3px", color:C.green, marginBottom:"8px", display:"flex", alignItems:"center", gap:"8px" }}>WIND{metarFilled.includes("wind") && <span style={{ fontSize:"11px", background:C.green, color:C.btnText, borderRadius:"3px", padding:"2px 6px", letterSpacing:"1px", fontWeight:"bold" }}>✓ METAR</span>}</div>
               <Grid3 style={{ marginBottom:"8px" }}>
