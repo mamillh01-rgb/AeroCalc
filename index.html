@@ -761,10 +761,12 @@
       const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
       const [result, setResult] = useState(savedState.result || null);
       const [error, setError] = useState("");
+      const [gradFtNm, setGradFtNm] = useState(savedState.gradFtNm || "");
+      const [gradGs, setGradGs] = useState(savedState.gradGs || "");
 
       useEffect(() => {
-        onStateChange({ alt, oat, tempUnit, result });
-      }, [alt, oat, tempUnit, result]);
+        onStateChange({ alt, oat, tempUnit, result, gradFtNm, gradGs });
+      }, [alt, oat, tempUnit, result, gradFtNm, gradGs]);
 
       const handleCalculate = useCallback(() => {
         setError(""); setResult(null);
@@ -779,6 +781,12 @@
 
       const rocColor = result ? (result.roc > 500 ? C.green : result.roc > 300 ? "#8ab87a" : result.roc > 150 ? C.warm : "#cc5555") : C.text;
       const rocLabel = result ? (result.roc > 500 ? "EXCELLENT" : result.roc > 300 ? "GOOD" : result.roc > 150 ? "MARGINAL" : result.roc > 0 ? "POOR — NEAR CEILING" : "AT / ABOVE CEILING") : "";
+
+      const gradFtNmVal = parseFloat(gradFtNm);
+      const gradGsVal = parseFloat(gradGs);
+      const reqFpm = (!isNaN(gradFtNmVal) && !isNaN(gradGsVal) && gradGsVal > 0)
+        ? Math.round(gradFtNmVal * gradGsVal / 60) : null;
+      const canMeet = result && reqFpm !== null ? Math.round(result.roc) >= reqFpm : null;
 
       return (
         <Card>
@@ -802,6 +810,50 @@
               <NoteBox text="Interpolated from Figure 5-15. Full Throttle, Flaps UP, 76 KIAS, A/C OFF. Service ceiling ~14,085 ft. Always verify against official charts." />
             </div>
           )}
+
+          {/* Gradient checker — always visible */}
+          <div style={{ marginTop: "24px", paddingTop: "20px", borderTop: `1px solid ${C.border}` }}>
+            <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "14px" }}>CLIMB GRADIENT CHECKER</div>
+            <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "1px", marginBottom: "14px" }}>Convert ft/nm departure procedure gradient to required FPM</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px" }}>
+              <div>
+                <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>GRADIENT</div>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                  <input type="number" value={gradFtNm} onChange={e => setGradFtNm(e.target.value)} placeholder="e.g. 200"
+                    style={{ flex: 1, minWidth: 0, background: C.input, border: `1px solid ${C.border}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                  <div style={{ padding: "10px 8px", background: C.input, border: `1px solid ${C.borderDim}`, borderRadius: "3px", color: C.dim, fontSize: "11px", letterSpacing: "1px", flexShrink: 0 }}>FT/NM</div>
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>GROUNDSPEED</div>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                  <input type="number" value={gradGs} onChange={e => setGradGs(e.target.value)} placeholder="e.g. 90"
+                    style={{ flex: 1, minWidth: 0, background: C.input, border: `1px solid ${C.border}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                  <div style={{ padding: "10px 8px", background: C.input, border: `1px solid ${C.borderDim}`, borderRadius: "3px", color: C.dim, fontSize: "11px", letterSpacing: "1px", flexShrink: 0 }}>KT</div>
+                </div>
+              </div>
+            </div>
+            {reqFpm !== null && (
+              <div style={{ background: C.input, border: `2px solid ${canMeet === null ? C.border : canMeet ? C.green : C.error}`, borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ padding: "16px", textAlign: "center", borderBottom: `1px solid ${C.borderDim}` }}>
+                  <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>REQUIRED CLIMB RATE</div>
+                  <div style={{ fontSize: "48px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{reqFpm}</div>
+                  <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "2px" }}>FT / MIN</div>
+                  <div style={{ fontSize: "11px", color: C.dim, marginTop: "4px" }}>{gradFtNm} ft/nm × {gradGs} kt ÷ 60</div>
+                </div>
+                {canMeet !== null && (
+                  <div style={{ padding: "12px 16px", background: canMeet ? C.green + "22" : C.errorBg, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ fontSize: "13px", letterSpacing: "2px", color: canMeet ? C.green : C.error, fontWeight: "bold" }}>
+                      {canMeet ? "GRADIENT MET" : "GRADIENT NOT MET"}
+                    </div>
+                    <div style={{ fontSize: "12px", color: canMeet ? C.green : C.error }}>
+                      {Math.round(result.roc)} FPM available · {reqFpm} FPM required
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </Card>
       );
     }
@@ -3188,10 +3240,12 @@
       const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
       const [result, setResult] = useState(savedState.result || null);
       const [error, setError] = useState("");
+      const [gradFtNm, setGradFtNm] = useState(savedState.gradFtNm || "");
+      const [gradGs, setGradGs] = useState(savedState.gradGs || "");
 
       useEffect(() => {
-        onStateChange({ alt, oat, tempUnit, result });
-      }, [alt, oat, tempUnit, result]);
+        onStateChange({ alt, oat, tempUnit, result, gradFtNm, gradGs });
+      }, [alt, oat, tempUnit, result, gradFtNm, gradGs]);
 
       const handleCalculate = useCallback(() => {
         setError(""); setResult(null);
@@ -3208,6 +3262,12 @@
 
       const rocColor = result ? (result.roc > 500 ? C.green : result.roc > 300 ? "#8ab87a" : result.roc > 150 ? C.warm : "#cc5555") : C.text;
       const rocLabel = result ? (result.roc > 500 ? "EXCELLENT" : result.roc > 300 ? "GOOD" : result.roc > 150 ? "MARGINAL" : result.roc > 0 ? "POOR — NEAR CEILING" : "AT / ABOVE CEILING") : "";
+
+      const gradFtNmVal = parseFloat(gradFtNm);
+      const gradGsVal = parseFloat(gradGs);
+      const reqFpm = (!isNaN(gradFtNmVal) && !isNaN(gradGsVal) && gradGsVal > 0)
+        ? Math.round(gradFtNmVal * gradGsVal / 60) : null;
+      const canMeet = result && reqFpm !== null ? result.roc >= reqFpm : null;
 
       return (
         <Card>
@@ -3240,6 +3300,50 @@
               <NoteBox text="Flaps UP, full throttle, mixture leaned above 3,000 ft for max RPM. Always verify against official POH charts." />
             </div>
           )}
+
+          {/* Gradient checker */}
+          <div style={{ marginTop: "24px", paddingTop: "20px", borderTop: `1px solid ${C.border}` }}>
+            <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "14px" }}>CLIMB GRADIENT CHECKER</div>
+            <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "1px", marginBottom: "14px" }}>Convert ft/nm departure procedure gradient to required FPM</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px" }}>
+              <div>
+                <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>GRADIENT</div>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                  <input type="number" value={gradFtNm} onChange={e => setGradFtNm(e.target.value)} placeholder="e.g. 200"
+                    style={{ flex: 1, minWidth: 0, background: C.input, border: `1px solid ${C.border}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                  <div style={{ padding: "10px 8px", background: C.input, border: `1px solid ${C.borderDim}`, borderRadius: "3px", color: C.dim, fontSize: "11px", letterSpacing: "1px", flexShrink: 0 }}>FT/NM</div>
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>GROUNDSPEED</div>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                  <input type="number" value={gradGs} onChange={e => setGradGs(e.target.value)} placeholder="e.g. 90"
+                    style={{ flex: 1, minWidth: 0, background: C.input, border: `1px solid ${C.border}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                  <div style={{ padding: "10px 8px", background: C.input, border: `1px solid ${C.borderDim}`, borderRadius: "3px", color: C.dim, fontSize: "11px", letterSpacing: "1px", flexShrink: 0 }}>KT</div>
+                </div>
+              </div>
+            </div>
+            {reqFpm !== null && (
+              <div style={{ background: C.input, border: `2px solid ${canMeet === null ? C.border : canMeet ? C.green : C.error}`, borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ padding: "16px", textAlign: "center", borderBottom: `1px solid ${C.borderDim}` }}>
+                  <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "6px" }}>REQUIRED CLIMB RATE</div>
+                  <div style={{ fontSize: "48px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{reqFpm}</div>
+                  <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "2px" }}>FT / MIN</div>
+                  <div style={{ fontSize: "11px", color: C.dim, marginTop: "4px" }}>{gradFtNm} ft/nm × {gradGs} kt ÷ 60</div>
+                </div>
+                {canMeet !== null && (
+                  <div style={{ padding: "12px 16px", background: canMeet ? C.green + "22" : C.errorBg, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ fontSize: "13px", letterSpacing: "2px", color: canMeet ? C.green : C.error, fontWeight: "bold" }}>
+                      {canMeet ? "GRADIENT MET" : "GRADIENT NOT MET"}
+                    </div>
+                    <div style={{ fontSize: "12px", color: canMeet ? C.green : C.error }}>
+                      {result.roc} FPM available · {reqFpm} FPM required
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </Card>
       );
     }
