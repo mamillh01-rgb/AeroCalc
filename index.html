@@ -5145,6 +5145,1219 @@ null}
       );
     }
 
+
+    // ==== PA-44-180 SEMINOLE ====
+
+    const sem50Panel1 = {
+      "SL":   [[-40,1450], [-14,1750], [10,2100],  [32,2500],  [40,2710],  [50,3030]],
+      "2000": [[-40,1750], [-20,2000], [0,2310],   [20,2790],  [38,3270],  [46,3600]],
+      "4000": [[-40,2090], [-20,2410], [0,2885],   [20,3400],  [32,3800],  [42,4250]],
+      "6000": [[-40,2565], [-20,3000], [0,3565],   [20,4325],  [32,4750],  [40,5100]],
+      "8000": [[-40,3170], [-20,3790], [0,4450],   [18,5200],  [33.5,6000]],
+    };
+
+    const sem50Panel2 = {
+      2000: [[2750,810],  [3000,950],  [3250,1190], [3500,1500], [3800,2000]],
+      3000: [[2750,1220], [3000,1450], [3250,1800], [3500,2265], [3800,3000]],
+      4000: [[2750,1620], [3000,1950], [3200,2285], [3400,2720], [3500,3050], [3800,4000]],
+      5000: [[2750,2000], [2900,2200], [3100,2600], [3400,3435], [3500,3810], [3800,5000]],
+      6000: [[2750,2440], [3050,3080], [3250,3600], [3350,3930], [3500,4600], [3800,6000]],
+    };
+
+    const sem50Panel3 = {
+      0:    [[-30,0],    [0,0],    [10,600]],
+      1000: [[-30,450],  [0,1000], [10,1610]],
+      2000: [[-30,1260], [0,2000], [10,2820]],
+      3000: [[-30,2060], [0,3000], [10,4250]],
+      4000: [[-30,2880], [0,4000], [10,5250]],
+      5000: [[-30,3690], [0,5000], [7,6000],  [10,6000]],
+      6000: [[-30,4500], [0,6000], [10,6000]],
+    };
+
+    const semGrPanel1 = {
+      "SL":   [[-40,700],  [-20,840],  [4,1000],   [28,1260],  [40,1410],  [50,1580]],
+      "2000": [[-40,850],  [-20,1000], [0,1200],   [20,1435],  [36,1625],  [46,1850]],
+      "4000": [[-40,1050], [-20,1250], [0,1490],   [20,1790],  [32,2000],  [41.8,2200]],
+      "6000": [[-40,1310], [-20,1560], [0,1860],   [20,2225],  [32,2500],  [40,2745]],
+      "8000": [[-40,1610], [-20,1975], [0,2350],   [20,2800],  [26.8,3000]],
+    };
+
+    const semGrPanel1Alts = [0, 2000, 4000, 6000, 8000];
+
+    const semGrPanel1Keys = ["SL","2000","4000","6000","8000"];
+
+    const semGrPanel2 = {
+      500:  [[2750,200],  [3800,500]],
+      1000: [[2750,420],  [3800,1000]],
+      1500: [[2750,620],  [3800,1500]],
+      2000: [[2750,845],  [3800,2000]],
+      2500: [[2750,1050], [3800,2500]],
+      3000: [[2750,1275], [3800,3000]],
+    };
+
+    const semGrPanel3 = {
+      0:    [[-30,0],    [0,0],    [10,225]],
+      500:  [[-30,310],  [0,500],  [10,700]],
+      1000: [[-30,650],  [0,1000], [10,1380]],
+      1500: [[-30,980],  [0,1500], [10,2100]],
+      2000: [[-30,1325], [0,2000], [10,2800]],
+      2500: [[-30,1670], [0,2500], [10,3000]],
+      3000: [[-30,1975], [0,3000], [10,3000]],
+    };
+
+    // Fig 5-19: Climb Performance - Both Engines Operating - Gear Up
+
+    const semClimbGearUpData = {
+      3800: {
+        "SL":    [[15,1330], [36,1075], [50,875]],
+        "2000":  [[-3.5,1330],[16,1005],[32,827],  [44,660]],
+        "4000":  [[-25.5,1330],[8,1000],[26,800],  [41.8,610]],
+        "6000":  [[-40,1245],[0,870],   [20,675],  [34,525],  [40,450]],
+        "8000":  [[-40,1000],[-2,675],  [20,480],  [34,350],  [40,270]],
+        "10000": [[-40,770], [0,465],   [20,300],  [30,210],  [33,175]],
+        "12000": [[-40,550], [-8.8,340],[14.5,175]],
+        "14000": [[-40,340], [-14,175]],
+      },
+      2800: {
+        "SL":    [[15,1900], [36,1600], [50,1350]],
+        "2000":  [[-3.5,1900],[20,1580],[34,1375], [46,1180]],
+        "4000":  [[-25,1900],[20,1340], [42,1025]],
+        "6000":  [[-40,1800],[2,1325],  [30,980],  [40,950]],
+        "8000":  [[-40,1500],[0,1090],  [28,775],  [40,620]],
+        "10000": [[-40,1225],[0,850],   [26,590],  [33,500]],
+        "12000": [[-40,955], [-8,700],  [14.5,500]],
+        "14000": [[-40,700], [-13.5,500]],
+      },
+    };
+
+    const semClimbGearUpAlts = [0, 2000, 4000, 6000, 8000, 10000, 12000, 14000];
+    const semClimbGearUpKeys = ["SL","2000","4000","6000","8000","10000","12000","14000"];
+
+    function calculateSemClimbGearUp(altFt, oatC, weightLbs) {
+      const clampedAlt = Math.max(0, Math.min(14000, altFt));
+      const clampedWt = Math.max(2800, Math.min(3800, weightLbs));
+
+      function rocAtWeight(wt) {
+        const data = semClimbGearUpData[wt];
+        for (let i = 0; i < semClimbGearUpAlts.length - 1; i++) {
+          if (clampedAlt >= semClimbGearUpAlts[i] && clampedAlt <= semClimbGearUpAlts[i+1]) {
+            const lo = toInterpList(data[semClimbGearUpKeys[i]], oatC);
+            const hi = toInterpList(data[semClimbGearUpKeys[i+1]], oatC);
+            const t = (clampedAlt - semClimbGearUpAlts[i]) / (semClimbGearUpAlts[i+1] - semClimbGearUpAlts[i]);
+            return lo + t * (hi - lo);
+          }
+        }
+        return toInterpList(data[semClimbGearUpKeys[semClimbGearUpKeys.length-1]], oatC);
+      }
+
+      const roc3800 = rocAtWeight(3800);
+      const roc2800 = rocAtWeight(2800);
+      const t = (clampedWt - 2800) / (3800 - 2800);
+      const roc = roc2800 + t * (roc3800 - roc2800);
+
+      return {
+        roc: Math.round(roc),
+        atCeiling: roc <= 0,
+        isaDeviation: getISADeviation(altFt, oatC),
+        isaTemp: getISATemp(altFt),
+      };
+    }
+
+    // Fig 5-17: Climb Performance - Both Engines Operating - Gear Down
+
+    const semClimbGearDownData = {
+      3800: {
+        "SL":    [[15,1200], [34,990],  [50,790]],
+        "2000":  [[-7,1200], [20,940],  [46,640]],
+        "4000":  [[-30,1200],[16,765],  [30,625],  [42,480]],
+        "6000":  [[-40,1050],[4,675],   [24,480],  [40,310]],
+        "8000":  [[-40,800], [-2,515],  [20,340],  [40,140]],
+        "10000": [[-40,560], [0,500],   [21.8,300],[40,140]],
+        "12000": [[-40,350], [-8,150],  [17,-25]],
+        "14000": [[-40,140], [-12.5,-25]],
+      },
+      2800: {
+        "SL":    [[15,1765], [36,1500], [45,1265]],
+        "2000":  [[-6.5,1765],[20,1450],[40,1175], [46,1080]],
+        "4000":  [[-30,1765],[0,1430],  [24,1150], [36,990],  [42,900]],
+        "6000":  [[-40,1580],[0,1175],  [22,920],  [40,590]],
+        "8000":  [[-40,1280],[0,910],   [20,700],  [30,590],  [40,450]],
+        "10000": [[-40,1000],[6,550],   [28,390],  [38.7,260]],
+        "12000": [[-40,725], [-8,475],  [17,265]],
+        "14000": [[-40,450], [-12.5,265]],
+      },
+    };
+
+    const semClimbGearDownAlts = [0, 2000, 4000, 6000, 8000, 10000, 12000, 14000];
+    const semClimbGearDownKeys = ["SL","2000","4000","6000","8000","10000","12000","14000"];
+
+    function calculateSemClimbGearDown(altFt, oatC, weightLbs) {
+      const clampedAlt = Math.max(0, Math.min(14000, altFt));
+      const clampedWt = Math.max(2800, Math.min(3800, weightLbs));
+
+      function rocAtWeight(wt) {
+        const altKeys = semClimbGearDownAlts;
+        const altStrs = semClimbGearDownKeys;
+        const data = semClimbGearDownData[wt];
+        for (let i = 0; i < altKeys.length - 1; i++) {
+          if (clampedAlt >= altKeys[i] && clampedAlt <= altKeys[i+1]) {
+            const lo = toInterpList(data[altStrs[i]], oatC);
+            const hi = toInterpList(data[altStrs[i+1]], oatC);
+            const t = (clampedAlt - altKeys[i]) / (altKeys[i+1] - altKeys[i]);
+            return lo + t * (hi - lo);
+          }
+        }
+        return toInterpList(data[altStrs[altStrs.length-1]], oatC);
+      }
+
+      const roc3800 = rocAtWeight(3800);
+      const roc2800 = rocAtWeight(2800);
+      const t = (clampedWt - 2800) / (3800 - 2800);
+      const roc = roc2800 + t * (roc3800 - roc2800);
+
+      return {
+        roc: Math.round(roc),
+        atCeiling: roc <= 0,
+        isaDeviation: getISADeviation(altFt, oatC),
+        isaTemp: getISATemp(altFt),
+      };
+    }
+
+    // Fig 5-11: Short Field Accelerate and Stop Distance
+
+    const semAsPanel1 = {
+      "SL":   [[-40,1210], [0,2000],  [30,2650], [40,2900], [50,3200]],
+      "2000": [[-40,1580], [0,2490],  [22,3000], [36,3400], [46,3680]],
+      "4000": [[-40,1900], [0,2970],  [20,3500], [42,4200]],
+      "6000": [[-40,2400], [0,3600],  [20,4200], [32,4600]],
+      "7000": [[-40,2700], [0,3910],  [20,4600]],
+    };
+
+    const semAsPanel1Alts = [0, 2000, 4000, 6000, 7000];
+    const semAsPanel1Keys = ["SL","2000","4000","6000","7000"];
+
+    const semAsPanel2 = {
+      2350: [[2750,1290], [3000,1500], [3500,2005], [3800,2350]],
+      2710: [[2750,1480], [3150,1900], [3500,2320], [3800,2710]],
+      3140: [[2750,1680], [3000,2000], [3225,2300], [3500,2695], [3800,3140]],
+      3695: [[2750,1930], [3100,2440], [3425,3000], [3800,3695]],
+      4265: [[2750,2180], [2900,2400], [3150,2830], [3500,3550], [3800,4265]],
+    };
+
+    const semAsPanel3 = {
+      0:    [[-5,250],  [0,0],    [15,0]],
+      1080: [[-5,1360], [0,1080], [15,780]],
+      1695: [[-5,2160], [0,1695], [15,1280]],
+      2380: [[-5,2950], [0,2380], [15,1840]],
+      3175: [[-5,3910], [0,3175], [15,2520]],
+      4235: [[-5,5200], [0,4235], [15,3450]],
+    };
+
+    function calculateSemAccelStop(altFt, oatC, weightLbs, windKt, windDir) {
+      const windVal = windDir === "tail" ? -windKt : windKt;
+      const clampedAlt = Math.max(0, Math.min(7000, altFt));
+      var ref1;
+      for (var i = 0; i < semAsPanel1Alts.length - 1; i++) {
+        if (clampedAlt >= semAsPanel1Alts[i] && clampedAlt <= semAsPanel1Alts[i+1]) {
+          const lo = toInterpList(semAsPanel1[semAsPanel1Keys[i]], oatC);
+          const hi = toInterpList(semAsPanel1[semAsPanel1Keys[i+1]], oatC);
+          const t = (clampedAlt - semAsPanel1Alts[i]) / (semAsPanel1Alts[i+1] - semAsPanel1Alts[i]);
+          ref1 = lo + t * (hi - lo);
+          break;
+        }
+      }
+      if (ref1 === undefined) ref1 = toInterpList(semAsPanel1["7000"], oatC);
+      const ref2 = toInterpPanel(semAsPanel2, ref1, weightLbs);
+      const windClamped = windDir === "tail" ? Math.min(windKt, 5) : Math.min(windKt, 15);
+      const windFinal = windDir === "tail" ? -windClamped : windClamped;
+      const accelStop = toInterpPanel(semAsPanel3, ref2, windFinal);
+      return {
+        accelStopFt: Math.round(accelStop),
+        windWasClamped: windClamped < windKt,
+      };
+    }
+
+    // Fig 5-15: Takeoff Distance Over 50ft Obstacle
+
+    const SEM_ROTATE_SPEEDS = [
+      { wt: 2600, vr: 57 }, { wt: 3000, vr: 62 },
+      { wt: 3400, vr: 66 }, { wt: 3800, vr: 70 },
+    ];
+
+    const SEM_OBS_SPEEDS = [
+      { wt: 2600, obs: 67 }, { wt: 3000, obs: 72 },
+      { wt: 3400, obs: 77 }, { wt: 3800, obs: 82 },
+    ];
+
+    function isSemOEICaution(weightLbs, groundRollFt) {
+      if (weightLbs < 3225 || weightLbs > 3800) return false;
+      const t = (3800 - weightLbs) / (3800 - 3225);
+      return groundRollFt >= (1500 + (2045 - 1500) * t) && groundRollFt <= (3000 + (2045 - 3000) * t);
+    }
+    // 50ft: vertices (3800,2800) bottom-left, (3800,6000) top-left, (3300,3800) right apex
+
+    function isSemOEICaution50(weightLbs, dist50Ft) {
+      if (weightLbs < 3300 || weightLbs > 3800) return false;
+      const t = (3800 - weightLbs) / (3800 - 3300);
+      return dist50Ft >= (2800 + (3800 - 2800) * t) && dist50Ft <= (6000 + (3800 - 6000) * t);
+    }
+
+    function getSemRotateSpeed(weightLbs) {
+      const w = Math.max(2600, Math.min(3800, weightLbs));
+      for (var i = 0; i < SEM_ROTATE_SPEEDS.length - 1; i++) {
+        if (w >= SEM_ROTATE_SPEEDS[i].wt && w <= SEM_ROTATE_SPEEDS[i+1].wt) {
+          const t = (w - SEM_ROTATE_SPEEDS[i].wt) / (SEM_ROTATE_SPEEDS[i+1].wt - SEM_ROTATE_SPEEDS[i].wt);
+          return Math.round(SEM_ROTATE_SPEEDS[i].vr + t * (SEM_ROTATE_SPEEDS[i+1].vr - SEM_ROTATE_SPEEDS[i].vr));
+        }
+      }
+      return SEM_ROTATE_SPEEDS[SEM_ROTATE_SPEEDS.length-1].vr;
+    }
+
+    function getSemObsSpeed(weightLbs) {
+      const w = Math.max(2600, Math.min(3800, weightLbs));
+      for (var i = 0; i < SEM_OBS_SPEEDS.length - 1; i++) {
+        if (w >= SEM_OBS_SPEEDS[i].wt && w <= SEM_OBS_SPEEDS[i+1].wt) {
+          const t = (w - SEM_OBS_SPEEDS[i].wt) / (SEM_OBS_SPEEDS[i+1].wt - SEM_OBS_SPEEDS[i].wt);
+          return Math.round(SEM_OBS_SPEEDS[i].obs + t * (SEM_OBS_SPEEDS[i+1].obs - SEM_OBS_SPEEDS[i].obs));
+        }
+      }
+      return SEM_OBS_SPEEDS[SEM_OBS_SPEEDS.length-1].obs;
+    }
+
+    // OEI caution zones - weight axis descends left to right
+    // GR: vertices (3800,1500) bottom-left, (3800,3000) top-left, (3225,2045) right apex
+
+    function calculateSemTakeoffGR(altFt, oatC, weightLbs, windKt, windDir) {
+      const windVal = windDir === "tail" ? windKt : -windKt;
+      const clampedAlt = Math.max(0, Math.min(8000, altFt));
+      var ref1;
+      for (var i = 0; i < semGrPanel1Alts.length - 1; i++) {
+        if (clampedAlt >= semGrPanel1Alts[i] && clampedAlt <= semGrPanel1Alts[i+1]) {
+          const lo = toInterpList(semGrPanel1[semGrPanel1Keys[i]], oatC);
+          const hi = toInterpList(semGrPanel1[semGrPanel1Keys[i+1]], oatC);
+          const t = (clampedAlt - semGrPanel1Alts[i]) / (semGrPanel1Alts[i+1] - semGrPanel1Alts[i]);
+          ref1 = lo + t * (hi - lo);
+          break;
+        }
+      }
+      if (ref1 === undefined) ref1 = toInterpList(semGrPanel1["8000"], oatC);
+      const ref2 = toInterpPanel(semGrPanel2, ref1, weightLbs);
+      const gr = Math.min(3000, toInterpPanel(semGrPanel3, ref2, windVal));
+      return {
+        groundRollFt: Math.round(gr),
+        isaDeviation: getISADeviation(altFt, oatC),
+        isaTemp: getISATemp(altFt),
+        oeiCaution: isSemOEICaution(weightLbs, Math.round(gr)),
+      };
+    }
+
+    function calculateSemTakeoff50(altFt, oatC, weightLbs, windKt, windDir) {
+      const windVal = windDir === "tail" ? windKt : -windKt;
+      const clampedAlt = Math.max(0, Math.min(8000, altFt));
+      var ref1;
+      for (var i = 0; i < semGrPanel1Alts.length - 1; i++) {
+        if (clampedAlt >= semGrPanel1Alts[i] && clampedAlt <= semGrPanel1Alts[i+1]) {
+          const lo = toInterpList(sem50Panel1[semGrPanel1Keys[i]], oatC);
+          const hi = toInterpList(sem50Panel1[semGrPanel1Keys[i+1]], oatC);
+          const t = (clampedAlt - semGrPanel1Alts[i]) / (semGrPanel1Alts[i+1] - semGrPanel1Alts[i]);
+          ref1 = lo + t * (hi - lo);
+          break;
+        }
+      }
+      if (ref1 === undefined) ref1 = toInterpList(sem50Panel1["8000"], oatC);
+      const ref2 = toInterpPanel(sem50Panel2, ref1, weightLbs);
+      const dist50 = Math.min(6000, toInterpPanel(sem50Panel3, ref2, windVal));
+      return {
+        dist50Ft: Math.round(dist50),
+        isaDeviation: getISADeviation(altFt, oatC),
+        isaTemp: getISATemp(altFt),
+        oeiCaution: isSemOEICaution50(weightLbs, Math.round(dist50)),
+      };
+    }
+
+    function SeminoleRunwayViz({ result, airportRunways, runway, runwayFull }) {
+      const C = useC();
+      const dist50 = result.dist50Ft;
+      const distGr = result.groundRollFt;
+      const distAs = result.accelStopFt || 0;
+      const flapsUp = result.flaps === "up";
+      const markerColor50 = C.warm;
+      const markerColorRoll = C.green;
+      const markerColorAs = C.cool;
+      const centerlineColor = C.rwyStripe;
+
+      const maxDist = Math.max(dist50, distAs) * 1.32;
+      const dist50Pct = Math.min(dist50 / maxDist, 0.88);
+      const grPct = Math.min(distGr / maxDist, dist50Pct - 0.05);
+      const asPct = Math.min(distAs / maxDist, 0.92);
+
+      const xStart = 26;
+      const yRwy   = 95;
+      const xGr    = 18 + grPct * 420;
+      const x50    = 18 + dist50Pct * 420;
+      const xAs    = 18 + asPct * 420;
+      const xEnd   = Math.min(x50 + 55, 448);
+      // Climb arc: plane should be well above the 50ft pole (pole top at y=62)
+      // by the time it reaches x50. Push CP1 lower (barely off runway) and CP2 high
+      // so the plane passes x50 at around y=30, giving ~32px clearance over pole top.
+      const yEnd   = 32;
+      const cp1X = xGr + (x50 - xGr) * 0.4;
+      const cp1Y = yRwy - 6;   // shallow initially
+      const cp2X = xGr + (x50 - xGr) * 0.75;
+      const cp2Y = yEnd + 8;   // pulls up well before 50ft marker
+
+      const animRef = useRef(null);
+      const [t, setT] = useState(0);
+      const [done, setDone] = useState(false);
+
+      useEffect(() => {
+        setT(0); setDone(false);
+        let start = null;
+        const duration = 2800;
+        function step(ts) {
+          if (!start) start = ts;
+          const raw = Math.min((ts - start) / duration, 1);
+          const eased = raw < 0.5 ? 2*raw*raw : -1+(4-2*raw)*raw;
+          setT(eased);
+          if (raw < 1) animRef.current = requestAnimationFrame(step);
+          else setDone(true);
+        }
+        animRef.current = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(animRef.current);
+      }, [result]);
+
+      const grFrac = grPct / (dist50Pct + 0.08);
+
+      function bezier(t2) {
+        const u = 1 - t2;
+        return {
+          x: u*u*u*xGr + 3*u*u*t2*cp1X + 3*u*t2*t2*cp2X + t2*t2*t2*xEnd,
+          y: u*u*u*yRwy + 3*u*u*t2*cp1Y + 3*u*t2*t2*cp2Y + t2*t2*t2*yEnd,
+        };
+      }
+      function bezierAngle(t2) {
+        const dt = 0.01, t3 = Math.min(t2 + dt, 1);
+        const p1 = bezier(t2), p2 = bezier(t3);
+        return Math.atan2(-(p2.y - p1.y), p2.x - p1.x) * 180 / Math.PI;
+      }
+
+      let px, py, angle;
+      if (t <= grFrac) {
+        const gt = grFrac > 0 ? t / grFrac : 0;
+        px = 18 + gt * (xGr - 18);
+        py = yRwy;
+        // Gentle nose-up rotation near liftoff
+        angle = gt > 0.85 ? (gt - 0.85) / 0.15 * 6 : 0;
+      } else {
+        const bt = (t - grFrac) / (1 - grFrac);
+        const pos = bezier(bt);
+        px = pos.x;
+        py = pos.y;
+        angle = bezierAngle(bt);
+      }
+
+      // Auto-sized label box helper
+      function LabelBox({ cx, cy, text, color, boxFill="#060a0f" }) {
+        const charW = 6.6, padX = 7, h = 15;
+        const w = text.length * charW + padX * 2;
+        return (
+          <>
+            <rect x={cx - w/2} y={cy - h + 2} width={w} height={h} rx="2" fill={boxFill} stroke={color} strokeWidth="1" />
+            <text x={cx} y={cy} textAnchor="middle" fill={color} fontSize="11" fontFamily="Courier New">{text}</text>
+          </>
+        );
+      }
+
+      return (
+        <div style={{ marginTop: "28px" }}>
+          <ISABadgeRow label="RESULTS" isaLabel={formatISA(result.isaDeviation)} isaDeviation={result.isaDeviation} isaTemp={result.isaTemp} />
+
+          {result.windWasClamped && (
+            <div style={{ background: C.errorBg, border: `1px solid ${C.warm}`, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ color: C.warm, fontSize: "16px" }}>!</div>
+              <div>
+                <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.warm, marginBottom: "2px" }}>WIND COMPONENT EXCEEDS CHART LIMIT</div>
+                <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>
+                  Actual {result.windDir === "head" ? "headwind" : "tailwind"}: <strong style={{color: C.text}}>{result.windActual} kt</strong>
+                  {" . "}Chart limit: <strong style={{color: C.text}}>{result.windDir === "head" ? "15" : "5"} kt</strong>
+                  {" . "}Calculated using <strong style={{color: C.warm}}>{result.windClamped} kt</strong>
+                </div>
+              </div>
+            </div>
+          )}
+          {result.altWasClamped && (
+            <div style={{ background: C.errorBg, border: `1px solid ${C.warm}`, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ color: C.warm, fontSize: "16px" }}>!</div>
+              <div>
+                <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.warm, marginBottom: "2px" }}>PRESSURE ALT BELOW SEA LEVEL</div>
+                <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>
+                  Entered: <strong style={{color: C.text}}>{result.altVal} ft</strong>
+                  {" . "}Calculated using <strong style={{color: C.warm}}>0 ft (SL)</strong>
+                </div>
+              </div>
+            </div>
+          )}
+
+
+
+          {/* Density altitude - only show if DA > 0 and meaningfully above pressure alt */}
+          {(() => {
+            const da = result.densityAlt;
+            const pa = result.altVal != null ? Math.max(0, result.altVal) : null;
+            const diff = pa != null ? da - pa : da;
+            if (da <= 0 || diff < 500) return null;
+            const daColor = diff > 2000 ? C.error : C.warm;
+            const daLabel = diff > 2000 ? "HIGH DA - PERFORMANCE SIGNIFICANTLY DEGRADED" : "ELEVATED DA - EXPECT REDUCED PERFORMANCE";
+            return (
+              <div style={{ background: C.input, border: `1px solid ${daColor}55`, borderRadius: "3px", padding: "10px 16px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: "11px", letterSpacing: "3px", color: C.dim, marginBottom: "2px" }}>DENSITY ALTITUDE</div>
+                  <div style={{ fontSize: "11px", letterSpacing: "1px", color: daColor }}>{daLabel}</div>
+                  <div style={{ fontSize: "11px", color: C.dim, marginTop: "2px" }}>+{diff.toLocaleString()} ft above pressure alt</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <span style={{ fontSize: "32px", fontWeight: "bold", color: daColor }}>{da.toLocaleString()}</span>
+                  <span style={{ fontSize: "13px", color: C.dim, marginLeft: "6px" }}>FT</span>
+                </div>
+              </div>
+            );
+          })()}
+
+          <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: "4px", padding: "14px 14px 10px", marginBottom: "14px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+              <div style={{ fontSize: "15px", letterSpacing: "3px", color: C.green }}>FLAPS 25 deg TAKEOFF</div>
+              <div style={{ fontSize: "13px", letterSpacing: "2px", color: C.dimmer }}>FULL THROTTLE . PAVED/LEVEL/DRY . A/C OFF</div>
+            </div>
+            <svg viewBox="0 0 460 185" style={{ width: "100%", display: "block" }}>
+              {/* Sky background */}
+              <rect x="0" y="0" width="460" height="185" fill={C.card} />
+              <defs>
+                <linearGradient id="rwyGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor={C.rwyAsphalt} />
+                  <stop offset="100%" stopColor={C.rwyBg} />
+                </linearGradient>
+              </defs>
+
+
+              {/* Runway */}
+              <rect x="18" y="84" width="424" height="30" rx="2" fill="url(#rwyGrad)" stroke={C.rwyAsphalt} strokeWidth="1" />
+
+              {/* Threshold bars */}
+              {[0,1,2,3].map(i => (
+                <rect key={i} x={22 + i*6} y="88" width="3" height="22" rx="1" fill={C.rwyAsphalt} />
+              ))}
+
+              {/* Centerline dashes */}
+              {Array.from({length: 18}).map((_, i) => (
+                <rect key={i} x={55 + i*22} y="98" width="12" height="2" rx="1" fill={centerlineColor} />
+              ))}
+
+              {/* Climb arc path */}
+              <path
+                d={`M ${xGr} ${yRwy} C ${cp1X} ${cp1Y} ${cp2X} ${cp2Y} ${xEnd} ${yEnd}`}
+                fill="none" stroke={markerColor50} strokeWidth="1.5"
+                strokeDasharray="5,3" opacity={done ? 0.5 : 0.15}
+              />
+
+              {/* Ground roll marker */}
+              <line x1={xGr} y1="84" x2={xGr} y2="116" stroke={markerColorRoll} strokeWidth="1.5" strokeDasharray="3,2" />
+              <circle cx={xGr} cy={yRwy} r="2.5" fill={markerColorRoll} />
+
+              {/* 50ft obstacle pole + flag */}
+              <line x1={x50} y1="62" x2={x50} y2="116" stroke={markerColor50} strokeWidth="2" />
+              <rect x={x50 + 2} y="62" width="17" height="11" rx="1.5" fill={markerColor50} />
+              <text x={x50 + 10.5} y="71" textAnchor="middle" fill={C.btnText} fontSize="11" fontFamily="Courier New" fontWeight="bold">50</text>
+
+              {/* Ground roll bracket ABOVE runway */}
+              {(() => {
+                const label = `${distGr} FT . GROUND ROLL`;
+                const textW = label.length * 6.6, padX = 7, boxW = textW + padX * 2;
+                const cx = (18 + xGr) / 2;
+                return (
+                  <>
+                    <line x1="18" y1="75" x2={xGr} y2="75" stroke={markerColorRoll} strokeWidth="1" opacity="0.7" />
+                    <line x1="18" y1="72" x2="18" y2="78" stroke={markerColorRoll} strokeWidth="1" />
+                    <line x1={xGr} y1="72" x2={xGr} y2="78" stroke={markerColorRoll} strokeWidth="1" />
+                    <rect x={cx - boxW/2} y="61" width={boxW} height="15" rx="2" fill={C.markerBg} stroke={markerColorRoll} strokeWidth="0.8" />
+                    <text x={cx} y="72" textAnchor="middle" fill={markerColorRoll} fontSize="11" fontFamily="Courier New">{label}</text>
+                  </>
+                );
+              })()}
+
+              {/* Accel-stop marker on runway */}
+              {distAs > 0 && (
+                <>
+                  <line x1={xAs} y1="84" x2={xAs} y2="116" stroke={markerColorAs} strokeWidth="1.5" strokeDasharray="3,2" />
+                  <circle cx={xAs} cy={yRwy} r="2.5" fill={markerColorAs} />
+                </>
+              )}
+
+              {/* 50ft distance bracket BELOW runway */}
+              {(() => {
+                const label = `${dist50} FT . OVER 50 FT`;
+                const textW = label.length * 6.6, padX = 7, boxW = textW + padX * 2;
+                const cx = (18 + x50) / 2;
+                return (
+                  <>
+                    <line x1="18" y1="122" x2={x50} y2="122" stroke={markerColor50} strokeWidth="1" opacity="0.7" />
+                    <line x1="18" y1="119" x2="18" y2="125" stroke={markerColor50} strokeWidth="1" />
+                    <line x1={x50} y1="119" x2={x50} y2="125" stroke={markerColor50} strokeWidth="1" />
+                    <rect x={cx - boxW/2} y="127" width={boxW} height="15" rx="2" fill={C.markerBg} stroke={markerColor50} strokeWidth="0.8" />
+                    <text x={cx} y="138" textAnchor="middle" fill={markerColor50} fontSize="11" fontFamily="Courier New">{label}</text>
+                  </>
+                );
+              })()}
+
+              {/* Accel-stop bracket BELOW 50ft bracket */}
+              {distAs > 0 && (() => {
+                const label = `${distAs} FT . ACCEL-STOP`;
+                const textW = label.length * 6.6, padX = 7, boxW = textW + padX * 2;
+                const cx = (18 + xAs) / 2;
+                return (
+                  <>
+                    <line x1="18" y1="148" x2={xAs} y2="148" stroke={markerColorAs} strokeWidth="1" opacity="0.7" />
+                    <line x1="18" y1="145" x2="18" y2="151" stroke={markerColorAs} strokeWidth="1" />
+                    <line x1={xAs} y1="145" x2={xAs} y2="151" stroke={markerColorAs} strokeWidth="1" />
+                    <rect x={cx - boxW/2} y="153" width={boxW} height="15" rx="2" fill={C.markerBg} stroke={markerColorAs} strokeWidth="0.8" />
+                    <text x={cx} y="164" textAnchor="middle" fill={markerColorAs} fontSize="11" fontFamily="Courier New">{label}</text>
+                  </>
+                );
+              })()}
+
+              {/* Runway number near threshold */}
+              {result.rwyNum && (
+                <text x="36" y="102" textAnchor="middle" fill={C.rwyText} fontSize="11" fontFamily="Courier New" fontWeight="bold" letterSpacing="1">{String(result.rwyNum).padStart(2,'0')}</text>
+              )}
+
+              {/* Wind arrow - top LEFT to avoid plane overlap */}
+              {result.windComponents && (() => {
+                const wc = result.windComponents;
+                const svgDeg = (180 + wc.angle) % 360;
+                const rad = svgDeg * Math.PI / 180;
+                const cx = 230, cy = 24, len = 28;
+                const dx = Math.cos(rad) * len, dy = Math.sin(rad) * len;
+                const x1 = cx - dx*0.5, y1 = cy - dy*0.5;
+                const x2 = cx + dx*0.5, y2 = cy + dy*0.5;
+                const headLen = 7, headAngle = 0.4;
+                const hx1 = x2 - headLen*Math.cos(rad-headAngle), hy1 = y2 - headLen*Math.sin(rad-headAngle);
+                const hx2 = x2 - headLen*Math.cos(rad+headAngle), hy2 = y2 - headLen*Math.sin(rad+headAngle);
+                return (
+                  <g opacity="0.9">
+                    <circle cx={cx} cy={cy} r="22" fill={C.markerBg} stroke={C.border} strokeWidth="1" />
+                    {[0,45,90,135,180,225,270,315].map(a => {
+                      const r2 = (a-90)*Math.PI/180;
+                      return <line key={a} x1={cx+Math.cos(r2)*16} y1={cy+Math.sin(r2)*16} x2={cx+Math.cos(r2)*20} y2={cy+Math.sin(r2)*20} stroke={C.borderDim} strokeWidth="1" />;
+                    })}
+                    <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={C.cool} strokeWidth="2" />
+                    <polygon points={`${x2},${y2} ${hx1},${hy1} ${hx2},${hy2}`} fill={C.cool} />
+                    <text x={cx} y={cy-27} textAnchor="middle" fill={C.dimmest} fontSize="8" fontFamily="Courier New" letterSpacing="1">WIND / RWY</text>
+                    <text x={cx} y={cy+33} textAnchor="middle" fill={C.cool} fontSize="9" fontFamily="Courier New">{result.windSpd}KT/{wc.angle===0?'HW':wc.angle===180?'TW':`XW-${wc.crossDir}`}</text>
+                  </g>
+                );
+              })()}
+
+              {/* Animated Archer - same real SVG silhouette as landing viz */}
+              <g transform={`translate(${px},${py}) rotate(${-angle}) scale(-0.11, 0.11)`}>
+                <g transform="scale(0.281) translate(-1337,-564)" fill={markerColorRoll} stroke="none">
+                <path d="M2447.64,241.35l3.44-14.23c0.41-1.72,1.85-3.01,3.61-3.24l2.46-0.31c3.45-0.43,6.02-3.38,5.99-6.85 l-0.04-5.1c-0.02-3.65-2.91-6.63-6.56-6.79l-99.4-4.18l-64.75-2.73c-23.3-0.98-45.63,9.41-59.9,27.86l-187.91,243.12 c-1.33,1.71-2.7,3.39-4.1,5.04c-20.93,24.73-48.68,42.27-79.32,50.76c-15.17,4.21-31.05,6.19-47.15,5.75l-198.66-5.53 c0,0-15.33-2.28-41.34-6.15c-66.99-10.02-204.79-30.71-333.67-50.76c-81.31-12.65-159.06-25.06-213.26-34.35 c-112.09-19.24-220.34-45.83-345.1-18.75c-67.41,14.63-139.63,44.93-219.88,100.51c-0.73,0.51-1.5,0.92-2.3,1.25 c-1.42,0.58-2.95,0.89-4.5,0.89c-17.36,0.01-93.53,0.77-184.09,12.4c-112.39,14.43-246.95,45.59-318.8,112.81 c-16.44,15.39-11.32,42.69,9.47,51.35c24.9,10.36,68.25,23.11,143.73,36.33c70.02,12.25,167.69,24.88,303.93,36.36 c158.09,13.31,291.95,19.8,403.18,22.29" />
+                <path d="M994.23,790.26c183.79,1.15,291.97-8.81,334.39-12.1c54.3-4.22,637.36-54.13,912.9-77.74 c65.61-5.62,113.79-9.75,133.23-11.42c5.68-0.49,10.44-4.5,11.88-10.02l18.83-71.86l62.03-236.65l20.64-78.72 c0.28-1.06-0.41-2.12-1.49-2.3l-35.46-5.93l-10.63-1.78c-1.38-0.23-2.28-1.58-1.95-2.94l4.74-19.61" />
+                <path d="M559.79,516.67c0,0,17.07,17.33,50.39,37.61" />
+                <path d="M829.52,562.41c-22.55-3.08-52.17-6.21-87.43-7.92c0,0-193.97-2.78-241.99,4.84 c-0.36,0.05-0.71,0.08-1.07,0.06l-46.52-2.26c-0.16-0.01-0.3-0.01-0.45-0.01c-3.35,0.09-41.88,1.55-83.35,23.46 c-11.73,6.21-13.13,22.49-2.68,30.66c15.56,12.15,41.28,26.66,78.1,30.17c1.27,0.12,2.44,0.7,3.28,1.64 c7.28,8.05,53.63,48.07,194.98,66.83" />
+                <path d="M211.62,731.48l-1.78,36.65c-0.1,2.07,1.46,3.84,3.52,4.01l285.54,23.41c1.86,0.15,3.57-1.06,4.03-2.87 l6.61-25.87" />
+                <path d="M922.6,726.32c0.35-2.2,1.97-3.96,4.13-4.5c8.26-2.04,20.76-3.94,35.6-1.81c11.75,1.68,21.19,5.34,27.86,8.62 c1.85,0.91,3.03,2.78,3.07,4.85l2.58,152.15c0.02,1.38-1.11,2.5-2.49,2.46l-93.03-2.93c-1.45-0.05-2.54-1.36-2.31-2.79 L922.6,726.32z" />
+                <path d="M913.63,783.25c-50.76-4.06-104.25-11.5-157.35-23.99c-20.29-4.78-40.08-11.36-59.13-19.65 c-19.05-8.27-37.37-18.24-54.75-29.75c30.14,4.48,62.69,7.75,91.67,10.08c41.74,3.37,76.09,4.81,85.19,5.16 c0.27,0.01,0.31-0.37,0.05-0.43c-38.66-9.01-65.58-33.16-74.97-46.29c-2.44-3.41-2.29-8.03,0.36-11.29l21.24-26.02l9.22-11.3 l49.25-60.36l21.16-25.94c1.73-2.04,3.79-3.75,6.08-5.06c0.01-0.01,0.01-0.01,0.01-0.01c1.93-1.11,4.02-1.93,6.22-2.42 c12.2-2.76,40.28-5.84,98.89,0.61c6.8,0.74,14.03,1.61,21.68,2.63c101.24,13.48,141.68,24.56,153.45,28.31 c0.56,0.18,1.11,0.39,1.63,0.65l0.01,0.01c1.82,0.88,3.4,2.21,4.58,3.88l17.14,24.12l0,0.01l49.68,69.91l14.18,19.95 c0.13,0.19,0.25,0.37,0.36,0.56c0.02,0.04,0.04,0.07,0.05,0.11c0.83,1.43,1.23,3.06,1.15,4.71l-1.22,25.23l-2.57,53.01 c-0.11,2.36-1.88,4.31-4.22,4.66c-10.82,1.64-42.84,6.11-88.63,9.37c-35.98,2.55-80.48,4.36-129.87,3.44" />
+                <path d="M851.66,538.43c0,0-29.13,29.72,87.4,35.37s205.25,5.36,194.47-5.59" />
+                <path d="M824.37,568.48c0,0-2.53,34.58,104.67,39.78s231.48,3.88,226.21-12.06" />
+                <path d="M1128.38,694.47c0,0,99.41,2.04,90.74-8.39" />
+                <path d="M775.16,629.79l1-20.6c0.3-6.25-4.52-11.56-10.77-11.87l-8.99-0.44c-6.25-0.3-11.57,4.51-11.88,10.77 l-1.03,21.3c-0.3,6.25,4.52,11.57,10.78,11.88l8.99,0.44c0.92,0.04,1.82-0.02,2.68-0.19" />
+                <path d="M449.06,578.09l20.2,0.98c2.7,0.13,4.78,2.42,4.65,5.12l-0.85,17.53c-0.13,2.7-2.42,4.78-5.12,4.65 l-20.2-0.98" />
+                <path d="M205.61,730.44l0.98-20.17c0.22-4.58,2.97-8.67,7.14-10.62c62.91-29.41,123.13-80.38,145.43-100.28" />
+                <path d="M750.98,554.95L750.98,554.95c-13.82-0.67-20.88-16.88-11.96-27.46l58.52-69.38 c3.81-4.52,9.61-6.88,15.49-6.3l122.18,12.03c6.17,0.61,10.78,5.95,10.48,12.14l-2.84,58.6" />
+                <path d="M956.77,536.61l2.91-59.94c0.66-13.66-9.48-25.41-23.09-26.75l-122.18-12.03c-0.53-0.05-1.06-0.09-1.59-0.12 c-9.92-0.48-19.54,3.68-25.98,11.32l-72.65,87.05c-5.98,7.16-0.93,18.05,8.4,18.11l11.67,0.08" />
+                <path d="M978.45,539.25l2.6-53.69c0.66-13.55,13.06-23.45,26.43-21.09l126.5,22.4c8.24,1.46,14.11,8.82,13.71,17.18 l-2.75,56.63c-0.23,4.7-2.79,8.98-6.82,11.41l0,0" />
+                <path d="M1199.39,497.52l104.98,20.23c7.68,1.48,13.11,8.38,12.73,16.2l-1.28,26.49c-0.39,8.05-6.8,14.5-14.84,14.94 l-103.16,5.64c-9.9,0.54-18.1-7.6-17.62-17.51l2.57-52.92C1183.17,502.08,1191.03,495.91,1199.39,497.52z" />
+                <path d="M2029.74,580.92l218.88-319.81c3.91-5.71,10.76-8.64,17.58-7.54l184.96,29.94" />
+                <path d="M2394.92,274.41l-12.35,42.82c-0.7,2.43-3.22,3.86-5.67,3.21l-28.25-7.5c-2.36-0.63-4.78,0.75-5.45,3.1 l-14.83,52.03c-0.52,1.81,0.12,3.76,1.6,4.92l5.98,4.67c1.51,1.18,2.13,3.16,1.58,4.99l-96.01,317.78" />
+                <path d="M2467.49,370.47l-27.03-1.31c-4.7-0.23-8.92,2.85-10.14,7.39l-58.19,216.66c-1.68,6.24,2.84,12.43,9.29,12.74 l24.04,1.17" />
+                <path d="M2294.08,240.59l16.83,11.44c3.73,2.54,8.11,3.95,12.62,4.06l119.57,3.1c5.13,0.13,9.42-3.85,9.67-8.98v0 c0.25-5.21-3.76-9.63-8.97-9.88l-147.25-7.14C2292.47,232.99,2290.7,238.29,2294.08,240.59z" />
+                <path d="M218.91,772.59l-0.89,18.45c-0.15,3.13,2.26,5.78,5.39,5.93l3,0.15l17.31,0.84l3,0.15 c3.13,0.15,5.79-2.25,5.94-5.38l0.84-17.3" />
+                <path d="M243.72,797.95l-5.14,105.88c-0.23,4.78-4.3,8.47-9.07,8.24c-4.78-0.23-8.47-4.3-8.24-9.08l5.14-105.88" />
+                <path d="M241.3,847.82c29.89,5.66,51.8,32.64,50.28,63.89c-1.66,34.2-30.72,60.57-64.92,58.91 c-34.19-1.66-60.56-30.72-58.9-64.92c1.52-31.25,25.93-55.99,56.23-58.73" />
+                <path d="M239.49,885.02c9.73,4.03,16.34,13.82,15.8,24.93c-0.69,14.15-12.72,25.07-26.87,24.39 c-14.14-0.69-25.06-12.72-24.38-26.87c0.54-11.12,8.08-20.23,18.14-23.29" />
+                <path d="M995.29,852.61c13.22,13.32,21.01,31.94,20.03,52.15c-1.85,38.24-34.35,67.73-72.59,65.87 c-38.23-1.85-67.72-34.35-65.86-72.59c1.02-21.05,11.33-39.45,26.78-51.42" />
+                <path d="M971.12,887.39c2.55,4.54,3.9,9.82,3.63,15.4c-0.77,15.83-14.22,28.03-30.05,27.27 c-15.82-0.77-28.02-14.21-27.26-30.05c0.25-5.23,1.9-10.07,4.56-14.18" />
+                <path d="M1650.14,568.9l72.74,3.53c2.92,0.14,5.48,2.01,6.51,4.75l6.62,17.72c1.84,4.93-1.96,10.14-7.22,9.89 l-74.91-3.63c-3.22-0.16-5.96-2.4-6.75-5.52l-4.46-17.61C1641.48,573.24,1645.23,568.66,1650.14,568.9z" />
+                <path d="M1204.94,666.12c0,0,88.33,28.86,87.81,39.7c-0.53,10.84-73.28,10.87-73.28,10.87" />
+                <path d="M1304.37,517.75c7.69,1.48,13.11,8.39,12.73,16.2l-1.28,26.49c-0.39,8.05-6.8,14.49-14.85,14.93l-103.16,5.65 c-9.9,0.54-18.1-7.61-17.61-17.51l2.56-52.92c0.41-8.51,8.27-14.68,16.63-13.07L1304.37,517.75z" />
+                <path d="M935.21,463.85c6.18,0.61,10.79,5.95,10.49,12.14l-2.85,58.61l-0.05,0.59c-49.18-4.51-73.73-1.72-84.91,0.81 c-2.21,0.49-4.3,1.31-6.23,2.42v0.01c0,0,0-0.01-0.01,0c-2.29,1.31-4.35,3.02-6.08,5.06l-15.68,19.22l-0.37-0.3 c-20.62-2.82-47.18-5.69-78.54-7.46c-13.82-0.67-20.88-16.88-11.96-27.46l58.52-69.37c3.82-4.52,9.61-6.88,15.5-6.3L935.21,463.85 z" />
+                <path d="M1133.98,486.87c8.24,1.46,14.11,8.82,13.71,17.18l-2.75,56.62c-0.23,4.71-2.79,8.99-6.82,11.42 c-1.18-1.67-2.76-3-4.58-3.88h-0.01v-0.01c-0.52-0.25-1.07-0.47-1.63-0.65c-11.77-3.74-52.21-14.82-153.45-28.3l2.6-53.69 c0.66-13.56,13.06-23.46,26.43-21.09L1133.98,486.87z" />
+                <path d="M995.29,852.61c13.22,13.32,21.01,31.93,20.03,52.15c-1.86,38.24-34.35,67.73-72.59,65.87 c-38.22-1.85-67.71-34.35-65.86-72.58c1.02-21.05,11.33-39.45,26.78-51.43h0.01l-5.63,35.75c-0.23,1.43,0.85,2.74,2.31,2.79 l21.66,0.68c-2.66,4.1-4.3,8.94-4.56,14.17c-0.77,15.83,11.44,29.28,27.26,30.05c15.82,0.77,29.28-11.44,30.04-27.27 c0.28-5.58-1.07-10.86-3.62-15.4l22.24,0.7c1.38,0.04,2.52-1.08,2.49-2.46L995.29,852.61z" />
+                <path d="M241.3,847.83c29.89,5.66,51.8,32.63,50.28,63.89c-1.66,34.2-30.72,60.57-64.92,58.91c-34.19-1.66-60.56-30.72-58.9-64.92 c1.51-31.25,25.93-55.99,56.23-58.73l-1.81,37.2c-10.06,3.06-17.6,12.17-18.14,23.29c-0.68,14.15,10.24,26.19,24.38,26.87 c14.15,0.69,26.19-10.23,26.87-24.38c0.54-11.12-6.07-20.91-15.8-24.94L241.3,847.83z" />
+                <path d="M781.97,414.77L677.31,553.86c-20.55-0.05-43.97,0.01-67.13,0.28v-0.01c-33.32-20.28-50.39-37.6-50.39-37.6 c0.81-0.34,1.58-0.75,2.31-1.25C642.34,459.7,714.57,429.4,781.97,414.77z" />
+              </g>
+            </g>
+
+            </svg>
+          </div>
+
+          {/* OEI caution */}
+          {result.oeiCaution && (
+            <div style={{ background: C.errorBg, border: "1px solid " + C.error, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ color: C.error, fontSize: "18px", flexShrink: 0 }}>!</div>
+              <div>
+                <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.error, marginBottom: "2px", fontWeight: "bold" }}>OEI CAUTION ZONE</div>
+                <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>Best one-engine-inoperative rate of climb is less than 50 FPM. Engine failure after takeoff may not allow terrain clearance.</div>
+              </div>
+            </div>
+          )}
+          {/* Numeric result cards */}
+          <Grid3 style={{ marginBottom: "12px" }}>
+            <div style={{ background: C.input, border: `1px solid ${markerColorRoll}`, borderRadius: "3px", padding: "16px", textAlign: "center" }}>
+              <div style={{ fontSize: "15px", letterSpacing: "2px", color: markerColorRoll, marginBottom: "8px" }}>GROUND ROLL</div>
+              <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{distGr}</div>
+              <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET . FIG 5-13</div>
+            </div>
+            <div style={{ background: C.input, border: `1px solid ${markerColor50}`, borderRadius: "3px", padding: "16px", textAlign: "center" }}>
+              <div style={{ fontSize: "15px", letterSpacing: "2px", color: markerColor50, marginBottom: "8px" }}>OVER 50 FT</div>
+              <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{dist50}</div>
+              <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET . FIG 5-15</div>
+            </div>
+            <div style={{ background: C.input, border: `1px solid ${C.cool}`, borderRadius: "3px", padding: "16px", textAlign: "center" }}>
+              <div style={{ fontSize: "15px", letterSpacing: "2px", color: C.cool, marginBottom: "8px" }}>ACCEL-STOP</div>
+              <div style={{ fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" }}>{result.accelStopFt}</div>
+              <div style={{ fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" }}>FEET . FIG 5-11</div>
+            </div>
+          </Grid3>
+
+          {/* 1.5x safety buffer row */}
+          <Grid3 style={{ marginBottom: "12px" }}>
+            <div style={{ background: C.input, border: `1px solid ${markerColorRoll}55`, borderRadius: "3px", padding: "12px 16px", textAlign: "center" }}>
+                <div style={{ fontSize: "12px", letterSpacing: "2px", color: `${markerColorRoll}99`, marginBottom: "6px" }}>GROUND ROLL x1.5</div>
+                <div style={{ fontSize: "32px", color: `${markerColorRoll}cc`, lineHeight: 1, fontWeight: "bold" }}>{Math.round(distGr * 1.5)}</div>
+                <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "5px", letterSpacing: "2px" }}>FEET</div>
+              </div>
+            <div style={{ background: C.input, border: `1px solid ${markerColor50}55`, borderRadius: "3px", padding: "12px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: "12px", letterSpacing: "2px", color: `${markerColor50}99`, marginBottom: "6px" }}>OVER 50 FT x1.5</div>
+              <div style={{ fontSize: "32px", color: `${markerColor50}cc`, lineHeight: 1, fontWeight: "bold" }}>{Math.round(dist50 * 1.5)}</div>
+              <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "5px", letterSpacing: "2px" }}>FEET</div>
+            </div>
+            <div style={{ background: C.input, border: `1px solid ${C.cool}55`, borderRadius: "3px", padding: "12px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: "12px", letterSpacing: "2px", color: `${C.cool}99`, marginBottom: "6px" }}>ACCEL-STOP x1.5</div>
+              <div style={{ fontSize: "32px", color: `${C.cool}cc`, lineHeight: 1, fontWeight: "bold" }}>{Math.round(result.accelStopFt * 1.5)}</div>
+              <div style={{ fontSize: "11px", color: C.dimmest, marginTop: "5px", letterSpacing: "2px" }}>FEET</div>
+            </div>
+          </Grid3>
+
+          {(function() {
+            if (!airportRunways || !runway) return null;
+            var rwy = null;
+            for (var i = 0; i < airportRunways.length; i++) {
+              var matchFull = typeof runwayFull === "string" && runwayFull.length > 0;
+              if (matchFull ? airportRunways[i].num === runwayFull : String(parseInt(airportRunways[i].num)) === String(runway)) { rwy = airportRunways[i]; break; }
+            }
+            if (!rwy || !rwy.length) return null;
+            var len = rwy.length;
+            var gr = result.groundRollFt || 0;
+            var d50 = result.dist50Ft || result.distFt || 0;
+            var as = result.accelStopFt || 0;
+            var gr15 = Math.round(gr * 1.5);
+            var d5015 = Math.round(d50 * 1.5);
+            var as15 = Math.round(as * 1.5);
+            var gr15ok = gr === 0 || gr15 <= len;
+            var d50ok = d50 === 0 || d5015 <= len;
+            var asok = as === 0 || as15 <= len;
+            var ok = gr15ok && d50ok && asok;
+            var col = ok ? C.green : C.error;
+            function pctColor(val, total) {
+              var pct = Math.round(val / total * 100);
+              if (pct >= 90) return C.error;
+              if (pct >= 70) return C.warm;
+              return C.green;
+            }
+            return (
+              <div style={{ marginBottom: "12px", background: ok ? C.input : C.errorBg, border: "2px solid " + col, borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid " + col + "44", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                  <div style={{ fontSize: "18px", letterSpacing: "3px", color: col, fontWeight: "bold" }}>
+                    {ok ? "RUNWAY LENGTH OK" : "RUNWAY LENGTH CHECK"}
+                  </div>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: col, flexShrink: 0 }} />
+                </div>
+                <div style={{ display: "flex", borderBottom: "1px solid " + col + "22" }}>
+                  <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: "1px solid " + col + "22" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>RWY {rwy.num} AVAILABLE</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: C.text, lineHeight: 1 }}>{len.toLocaleString()}</div>
+                    <div style={{ fontSize: "11px", color: C.dim, marginTop: "3px", letterSpacing: "1px" }}>FT</div>
+                  </div>
+                  {gr > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: "1px solid " + col + "22" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>GND ROLL x1.5</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: gr15ok ? C.text : C.error, lineHeight: 1 }}>{gr15.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: gr15ok ? pctColor(gr15, len) : C.error, marginTop: "3px" }}>{Math.round(gr15/len*100)}% of runway</div>
+                  </div>}
+                  {d50 > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center", borderRight: as > 0 ? "1px solid " + col + "22" : "none" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>50FT DIST x1.5</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: d50ok ? C.text : C.error, lineHeight: 1 }}>{d5015.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: d50ok ? pctColor(d5015, len) : C.error, marginTop: "3px" }}>{Math.round(d5015/len*100)}% of runway</div>
+                  </div>}
+                  {as > 0 && <div style={{ flex: 1, padding: "14px 10px", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>ACCEL-STOP x1.5</div>
+                    <div style={{ fontSize: "28px", fontWeight: "bold", color: asok ? C.text : C.error, lineHeight: 1 }}>{as15.toLocaleString()}</div>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", color: asok ? pctColor(as15, len) : C.error, marginTop: "3px" }}>{Math.round(as15/len*100)}% of runway</div>
+                  </div>}
+                </div>
+                <div style={{ padding: "8px 14px", display: "flex", alignItems: "center", gap: "8px", background: C.warm + "18", borderTop: "1px solid " + C.warm }}>
+                  <span style={{ fontSize: "10px", letterSpacing: "2px", color: C.warm, fontWeight: "bold", flexShrink: 0 }}>ADVISORY ONLY</span>
+                  <span style={{ fontSize: "10px", color: C.text }}>Runway lengths from OurAirports data. Always verify with AFD and NOTAMs before flight.</span>
+                </div>
+              </div>
+            );
+          })()}
+
+        </div>
+      );
+    }
+
+    // ============================================================
+    function SeminoleTakeoffTab({ savedState, onStateChange }) {
+      const C = useC();
+      const mobile = useIsMobileInner();
+      const [alt, setAlt] = useState(savedState.alt || "");
+      const [oat, setOat] = useState(savedState.oat || "");
+      const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
+      const [weight, setWeight] = useState(savedState.weight || "");
+      const [runway, setRunway] = useState(savedState.runway || "");
+      const [runwayFull, setRunwayFull] = useState(savedState.runwayFull || "");
+      const [windHeading, setWindHeading] = useState(savedState.windHeading || "");
+      const [windSpeed, setWindSpeed] = useState(savedState.windSpeed || "");
+      const [airportRunways, setAirportRunways] = useState([]);
+      const [metarFilled, setMetarFilled] = useState([]);
+      const [result, setResult] = useState(null);
+      const [error, setError] = useState("");
+
+      useEffect(() => {
+        onStateChange({ alt, oat, tempUnit, weight, runway, runwayFull, windHeading, windSpeed });
+      }, [alt, oat, tempUnit, weight, runway, runwayFull, windHeading, windSpeed]);
+
+      function getWindComponents(rwyNum, windHdg, windSpd) {
+        const rwyHdg = (rwyNum * 10) % 360;
+        const ang = (windHdg - rwyHdg + 360) % 360;
+        const r = ang * Math.PI / 180;
+        return {
+          headwind: Math.round(windSpd * Math.cos(r) * 10) / 10,
+          crosswind: Math.round(Math.abs(windSpd * Math.sin(r)) * 10) / 10,
+          crossDir: (ang > 0 && ang < 180) ? "R" : "L",
+          angle: ang, rwyHdg,
+        };
+      }
+
+      const windSpd = parseFloat(windSpeed) || 0;
+      const rwyNum = parseInt(runway);
+      const windHdg = parseInt(windHeading);
+      const windComponents = (!isNaN(rwyNum) && !isNaN(windHdg) && windSpd > 0 && rwyNum >= 1 && rwyNum <= 36)
+        ? getWindComponents(rwyNum, windHdg, windSpd) : null;
+
+      const handleCalculate = useCallback(() => {
+        setError(""); setResult(null);
+        const altVal = parseFloat(alt);
+        let oatC = parseFloat(oat);
+        const weightVal = parseFloat(weight) || 3800;
+        if (isNaN(altVal) || isNaN(oatC)) { setError("Please fill in altitude and OAT."); return; }
+        if (tempUnit === "F") oatC = (oatC - 32) * 5 / 9;
+        if (altVal > 8000) { setError("Altitude must be at or below 8,000 ft."); return; }
+        if (weightVal < 2600 || weightVal > 3800) { setError("Weight must be 2,600 - 3,800 lbs."); return; }
+        if (isNaN(rwyNum) || rwyNum < 1 || rwyNum > 36) { setError("Please enter a valid runway number (01-36)."); return; }
+        if (isNaN(windHdg) || windHdg < 0 || windHdg > 360) { setError("Please enter a valid wind direction (0-360)."); return; }
+        const altCalc = Math.max(0, altVal);
+        const wc = windComponents || { headwind: 0, crosswind: 0, crossDir: "R", angle: 0, rwyHdg: rwyNum * 10 };
+        const hwKt = wc.headwind;
+        const wDir = hwKt >= 0 ? "head" : "tail";
+        const windActual = Math.abs(hwKt);
+        const windClamped = wDir === "head" ? Math.min(windActual, 30) : Math.min(windActual, 10);
+        const windWasClamped = windActual > windClamped;
+        const grRes = calculateSemTakeoffGR(altCalc, oatC, weightVal, windClamped, wDir);
+        const ftRes = calculateSemTakeoff50(altCalc, oatC, weightVal, windClamped, wDir);
+        const asRes = calculateSemAccelStop(altCalc, oatC, weightVal, windClamped, wDir);
+        const vr = getSemRotateSpeed(weightVal);
+        const vobs = getSemObsSpeed(weightVal);
+        const oeiCaution = grRes.oeiCaution || ftRes.oeiCaution;
+        setResult({ groundRollFt: grRes.groundRollFt, dist50Ft: ftRes.dist50Ft, accelStopFt: asRes.accelStopFt, oeiCaution,
+          isaDeviation: grRes.isaDeviation, isaTemp: grRes.isaTemp,
+          windComponents: wc, windSpd, windActual, windClamped, windWasClamped,
+          windDir: wDir, rwyNum, weightLbs: weightVal,
+          densityAlt: getDensityAlt(altVal, oatC), altVal, altWasClamped: altVal < 0, vr, vobs });
+      }, [alt, oat, tempUnit, weight, runway, windHeading, windSpeed, windComponents, windSpd, rwyNum, windHdg]);
+
+      const markerColorRoll = C.green;
+      const markerColor50 = C.warm;
+
+      return (
+        <Card>
+          <div style={{ marginBottom: "20px", paddingBottom: "16px", borderBottom: "1px solid " + C.border }}>
+            <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.green, marginBottom: "4px" }}>TAKEOFF PERFORMANCE</div>
+            <div style={{ fontSize: "13px", color: C.dimmer, letterSpacing: "1px" }}>WING FLAPS 0 · COWL FLAPS OPEN · SHORT FIELD · FIG 5-13 / 5-15</div>
+          </div>
+          <MetarFetch onFill={function(d) {
+            var filled = [];
+            if (d.windDir !== null) { setWindHeading(String(d.windDir)); filled.push("wind"); } else { setWindHeading(""); }
+            if (d.windSpeed !== null) { setWindSpeed(String(d.windSpeed)); filled.push("wind"); } else { setWindSpeed(""); }
+            if (d.oat !== null) { setOat(String(d.oat)); setTempUnit("C"); filled.push("oat"); }
+            if (d.pressureAlt !== null && d.pressureAlt !== undefined) { setAlt(String(d.pressureAlt)); filled.push("alt"); }
+            if (d.runways && d.runways.length > 0) setAirportRunways(d.runways);
+            setMetarFilled(filled);
+          }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+            <AltOATRow altLabel="PRESSURE ALTITUDE" altValue={alt} onAltChange={setAlt} altHint="0 - 8,000 ft" altPlaceholder="e.g. 1250" altFilled={metarFilled.includes("alt")} oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} oatFilled={metarFilled.includes("oat")} />
+            <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 3400" hint="2,600 - 3,800 lbs (leave blank for 3,800)" />
+            <div>
+              <div style={{ fontSize: "12px", letterSpacing: "3px", color: C.green, marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                WIND
+                {metarFilled.includes("wind") && <span style={{ fontSize: "11px", background: C.green, color: C.btnText, borderRadius: "3px", padding: "2px 6px", letterSpacing: "1px", fontWeight: "bold" }}>METAR</span>}
+              </div>
+              <Grid3 style={{ marginBottom: "8px" }}>
+                <div>
+                  <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "2px", marginBottom: "4px" }}>RUNWAY</div>
+                  {airportRunways.length > 0 ? (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                      {(function() {
+                        var wHdg = parseFloat(windHeading), wSpd = parseFloat(windSpeed) || 0;
+                        var withWind = airportRunways.map(function(r) {
+                          if (!isNaN(wHdg) && wSpd > 0) {
+                            var ang = (wHdg - r.heading + 360) % 360;
+                            var hw = Math.round(wSpd * Math.cos(ang * Math.PI / 180) * 10) / 10;
+                            var xw = Math.abs(Math.round(wSpd * Math.sin(ang * Math.PI / 180) * 10) / 10);
+                            return { num: r.num, heading: r.heading, length: r.length, hw: hw, xw: xw };
+                          }
+                          return { num: r.num, heading: r.heading, length: r.length, hw: null, xw: null };
+                        });
+                        var bestHW = withWind.reduce(function(best, r) { return r.hw !== null && (best === null || r.hw > best.hw) ? r : best; }, null);
+                        return withWind.map(function(r) {
+                          var isSelected = runway === String(parseInt(r.num));
+                          var isBest = bestHW && r.num === bestHW.num && r.hw !== null;
+                          return (
+                            <button key={r.num} onClick={function() { setRunway(String(parseInt(r.num))); setRunwayFull(r.num); }} style={{
+                              padding: "8px 12px", background: isSelected ? C.green : isBest ? "rgba(106,170,122,0.15)" : C.input,
+                              border: "1px solid " + (isSelected ? C.green : isBest ? C.green : C.border),
+                              borderRadius: "3px", color: isSelected ? C.btnText : isBest ? C.green : C.dim,
+                              fontFamily: mono, fontSize: "15px", letterSpacing: "1px", cursor: "pointer",
+                            }}>
+                              <div>{r.num}</div>
+                              {r.hw !== null && <div style={{ fontSize: "9px", marginTop: "2px", color: isSelected ? "#0a0e14" : r.hw > 0 ? C.green : C.error }}>{r.hw > 0 ? "+" : ""}{r.hw}kt</div>}
+                            </button>
+                          );
+                        });
+                      })()}
+                    </div>
+                  ) : (
+                    <input type="number" value={runway} onChange={function(e) { setRunway(e.target.value.slice(0,2)); setRunwayFull(""); }} placeholder="e.g. 28"
+                      style={{ width: "100%", boxSizing: "border-box", background: C.input, border: "1px solid " + C.border, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                  )}
+                </div>
+                <div>
+                  <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "2px", marginBottom: "4px" }}>WIND DIR</div>
+                  <input type="number" value={windHeading} onChange={function(e) { setWindHeading(e.target.value); }} placeholder="e.g. 270"
+                    style={{ width: "100%", boxSizing: "border-box", background: C.input, border: "1px solid " + C.border, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "2px", marginBottom: "4px" }}>SPEED KT</div>
+                  <input type="number" value={windSpeed} onChange={function(e) { setWindSpeed(e.target.value); }} placeholder="e.g. 10"
+                    style={{ width: "100%", boxSizing: "border-box", background: C.input, border: "1px solid " + C.border, borderRadius: "3px", padding: "11px 14px", color: C.text, fontFamily: mono, fontSize: "18px" }} />
+                </div>
+              </Grid3>
+              {windComponents && (function() {
+                var hw = windComponents.headwind, xw = windComponents.crosswind;
+                var hwColor = hw >= 0 ? C.green : C.error;
+                return (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "4px" }}>
+                    <div style={{ background: C.input, border: "1px solid " + hwColor + "55", borderRadius: "3px", padding: "8px 12px", textAlign: "center" }}>
+                      <div style={{ fontSize: "11px", letterSpacing: "2px", color: hwColor, marginBottom: "3px" }}>{hw >= 0 ? "HEADWIND" : "TAILWIND"}</div>
+                      <div style={{ fontSize: "22px", fontWeight: "bold", color: hwColor }}>{Math.abs(hw)} <span style={{ fontSize: "12px", color: C.dim }}>KT</span></div>
+                    </div>
+                    <div style={{ background: C.input, border: "1px solid " + C.cool + "55", borderRadius: "3px", padding: "8px 12px", textAlign: "center" }}>
+                      <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.cool, marginBottom: "3px" }}>CROSSWIND {windComponents.crossDir}</div>
+                      <div style={{ fontSize: "22px", fontWeight: "bold", color: C.cool }}>{xw} <span style={{ fontSize: "12px", color: C.dim }}>KT</span></div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+          {error && <ErrorBox msg={error} />}
+          <CalcButton onClick={handleCalculate} />
+          {result && (
+            <div style={{ marginTop: "28px" }}>
+              <SeminoleRunwayViz result={result} airportRunways={airportRunways} runway={runway} runwayFull={runwayFull} />
+              {result.windWasClamped && (
+                <div style={{ background: C.errorBg, border: "1px solid " + C.warm, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px" }}>
+                  <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>Wind clamped to {result.windClamped} kt (chart max {result.windDir === "head" ? "30" : "10"} kt)</div>
+                </div>
+              )}
+              <div style={{ background: C.input, border: "1px solid " + C.borderDim, borderRadius: "3px", padding: "12px 16px", display: "flex", justifyContent: "space-around", alignItems: "center", marginBottom: "12px" }}>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>ROTATE (Vr)</div>
+                  <div style={{ fontSize: "28px", fontWeight: "bold", color: markerColorRoll }}>{result.vr}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>KIAS</span></div>
+                </div>
+                <div style={{ width: "1px", height: "40px", background: C.borderDim }} />
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.dim, marginBottom: "4px" }}>OBSTACLE</div>
+                  <div style={{ fontSize: "28px", fontWeight: "bold", color: markerColor50 }}>{result.vobs}<span style={{ fontSize: "13px", color: C.dim, marginLeft: "4px" }}>KIAS</span></div>
+                </div>
+              </div>
+              <NoteBox text="Short field effort. Wing flaps 0, cowl flaps open, 2700 RPM full throttle before brake release, paved/level/dry. Engine failure at or after Vr - continue and fly procedure. Always verify against official POH." />
+            </div>
+          )}
+        </Card>
+      );
+    }
+
+    function SeminoleClimbGearUpTab({ savedState, onStateChange }) {
+      const C = useC();
+      const [alt, setAlt] = useState(savedState.alt || "");
+      const [oat, setOat] = useState(savedState.oat || "");
+      const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
+      const [weight, setWeight] = useState(savedState.weight || "");
+      const [result, setResult] = useState(null);
+      const [error, setError] = useState("");
+
+      useEffect(() => {
+        onStateChange({ alt, oat, tempUnit, weight });
+      }, [alt, oat, tempUnit, weight]);
+
+      const handleCalculate = useCallback(() => {
+        setError(""); setResult(null);
+        const altVal = parseFloat(alt);
+        let oatC = parseFloat(oat);
+        const weightVal = parseFloat(weight) || 3800;
+        if (isNaN(altVal) || isNaN(oatC)) { setError("Please fill in altitude and OAT."); return; }
+        if (tempUnit === "F") oatC = (oatC - 32) * 5 / 9;
+        if (altVal > 14000) { setError("Altitude must be at or below 14,000 ft."); return; }
+        if (weightVal < 2800 || weightVal > 3800) { setError("Weight must be 2,800 - 3,800 lbs."); return; }
+        const res = calculateSemClimbGearUp(Math.max(0, altVal), oatC, weightVal);
+        setResult({ ...res, altVal, weightVal });
+      }, [alt, oat, tempUnit, weight]);
+
+      return (
+        <Card>
+          <div style={{ marginBottom: "20px", paddingBottom: "16px", borderBottom: "1px solid " + C.border }}>
+            <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.green, marginBottom: "4px" }}>CLIMB PERFORMANCE</div>
+            <div style={{ fontSize: "13px", color: C.dimmer, letterSpacing: "1px" }}>BOTH ENGINES · GEAR UP · FLAPS 0 · 2700 RPM · FULL THROTTLE · 88 KIAS · FIG 5-19</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+            <AltOATRow altLabel="PRESSURE ALTITUDE" altValue={alt} onAltChange={setAlt} altHint="0 - 14,000 ft" altPlaceholder="e.g. 1250" oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
+            <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 3430" hint="2,800 - 3,800 lbs (leave blank for 3,800)" />
+          </div>
+          {error && <ErrorBox msg={error} />}
+          <CalcButton onClick={handleCalculate} />
+          {result && (
+            <div style={{ marginTop: "28px" }}>
+              <ISABadgeRow label="RESULTS" isaLabel={formatISA(result.isaDeviation)} isaDeviation={result.isaDeviation} isaTemp={result.isaTemp} />
+              {result.atCeiling && (
+                <div style={{ background: C.errorBg, border: "1px solid " + C.error, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ color: C.error, fontSize: "18px", flexShrink: 0 }}>!</div>
+                  <div>
+                    <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.error, marginBottom: "2px", fontWeight: "bold" }}>AT OR ABOVE SERVICE CEILING</div>
+                    <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>Rate of climb is zero or negative at these conditions.</div>
+                  </div>
+                </div>
+              )}
+              <div style={{ background: C.input, border: "1px solid " + C.green, borderRadius: "3px", padding: "24px 16px", textAlign: "center", marginBottom: "12px" }}>
+                <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "8px" }}>RATE OF CLIMB</div>
+                <div style={{ fontSize: "64px", color: result.atCeiling ? C.error : C.text, lineHeight: 1, fontWeight: "bold" }}>{Math.max(0, result.roc).toLocaleString()}</div>
+                <div style={{ fontSize: "13px", color: C.dim, marginTop: "8px", letterSpacing: "3px" }}>FEET PER MINUTE</div>
+              </div>
+              <NoteBox text="Both engines operating, gear up, flaps 0°, cowl flaps open, 2700 RPM full throttle, mixture full rich, 88 KIAS. Normal climb configuration after gear retraction. Always verify against official POH." />
+            </div>
+          )}
+        </Card>
+      );
+    }
+
+    function SeminoleClimbTab({ savedState, onStateChange }) {
+      const C = useC();
+      const [alt, setAlt] = useState(savedState.alt || "");
+      const [oat, setOat] = useState(savedState.oat || "");
+      const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
+      const [weight, setWeight] = useState(savedState.weight || "");
+      const [gear, setGear] = useState(savedState.gear || "up");
+      const [result, setResult] = useState(null);
+      const [error, setError] = useState("");
+
+      useEffect(() => {
+        onStateChange({ alt, oat, tempUnit, weight, gear });
+      }, [alt, oat, tempUnit, weight, gear]);
+
+      const handleCalculate = useCallback(() => {
+        setError(""); setResult(null);
+        const altVal = parseFloat(alt);
+        let oatC = parseFloat(oat);
+        const weightVal = parseFloat(weight) || 3800;
+        if (isNaN(altVal) || isNaN(oatC)) { setError("Please fill in altitude and OAT."); return; }
+        if (tempUnit === "F") oatC = (oatC - 32) * 5 / 9;
+        if (altVal > 14000) { setError("Altitude must be at or below 14,000 ft."); return; }
+        if (weightVal < 2800 || weightVal > 3800) { setError("Weight must be 2,800 - 3,800 lbs."); return; }
+        const res = gear === "up"
+          ? calculateSemClimbGearUp(Math.max(0, altVal), oatC, weightVal)
+          : calculateSemClimbGearDown(Math.max(0, altVal), oatC, weightVal);
+        setResult({ ...res, altVal, weightVal, gear });
+      }, [alt, oat, tempUnit, weight, gear]);
+
+      useEffect(() => {
+        if (result) handleCalculate();
+      }, [gear]);
+
+      return (
+        <Card>
+          <div style={{ marginBottom: "20px", paddingBottom: "16px", borderBottom: "1px solid " + C.border }}>
+            <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.green, marginBottom: "4px" }}>CLIMB PERFORMANCE</div>
+            <div style={{ fontSize: "13px", color: C.dimmer, letterSpacing: "1px" }}>BOTH ENGINES · FLAPS 0 · 2700 RPM · FULL THROTTLE · FULL RICH</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+            <ToggleRow label="LANDING GEAR" options={[{ label: "GEAR UP", val: "up" }, { label: "GEAR DOWN", val: "down" }]} value={gear} onChange={setGear} />
+            <AltOATRow altLabel="PRESSURE ALTITUDE" altValue={alt} onAltChange={setAlt} altHint="0 - 14,000 ft" altPlaceholder="e.g. 1250" oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
+            <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 3430" hint="2,800 - 3,800 lbs (leave blank for 3,800)" />
+          </div>
+          {error && <ErrorBox msg={error} />}
+          <CalcButton onClick={handleCalculate} />
+          {result && (
+            <div style={{ marginTop: "28px" }}>
+              <ISABadgeRow label="RESULTS" isaLabel={formatISA(result.isaDeviation)} isaDeviation={result.isaDeviation} isaTemp={result.isaTemp} />
+              {result.atCeiling && (
+                <div style={{ background: C.errorBg, border: "1px solid " + C.error, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ color: C.error, fontSize: "18px", flexShrink: 0 }}>!</div>
+                  <div>
+                    <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.error, marginBottom: "2px", fontWeight: "bold" }}>AT OR ABOVE SERVICE CEILING</div>
+                    <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>Rate of climb is zero or negative at these conditions.</div>
+                  </div>
+                </div>
+              )}
+              <div style={{ background: C.input, border: "1px solid " + C.green, borderRadius: "3px", padding: "24px 16px", textAlign: "center", marginBottom: "12px" }}>
+                <div style={{ fontSize: "11px", letterSpacing: "3px", color: C.dim, marginBottom: "4px" }}>{result.gear === "up" ? "GEAR UP · 88 KIAS · FIG 5-19" : "GEAR DOWN · 78 KIAS · FIG 5-17"}</div>
+                <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "8px" }}>RATE OF CLIMB</div>
+                <div style={{ fontSize: "64px", color: result.atCeiling ? C.error : C.text, lineHeight: 1, fontWeight: "bold" }}>{Math.max(0, result.roc).toLocaleString()}</div>
+                <div style={{ fontSize: "13px", color: C.dim, marginTop: "8px", letterSpacing: "3px" }}>FEET PER MINUTE</div>
+              </div>
+              <NoteBox text={result.gear === "up"
+                ? "Both engines operating, gear up, flaps 0°, cowl flaps open, 2700 RPM full throttle, mixture full rich, 88 KIAS. Normal climb configuration after gear retraction. Always verify against official POH."
+                : "Both engines operating, gear down, flaps 0°, cowl flaps open, 2700 RPM full throttle, mixture full rich, 78 KIAS. Initial climb configuration before gear retraction. Always verify against official POH."
+              } />
+            </div>
+          )}
+        </Card>
+      );
+    }
+
+    function SeminoleClimbGearDownTab({ savedState, onStateChange }) {
+      const C = useC();
+      const [alt, setAlt] = useState(savedState.alt || "");
+      const [oat, setOat] = useState(savedState.oat || "");
+      const [tempUnit, setTempUnit] = useState(savedState.tempUnit || "C");
+      const [weight, setWeight] = useState(savedState.weight || "");
+      const [result, setResult] = useState(null);
+      const [error, setError] = useState("");
+
+      useEffect(() => {
+        onStateChange({ alt, oat, tempUnit, weight });
+      }, [alt, oat, tempUnit, weight]);
+
+      const handleCalculate = useCallback(() => {
+        setError(""); setResult(null);
+        const altVal = parseFloat(alt);
+        let oatC = parseFloat(oat);
+        const weightVal = parseFloat(weight) || 3800;
+        if (isNaN(altVal) || isNaN(oatC)) { setError("Please fill in altitude and OAT."); return; }
+        if (tempUnit === "F") oatC = (oatC - 32) * 5 / 9;
+        if (altVal > 14000) { setError("Altitude must be at or below 14,000 ft."); return; }
+        if (weightVal < 2800 || weightVal > 3800) { setError("Weight must be 2,800 - 3,800 lbs."); return; }
+        const res = calculateSemClimbGearDown(Math.max(0, altVal), oatC, weightVal);
+        setResult({ ...res, altVal, weightVal });
+      }, [alt, oat, tempUnit, weight]);
+
+      return (
+        <Card>
+          <div style={{ marginBottom: "20px", paddingBottom: "16px", borderBottom: "1px solid " + C.border }}>
+            <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.green, marginBottom: "4px" }}>CLIMB PERFORMANCE</div>
+            <div style={{ fontSize: "13px", color: C.dimmer, letterSpacing: "1px" }}>BOTH ENGINES · GEAR DOWN · FLAPS 0 · 2700 RPM · FULL THROTTLE · 78 KIAS · FIG 5-17</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+            <AltOATRow altLabel="PRESSURE ALTITUDE" altValue={alt} onAltChange={setAlt} altHint="0 - 14,000 ft" altPlaceholder="e.g. 1250" oatValue={oat} onOatChange={setOat} unit={tempUnit} onUnitChange={setTempUnit} />
+            <InputField label="GROSS WEIGHT" unit="LBS" value={weight} onChange={setWeight} placeholder="e.g. 3430" hint="2,800 - 3,800 lbs (leave blank for 3,800)" />
+          </div>
+          {error && <ErrorBox msg={error} />}
+          <CalcButton onClick={handleCalculate} />
+          {result && (
+            <div style={{ marginTop: "28px" }}>
+              <ISABadgeRow label="RESULTS" isaLabel={formatISA(result.isaDeviation)} isaDeviation={result.isaDeviation} isaTemp={result.isaTemp} />
+              {result.atCeiling && (
+                <div style={{ background: C.errorBg, border: "1px solid " + C.error, borderRadius: "3px", padding: "10px 14px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ color: C.error, fontSize: "18px", flexShrink: 0 }}>!</div>
+                  <div>
+                    <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.error, marginBottom: "2px", fontWeight: "bold" }}>AT OR ABOVE SERVICE CEILING</div>
+                    <div style={{ fontSize: "12px", color: C.note, letterSpacing: "1px" }}>Rate of climb is zero or negative at these conditions.</div>
+                  </div>
+                </div>
+              )}
+              <div style={{ background: C.input, border: "1px solid " + C.green, borderRadius: "3px", padding: "24px 16px", textAlign: "center", marginBottom: "12px" }}>
+                <div style={{ fontSize: "13px", letterSpacing: "3px", color: C.green, marginBottom: "8px" }}>RATE OF CLIMB</div>
+                <div style={{ fontSize: "64px", color: result.atCeiling ? C.error : C.text, lineHeight: 1, fontWeight: "bold" }}>{Math.max(0, result.roc).toLocaleString()}</div>
+                <div style={{ fontSize: "13px", color: C.dim, marginTop: "8px", letterSpacing: "3px" }}>FEET PER MINUTE</div>
+              </div>
+              <NoteBox text="Both engines operating, gear down, flaps 0°, cowl flaps open, 2700 RPM full throttle, mixture full rich, 78 KIAS. Transition to gear up configuration as soon as practical after positive rate established." />
+            </div>
+          )}
+        </Card>
+      );
+    }
+
+    function SeminoleApp({ onBack, theme, toggleTheme }) {
+      const C = useC();
+      const mobile = useIsMobile();
+      const [activeTab, setActiveTab] = useState("takeoff");
+      const [tabStates, setTabStates] = useState({});
+      function saveTabState(id, state) { setTabStates(function(prev) { var n = {}; Object.keys(prev).forEach(function(k) { n[k] = prev[k]; }); n[id] = state; return n; }); }
+      var tabs = [{ id: "takeoff", label: "TAKEOFF", fig: "5-13/15" }, { id: "climb", label: "CLIMB", fig: "5-17/19" }];
+      function tabProps(id) { return { savedState: tabStates[id] || {}, onStateChange: function(s) { saveTabState(id, s); } }; }
+      return (
+        <MobileContext.Provider value={mobile}>
+          <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: mobile ? "16px 12px" : "32px 24px" }}>
+            {onBack && (
+              <div style={{ width: "100%", maxWidth: "860px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <button onClick={onBack} style={{ background: "none", border: "1px solid " + C.borderDim, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>AIRCRAFT</button>
+                <button onClick={toggleTheme} style={{ background: "none", border: "1px solid " + C.borderDim, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
+                  {theme === "dark" ? "LIGHT" : "DARK"}
+                </button>
+              </div>
+            )}
+            <div style={{ textAlign: "center", marginBottom: mobile ? "16px" : "32px" }}>
+              <div style={{ fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" }}>PA-44-180 SEMINOLE - POH PERFORMANCE</div>
+              <div style={{ fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px" }}>PERFORMANCE CALCULATOR</div>
+              <div style={{ fontSize: "11px", color: C.warm, marginTop: "8px", letterSpacing: "2px" }}>EARLY ACCESS - MORE TABS COMING SOON</div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(" + tabs.length + ", 1fr)", marginBottom: mobile ? "14px" : "24px", border: "1px solid " + C.border, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
+              {tabs.map(function(tab, i) {
+                return (
+                  <button key={tab.id} onClick={function() { setActiveTab(tab.id); }} style={{
+                    padding: mobile ? "10px 4px" : "14px 8px", background: activeTab === tab.id ? C.green : C.card,
+                    border: "none", borderLeft: i > 0 ? "1px solid " + C.border : "none",
+                    color: activeTab === tab.id ? C.btnText : C.dim,
+                    fontFamily: mono, fontSize: mobile ? "10px" : "15px", letterSpacing: mobile ? "0px" : "2px",
+                    cursor: "pointer", textTransform: "uppercase",
+                  }}>
+                    <div style={{ fontWeight: "bold" }}>{tab.label}</div>
+                    <div style={{ fontSize: mobile ? "9px" : "12px", marginTop: "2px", opacity: 0.7 }}>{tab.fig}</div>
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ width: "100%", maxWidth: "860px" }}>
+              {activeTab === "takeoff" ? React.createElement(SeminoleTakeoffTab, tabProps("takeoff")) : null}
+              {activeTab === "climb" ? React.createElement(SeminoleClimbTab, tabProps("climb")) : null}
+            </div>
+            <div style={{ marginTop: "24px", fontSize: "12px", color: C.dim, letterSpacing: "2px" }}>PA-44-180 SEMINOLE - REPORT VB-2636 - ISSUED NOV 2016</div>
+          </div>
+        </MobileContext.Provider>
+      );
+    }
+
+
     function AircraftMenu({ onSelect, theme, toggleTheme }) {
       const C = useC();
       const mobile = useIsMobile();
@@ -5171,7 +6384,7 @@ null}
           sub: "Seminole",
           desc: "Twin Engine · Multi-Engine Trainer",
           tags: ["Takeoff", "Landing", "Climb", "Cruise", "OEI Performance"],
-          available: false,
+          available: true,
         },
       ];
 
@@ -5248,10 +6461,10 @@ null}
       }, [theme]);
       if (!aircraft) return <ThemeContext.Provider value={theme}><AircraftMenu onSelect={setAircraft} theme={theme} toggleTheme={toggleTheme} /></ThemeContext.Provider>;
       if (aircraft === "c172s") return <ThemeContext.Provider value={theme}><C172App onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} /></ThemeContext.Provider>;
+      if (aircraft === "pa44")  return <ThemeContext.Provider value={theme}><SeminoleApp onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} /></ThemeContext.Provider>;
       return <ThemeContext.Provider value={theme}><App onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} /></ThemeContext.Provider>;
     }
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<Root />);
-  </script>
+    ReactDOM.createRoot(document.getElementById("root")).render(<Root />);</script>
 </body>
 </html>
