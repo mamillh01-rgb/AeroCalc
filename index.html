@@ -864,7 +864,8 @@
       <div style={{ fontSize: "13px", letterSpacing: "2px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" }}>
       ENDURANCE & RANGE · {reserve === "45min" ? "45 MIN RESERVE" : "NO RESERVE"}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "6px", marginBottom: "6px" }}>
+      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "6px", marginBottom: "6px", minWidth: "280px" }}>
       {["POWER", "GPH", "ENDURANCE", "RANGE"].map(h => (
       <div key={h} style={{ fontSize: "12px", color: C.dimmer, letterSpacing: "1px", textAlign: "center" }}>{h}</div>
       ))}
@@ -881,7 +882,7 @@
       const isActive = row.key === result.power;
       const displayRange = Math.round(row.rangeNM * (result.wheelPants ? 1 : 0.97));
       return (
-      <div key={row.pwr} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "6px", marginBottom: "4px", background: isActive ? "rgba(90,138,106,0.12)" : "transparent", borderRadius: "2px", padding: "4px 2px", borderLeft: isActive ? `2px solid ${C.green}` : "2px solid transparent" }}>
+      <div key={row.pwr} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "6px", marginBottom: "4px", minWidth: "280px", background: isActive ? "rgba(90,138,106,0.12)" : "transparent", borderRadius: "2px", padding: "4px 2px", borderLeft: isActive ? `2px solid ${C.green}` : "2px solid transparent" }}>
       <div style={{ fontSize: "15px", color: isActive ? C.green : C.dim, textAlign: "center", fontWeight: isActive ? "bold" : "normal" }}>{row.pwr}</div>
       <div style={{ fontSize: "15px", color: isActive ? C.dim : C.dimmest, textAlign: "center" }}>{row.gph}</div>
       <div style={{ fontSize: "15px", color: isActive ? C.text : C.dim, textAlign: "center" }}>{row.endurance.toFixed(2)} hrs</div>
@@ -891,6 +892,7 @@
       })}
       <div style={{ fontSize: "12px", color: C.dimmest, marginTop: "8px", letterSpacing: "1px" }}>
       Incl. climb/descent · {reserve === "45min" ? "Reserve = 45 min at 55% power" : "No reserve"}{!result.wheelPants ? " · −3% range for no wheel pants" : ""}
+      </div>
       </div>
       </div>
       <NoteBox text={`${cfg.label} best economy mixture. RPM/TAS from Fig ${cfg.fig}. Endurance/range from Figs 5-33/5-29 (no reserve) or 5-35/5-31 (45 min reserve). Always verify against official charts.`} />
@@ -3561,16 +3563,16 @@
       return (
       <MobileContext.Provider value={mobile}>
       <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: mobile ? "16px 12px" : "32px 24px" }}>
-      {onBack && (
       <div style={{ width: "100%", maxWidth: "860px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      {onBack ? (
       <button onClick={onBack} style={{ background: "none", border: `${C.cardBorder} solid ${C.borderDim}`, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
       ← AIRCRAFT
       </button>
+      ) : <div />}
       <button onClick={toggleTheme} style={{ background: "none", border: `${C.cardBorder} solid ${C.borderDim}`, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
       {theme === "dark" ? "☀ LIGHT" : "☾ DARK"}
       </button>
       </div>
-      )}
       <div style={{ textAlign: "center", marginBottom: mobile ? "16px" : "32px" }}>
       <div style={{ fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" }}>PA-28-181 ARCHER III · POH PERFORMANCE</div>
       <div style={{ fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px", textTransform: "uppercase" }}>PERFORMANCE CALCULATOR</div>
@@ -3581,8 +3583,8 @@
       padding: mobile ? "10px 4px" : "14px 6px",
       background: activeTab === tab.id ? C.green : C.card,
       border: "none",
-      borderLeft: mobile ? (i % 3 > 0 ? `${C.cardBorder} solid ${C.border}` : "none") : (i > 0 ? `${C.cardBorder} solid ${C.border}` : "none"),
-      borderTop: mobile && i >= 3 ? `${C.cardBorder} solid ${C.border}` : "none",
+      borderLeft: mobile ? (i % 4 > 0 ? `${C.cardBorder} solid ${C.border}` : "none") : (i > 0 ? `${C.cardBorder} solid ${C.border}` : "none"),
+      borderTop: mobile && i >= 4 ? `${C.cardBorder} solid ${C.border}` : "none",
       color: activeTab === tab.id ? C.btnText : C.dim,
       fontFamily: mono, fontSize: mobile ? "10px" : "13px", letterSpacing: mobile ? "0px" : "1px",
       cursor: "pointer", textTransform: "uppercase", transition: "all 0.15s",
@@ -5395,16 +5397,16 @@
       return (
       <MobileContext.Provider value={mobile}>
       <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: mobile ? "16px 12px" : "32px 24px" }}>
-      {onBack && (
       <div style={{ width: "100%", maxWidth: "860px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      {onBack ? (
       <button onClick={onBack} style={{ background: "none", border: `${C.cardBorder} solid ${C.borderDim}`, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
       ← AIRCRAFT
       </button>
+      ) : <div />}
       <button onClick={toggleTheme} style={{ background: "none", border: `${C.cardBorder} solid ${C.borderDim}`, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
       {theme === "dark" ? "☀ LIGHT" : "☾ DARK"}
       </button>
       </div>
-      )}
       <div style={{ textAlign: "center", marginBottom: mobile ? "16px" : "32px" }}>
       <div style={{ fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" }}>CESSNA 172S NAV III · POH PERFORMANCE</div>
       <div style={{ fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px", textTransform: "uppercase" }}>PERFORMANCE CALCULATOR</div>
@@ -7550,14 +7552,14 @@ null}
       return (
       <MobileContext.Provider value={mobile}>
       <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: mobile ? "16px 12px" : "32px 24px" }}>
-      {onBack && (
       <div style={{ width: "100%", maxWidth: "860px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      {onBack ? (
       <button onClick={onBack} style={{ background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>AIRCRAFT</button>
+      ) : <div />}
       <button onClick={toggleTheme} style={{ background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
       {theme === "dark" ? "LIGHT" : "DARK"}
       </button>
       </div>
-      )}
       <div style={{ textAlign: "center", marginBottom: mobile ? "16px" : "32px" }}>
       <div style={{ fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" }}>PA-44-180 SEMINOLE - POH PERFORMANCE</div>
       <div style={{ fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px" }}>PERFORMANCE CALCULATOR</div>
@@ -7624,7 +7626,7 @@ null}
       return (
       <MobileContext.Provider value={mobile}>
       <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: mobile ? "24px 16px" : "48px 24px" }}>
-      <div style={{ position: "absolute", top: "16px", right: "16px" }}>
+      <div style={{ width: "100%", maxWidth: "760px", display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
       <button onClick={toggleTheme} style={{ background: "none", border: `${C.cardBorder} solid ${C.borderDim}`, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
       {theme === "dark" ? "☀ LIGHT" : "☾ DARK"}
       </button>
