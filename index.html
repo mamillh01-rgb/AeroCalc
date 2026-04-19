@@ -3203,13 +3203,50 @@
       const C = useC();
       const mono = "'Courier New', monospace";
       const ARMS = { frontSeats: 80.5, rearSeats: 118.1, fuel: 95.0, baggage: 142.8 };
-      const EMPTY_WT = 1673.2;
-      const EMPTY_MOM = 147408.4;
+      const DEFAULT_PROFILE = { tail: "N866PU", emptyWt: 1673.2, emptyCG: 147408.4 / 1673.2, emptyMom: 147408.4 };
+      const STORAGE_KEY = "aerocalc-archer-profiles";
+      const loadProfiles = () => {
+        try {
+          var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+          if (saved && saved.length) return saved;
+        } catch(e) {}
+        return [DEFAULT_PROFILE];
+      };
+      const [profiles, setProfiles] = useState(loadProfiles);
+      const [activeProfileIdx, setActiveProfileIdx] = useState(0);
+      const [showProfileEditor, setShowProfileEditor] = useState(false);
+      const [editTail, setEditTail] = useState("");
+      const [editWt, setEditWt] = useState("");
+      const [editCG, setEditCG] = useState("");
+      const activeProfile = profiles[activeProfileIdx] || DEFAULT_PROFILE;
+      const EMPTY_WT  = activeProfile.emptyWt;
+      const EMPTY_MOM = activeProfile.emptyMom || activeProfile.emptyWt * activeProfile.emptyCG;
       const MAX_GW = 2550;
       const FUEL_LB_PER_GAL = 6.0;
       const MAX_FUEL_GAL = 48;
       const MAX_BAGGAGE = 200;
       const TAXI_FUEL_LB = 1.2 * 6.0;
+      const saveProfiles = (profs) => {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(profs)); } catch(e) {}
+        setProfiles(profs);
+      };
+      const addProfile = () => {
+        var wt = parseFloat(editWt);
+        var cg = parseFloat(editCG);
+        if (!editTail || isNaN(wt) || isNaN(cg)) return;
+        var newProf = { tail: editTail.toUpperCase(), emptyWt: wt, emptyCG: cg, emptyMom: wt * cg };
+        var newProfs = [...profiles, newProf];
+        saveProfiles(newProfs);
+        setActiveProfileIdx(newProfs.length - 1);
+        setEditTail(""); setEditWt(""); setEditCG("");
+        setShowProfileEditor(false);
+      };
+      const deleteProfile = (idx) => {
+        if (profiles[idx].tail === "N866PU") return;
+        var newProfs = profiles.filter((_, i) => i !== idx);
+        saveProfiles(newProfs);
+        setActiveProfileIdx(0);
+      };
       const [pilot,   setPilot]   = useState(savedState.pilot   || "");
       const [copilot, setCopilot] = useState(savedState.copilot || "");
       const [rearL,   setRearL]   = useState(savedState.rearL   || "");
@@ -3299,7 +3336,58 @@
       ];
       return (
       <Card>
-      <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "20px" }}>WEIGHT AND BALANCE</div>
+      <div style={{ fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "12px" }}>WEIGHT AND BALANCE</div>
+      <div style={{ marginBottom: "16px" }}>
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
+          {profiles.map(function(p, i) {
+            var isActive = i === activeProfileIdx;
+            return React.createElement("button", {
+              key: i,
+              onClick: function() { setActiveProfileIdx(i); setShowProfileEditor(false); },
+              style: { padding: "5px 12px", background: isActive ? C.green : C.input, border: C.cardBorder + " solid " + (isActive ? C.green : C.border), borderRadius: "3px", color: isActive ? C.btnText : C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }
+            },
+              React.createElement("span", { style: { fontWeight: "bold" } }, p.tail),
+              i > 0 && !isActive && React.createElement("span", {
+                onClick: function(e) { e.stopPropagation(); deleteProfile(i); },
+                style: { color: C.error, fontSize: "13px", lineHeight: 1, marginLeft: "2px" }
+              }, "x")
+            );
+          })}
+          <button onClick={function() { setShowProfileEditor(!showProfileEditor); }}
+            style={{ padding: "5px 12px", background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
+            + NEW
+          </button>
+        </div>
+        <div style={{ fontSize: "10px", color: C.dimmest, letterSpacing: "1px", marginTop: "5px", fontFamily: mono }}>
+          {activeProfile.tail} · {activeProfile.emptyWt.toFixed(1)} LB · CG {(EMPTY_MOM / EMPTY_WT).toFixed(2)}"
+        </div>
+        {showProfileEditor && React.createElement("div", {
+          style: { marginTop: "10px", padding: "12px", background: C.input, border: C.cardBorder + " solid " + C.border, borderRadius: "4px" }
+        },
+          React.createElement("div", { style: { fontSize: "10px", letterSpacing: "2px", color: C.dim, fontFamily: mono, marginBottom: "8px", fontWeight: "bold" } }, "NEW AIRCRAFT PROFILE"),
+          React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "8px" } },
+            React.createElement("div", null,
+              React.createElement("div", { style: { fontSize: "9px", color: C.dim, letterSpacing: "1px", fontFamily: mono, marginBottom: "3px" } }, "TAIL #"),
+              React.createElement("input", { type: "text", value: editTail, onChange: function(e) { setEditTail(e.target.value); }, placeholder: "",
+                style: { width: "100%", background: C.bg, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "6px 8px", color: C.text, fontFamily: mono, fontSize: "14px" } })
+            ),
+            React.createElement("div", null,
+              React.createElement("div", { style: { fontSize: "9px", color: C.dim, letterSpacing: "1px", fontFamily: mono, marginBottom: "3px" } }, "EMPTY WT (LB)"),
+              React.createElement("input", { type: "number", value: editWt, onChange: function(e) { setEditWt(e.target.value); }, placeholder: "",
+                style: { width: "100%", background: C.bg, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "6px 8px", color: C.text, fontFamily: mono, fontSize: "14px" } })
+            ),
+            React.createElement("div", null,
+              React.createElement("div", { style: { fontSize: "9px", color: C.dim, letterSpacing: "1px", fontFamily: mono, marginBottom: "3px" } }, "EMPTY CG (IN)"),
+              React.createElement("input", { type: "number", value: editCG, onChange: function(e) { setEditCG(e.target.value); }, placeholder: "",
+                style: { width: "100%", background: C.bg, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "6px 8px", color: C.text, fontFamily: mono, fontSize: "14px" } })
+            )
+          ),
+          React.createElement("button", {
+            onClick: addProfile,
+            style: { padding: "7px 16px", background: C.green, border: "none", borderRadius: "3px", color: C.btnText, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: "bold" }
+          }, "SAVE PROFILE")
+        )}
+      </div>
       {/* Top-down aircraft diagram */}
       <div style={{ position: "relative", background: C.surface, borderRadius: "6px", border: C.cardBorder + " solid " + C.border, marginBottom: "16px" }}
       onClick={function() { setActive(null); }}>
