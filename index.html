@@ -8156,6 +8156,9 @@ null}
             <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "5px" }}>PASSWORD</div>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && submit()}
               style={{ width: "100%", background: C.isLight ? "#fff" : C.input, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "15px", boxSizing: "border-box" }} />
+            {mode === "signup" && <div style={{ fontSize: "10px", color: C.dimmest, marginTop: "6px", letterSpacing: "0.5px", lineHeight: "1.5" }}>
+              🔒 Your password is encrypted by Supabase and never visible to AeroCalc or its developers.
+            </div>}
           </div>}
           {mode === "login" && <div style={{ textAlign: "right", marginBottom: "16px" }}>
             <button onClick={() => { setMode("reset"); setMsg(""); }} style={{ background: "none", border: "none", color: C.dimmest, fontFamily: mono, fontSize: "10px", letterSpacing: "1px", cursor: "pointer", padding: 0 }}>Forgot password?</button>
@@ -8175,9 +8178,68 @@ null}
       );
     }
 
+    function ResetPasswordScreen({ theme, toggleTheme }) {
+      const C = useC();
+      const mono = "'Courier New', monospace";
+      const [password, setPassword] = useState("");
+      const [confirm, setConfirm] = useState("");
+      const [msg, setMsg] = useState("");
+      const [loading, setLoading] = useState(false);
+      const [done, setDone] = useState(false);
+      const submit = async () => {
+        if (password !== confirm) { setMsg("Passwords don't match."); return; }
+        if (password.length < 6) { setMsg("Password must be at least 6 characters."); return; }
+        setLoading(true); setMsg("");
+        var res = await sbClient.auth.updateUser({ password });
+        if (res.error) { setMsg(res.error.message); }
+        else { setDone(true); await sbClient.auth.signOut(); }
+        setLoading(false);
+      };
+      return (
+      <ThemeContext.Provider value={theme}>
+      <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 16px" }}>
+      <div style={{ width: "100%", maxWidth: "400px" }}>
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+          <div style={{ fontSize: "36px", fontWeight: "bold", letterSpacing: "3px" }}>AERO</div>
+          <div style={{ fontSize: "36px", fontWeight: "bold", letterSpacing: "3px", color: C.green }}>CALC</div>
+        </div>
+        <div style={{ background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "6px", padding: "28px" }}>
+          {done ? (
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "14px", color: C.green, letterSpacing: "2px", marginBottom: "8px" }}>PASSWORD UPDATED</div>
+              <div style={{ fontSize: "12px", color: C.dim, marginBottom: "20px" }}>You can now sign in with your new password.</div>
+              <button onClick={() => window.location.hash = ""} style={{ width: "100%", padding: "12px", background: C.green, border: "none", borderRadius: "3px", color: C.btnText, fontFamily: mono, fontSize: "12px", letterSpacing: "2px", cursor: "pointer", fontWeight: "bold" }}>GO TO APP</button>
+            </div>
+          ) : (
+            <>
+              <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.dim, marginBottom: "20px", textAlign: "center" }}>SET NEW PASSWORD</div>
+              <div style={{ marginBottom: "12px" }}>
+                <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "5px" }}>NEW PASSWORD</div>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                  style={{ width: "100%", background: C.isLight ? "#fff" : C.input, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "15px", boxSizing: "border-box" }} />
+              </div>
+              <div style={{ marginBottom: "20px" }}>
+                <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "5px" }}>CONFIRM PASSWORD</div>
+                <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} onKeyDown={e => e.key === "Enter" && submit()}
+                  style={{ width: "100%", background: C.isLight ? "#fff" : C.input, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "15px", boxSizing: "border-box" }} />
+              </div>
+              {msg && <div style={{ fontSize: "12px", color: C.error, marginBottom: "12px" }}>{msg}</div>}
+              <button onClick={submit} disabled={loading} style={{ width: "100%", padding: "12px", background: C.green, border: "none", borderRadius: "3px", color: C.btnText, fontFamily: mono, fontSize: "12px", letterSpacing: "2px", cursor: "pointer", fontWeight: "bold" }}>
+                {loading ? "..." : "UPDATE PASSWORD"}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+      </div>
+      </ThemeContext.Provider>
+      );
+    }
+
     function Root() {
       const [aircraft, setAircraft] = useState(null);
-      const [user, setUser] = useState(undefined); // undefined = loading, null = logged out
+      const [user, setUser] = useState(undefined);
+      const [isPasswordReset, setIsPasswordReset] = useState(false);
       const [theme, setTheme] = useState(() => {
         try { return localStorage.getItem("aerocalc-theme") || "dark"; } catch(e) { return "dark"; }
       });
@@ -8196,11 +8258,15 @@ null}
           setUser(data.session ? data.session.user : null);
         });
         var { data: listener } = sbClient.auth.onAuthStateChange((_event, session) => {
+          if (_event === "PASSWORD_RECOVERY") {
+            setIsPasswordReset(true);
+          }
           setUser(session ? session.user : null);
         });
         return () => listener.subscription.unsubscribe();
       }, []);
-      if (user === undefined) return null; // loading
+      if (user === undefined) return null;
+      if (isPasswordReset) return <ResetPasswordScreen theme={theme} toggleTheme={toggleTheme} />;
       const wrapTheme = (el) => <ThemeContext.Provider value={theme}>{el}</ThemeContext.Provider>;
       if (!aircraft) return wrapTheme(<AircraftMenu onSelect={setAircraft} theme={theme} toggleTheme={toggleTheme} user={user} onSignOut={async () => { await sbClient.auth.signOut(); setUser(null); }} onSignIn={setUser} />);
       if (aircraft === "c172s") return wrapTheme(<C172App onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} user={user} />);
