@@ -31,6 +31,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://udrzcdcywyeletqfwhpc.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_hguS4VI17bZTCsdwRW16zg_G85-J9Ot";
+    const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #0a0e1a; color: #e8e0cc; font-family: 'Courier New', monospace; }
@@ -2872,7 +2878,7 @@
     "M470.731,995.997L470.731,1014.08",
     "M504.824,1138.61C514.901,1181.24 523.938,1177.38 536.644,1138.61"
     ];
-    function C172WBTab({ savedState, onStateChange }) {
+    function C172WBTab({ savedState, onStateChange, user }) {
       const C = useC();
       const mono = "'Courier New', monospace";
       const ARMS = { frontSeats: 37.0, rearSeats: 73.0, fuel: 48.0, baggageA: 95.0, baggageB: 123.0 };
@@ -2904,7 +2910,32 @@
       const saveC172Profiles = (profs) => {
         try { localStorage.setItem(C172_STORAGE_KEY, JSON.stringify(profs)); } catch(e) {}
         setProfiles(profs);
+        if (user) {
+          var rows = profs.map(function(p) { return { user_id: user.id, aircraft: "C172S", tail: p.tail, empty_wt: p.emptyWt, empty_cg: p.emptyCG, empty_mom: p.emptyMom }; });
+          sbClient.from("profiles").delete().eq("user_id", user.id).eq("aircraft", "C172S").then(function({ error: delErr }) {
+            if (delErr) { console.error("C172 delete error:", delErr); return; }
+            sbClient.from("profiles").insert(rows).then(function({ error: insErr }) {
+              if (insErr) console.error("C172 insert error:", insErr);
+              else console.log("C172 profiles saved to cloud:", rows.length);
+            });
+          });
+        }
       };
+      React.useEffect(() => {
+        if (!user) return;
+        sbClient.from("profiles").select("*").eq("user_id", user.id).eq("aircraft", "C172S").then(function({ data, error }) {
+          if (error) { console.error("C172 profile sync error:", error); return; }
+          if (data && data.length) {
+            var cloud = data.map(function(r) { return { tail: r.tail, emptyWt: r.empty_wt, emptyCG: r.empty_cg, emptyMom: r.empty_mom }; });
+            setProfiles(function(current) {
+              var merged = [...current];
+              cloud.forEach(function(p) { if (!merged.find(function(m) { return m.tail === p.tail; })) merged.push(p); });
+              try { localStorage.setItem(C172_STORAGE_KEY, JSON.stringify(merged)); } catch(e) {}
+              return merged;
+            });
+          }
+        });
+      }, [user ? user.id : null]);
       const addC172Profile = () => {
         var wt = parseFloat(editWt);
         var cg = parseFloat(editCG);
@@ -2921,6 +2952,33 @@
         var newProfs = profiles.filter((_, i) => i !== idx);
         saveC172Profiles(newProfs);
         setActiveProfileIdx(0);
+      };
+      const exportC172Profiles = () => {
+        var data = JSON.stringify({ aircraft: "C172S", profiles: profiles }, null, 2);
+        var blob = new Blob([data], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = "aerocalc-c172-profiles.json"; a.click();
+        URL.revokeObjectURL(url);
+      };
+      const importC172Profiles = (e) => {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          try {
+            var data = JSON.parse(ev.target.result);
+            if (data.profiles && data.profiles.length) {
+              var merged = [...profiles];
+              data.profiles.forEach(function(p) {
+                if (!merged.find(function(m) { return m.tail === p.tail; })) merged.push(p);
+              });
+              saveC172Profiles(merged);
+            }
+          } catch(err) {}
+        };
+        reader.readAsText(file);
+        e.target.value = "";
       };
       const [pilot,    setPilot]    = useState(savedState.pilot    || "");
       const [copilot,  setCopilot]  = useState(savedState.copilot  || "");
@@ -3093,6 +3151,15 @@
             style: { padding: "7px 16px", background: C.green, border: "none", borderRadius: "3px", color: C.btnText, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: "bold" }
           }, "SAVE PROFILE")
         )}
+      <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
+        <button onClick={exportC172Profiles} style={{ padding: "4px 10px", background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", color: C.dim, fontFamily: mono, fontSize: "10px", letterSpacing: "1px", cursor: "pointer" }}>
+          ↓ EXPORT
+        </button>
+        <label style={{ padding: "4px 10px", background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", color: C.dim, fontFamily: mono, fontSize: "10px", letterSpacing: "1px", cursor: "pointer" }}>
+          ↑ IMPORT
+          <input type="file" accept=".json" onChange={importC172Profiles} style={{ display: "none" }} />
+        </label>
+      </div>
       </div>
       <div style={{ position: "relative", background: C.surface, borderRadius: "6px", border: "1px solid "+C.border, marginBottom: "16px" }}
         onClick={function() { setActive(null); }}>
@@ -3313,7 +3380,7 @@
       </Card>
       );
     }
-    function ArcherWBTab({ savedState, onStateChange }) {
+    function ArcherWBTab({ savedState, onStateChange, user }) {
       const C = useC();
       const mono = "'Courier New', monospace";
       const ARMS = { frontSeats: 80.5, rearSeats: 118.1, fuel: 95.0, baggage: 142.8 };
@@ -3343,7 +3410,32 @@
       const saveProfiles = (profs) => {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(profs)); } catch(e) {}
         setProfiles(profs);
+        if (user) {
+          var rows = profs.map(function(p) { return { user_id: user.id, aircraft: "PA-28-181", tail: p.tail, empty_wt: p.emptyWt, empty_cg: p.emptyCG, empty_mom: p.emptyMom }; });
+          sbClient.from("profiles").delete().eq("user_id", user.id).eq("aircraft", "PA-28-181").then(function({ error: delErr }) {
+            if (delErr) { console.error("Archer delete error:", delErr); return; }
+            sbClient.from("profiles").insert(rows).then(function({ error: insErr }) {
+              if (insErr) console.error("Archer insert error:", insErr);
+              else console.log("Archer profiles saved to cloud:", rows.length);
+            });
+          });
+        }
       };
+      React.useEffect(() => {
+        if (!user) return;
+        sbClient.from("profiles").select("*").eq("user_id", user.id).eq("aircraft", "PA-28-181").then(function({ data, error }) {
+          if (error) { console.error("Archer profile sync error:", error); return; }
+          if (data && data.length) {
+            var cloud = data.map(function(r) { return { tail: r.tail, emptyWt: r.empty_wt, emptyCG: r.empty_cg, emptyMom: r.empty_mom }; });
+            setProfiles(function(current) {
+              var merged = [...current];
+              cloud.forEach(function(p) { if (!merged.find(function(m) { return m.tail === p.tail; })) merged.push(p); });
+              try { localStorage.setItem(STORAGE_KEY, JSON.stringify(merged)); } catch(e) {}
+              return merged;
+            });
+          }
+        });
+      }, [user ? user.id : null]);
       const addProfile = () => {
         var wt = parseFloat(editWt);
         var cg = parseFloat(editCG);
@@ -3360,6 +3452,33 @@
         var newProfs = profiles.filter((_, i) => i !== idx);
         saveProfiles(newProfs);
         setActiveProfileIdx(0);
+      };
+      const exportProfiles = () => {
+        var data = JSON.stringify({ aircraft: "PA-28-181", profiles: profiles }, null, 2);
+        var blob = new Blob([data], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = "aerocalc-archer-profiles.json"; a.click();
+        URL.revokeObjectURL(url);
+      };
+      const importProfiles = (e) => {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          try {
+            var data = JSON.parse(ev.target.result);
+            if (data.profiles && data.profiles.length) {
+              var merged = [...profiles];
+              data.profiles.forEach(function(p) {
+                if (!merged.find(function(m) { return m.tail === p.tail; })) merged.push(p);
+              });
+              saveProfiles(merged);
+            }
+          } catch(err) {}
+        };
+        reader.readAsText(file);
+        e.target.value = "";
       };
       const [pilot,   setPilot]   = useState(savedState.pilot   || "");
       const [copilot, setCopilot] = useState(savedState.copilot || "");
@@ -3501,6 +3620,15 @@
             style: { padding: "7px 16px", background: C.green, border: "none", borderRadius: "3px", color: C.btnText, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: "bold" }
           }, "SAVE PROFILE")
         )}
+      <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
+        <button onClick={exportProfiles} style={{ padding: "4px 10px", background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", color: C.dim, fontFamily: mono, fontSize: "10px", letterSpacing: "1px", cursor: "pointer" }}>
+          ↓ EXPORT
+        </button>
+        <label style={{ padding: "4px 10px", background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", color: C.dim, fontFamily: mono, fontSize: "10px", letterSpacing: "1px", cursor: "pointer" }}>
+          ↑ IMPORT
+          <input type="file" accept=".json" onChange={importProfiles} style={{ display: "none" }} />
+        </label>
+      </div>
       </div>
       {/* Top-down aircraft diagram */}
       <div style={{ position: "relative", background: C.surface, borderRadius: "6px", border: C.cardBorder + " solid " + C.border, marginBottom: "16px" }}
@@ -3743,7 +3871,7 @@
       </Card>
       );
     }
-    function App({ onBack, theme, toggleTheme }) {
+    function App({ onBack, theme, toggleTheme, user }) {
       const C = useC();
       const [activeTab, setActiveTab] = useState("wb");
       const [tabStates, setTabStates] = useState({});
@@ -3804,7 +3932,7 @@
       activeTab === "cruise"   ? <CruiseTab        {...tabProps("cruise")}   /> :
       activeTab === "glide"    ? <GlideTab         {...tabProps("glide")}    /> :
       activeTab === "speeds"   ? <ArcherSpeedsTab  {...tabProps("speeds")}   /> :
-      activeTab === "wb"       ? <ArcherWBTab      {...tabProps("wb")}       /> : null}
+      activeTab === "wb"       ? <ArcherWBTab      {...tabProps("wb")} user={user}      /> : null}
       </div>
       <div style={{ marginTop: "24px", fontSize: "12px", color: C.dim, letterSpacing: "2px" }}>PA-28-181 ARCHER III · VB-2749 · ISSUED DEC 2017</div>
       </div>
@@ -5634,7 +5762,7 @@
       </Card>
       );
     }
-    function C172App({ onBack, theme, toggleTheme }) {
+    function C172App({ onBack, theme, toggleTheme, user }) {
       const C = useC();
       const [activeTab, setActiveTab] = useState("wb");
       const [tabStates, setTabStates] = useState({});
@@ -5669,12 +5797,14 @@
       <div style={{ fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" }}>CESSNA 172S NAV III · POH PERFORMANCE</div>
       <div style={{ fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px", textTransform: "uppercase" }}>PERFORMANCE CALCULATOR</div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${tabs.length}, 1fr)`, marginBottom: mobile ? "14px" : "24px", border: `${C.cardBorder} solid ${C.border}`, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr 1fr 1fr 1fr" : `repeat(${tabs.length}, 1fr)`, marginBottom: mobile ? "14px" : "24px", border: `${C.cardBorder} solid ${C.border}`, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
       {tabs.map((tab, i) => (
       <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
       padding: mobile ? "10px 4px" : "14px 8px",
       background: activeTab === tab.id ? C.green : C.card,
-      border: "none", borderLeft: i > 0 ? `${C.cardBorder} solid ${C.border}` : "none",
+      border: "none",
+      borderLeft: mobile ? (i % 4 > 0 ? `${C.cardBorder} solid ${C.border}` : "none") : (i > 0 ? `${C.cardBorder} solid ${C.border}` : "none"),
+      borderTop: mobile && i >= 4 ? `${C.cardBorder} solid ${C.border}` : "none",
       color: activeTab === tab.id ? C.btnText : C.dim,
       fontFamily: mono, fontSize: mobile ? "10px" : "15px", letterSpacing: mobile ? "0px" : "2px",
       cursor: "pointer", textTransform: "uppercase", transition: "all 0.15s",
@@ -5685,7 +5815,7 @@
       ))}
       </div>
       <div style={{ width: "100%", maxWidth: "860px" }}>
-      {activeTab === "wb"      ? <C172WBTab          {...tabProps("wb")}      /> :
+      {activeTab === "wb"      ? <C172WBTab          {...tabProps("wb")} user={user}     /> :
       activeTab === "takeoff" ? <C172TakeoffTab      {...tabProps("takeoff")} wbState={tabStates["wb"] || {}} /> :
       activeTab === "landing" ? <C172LandingTab      {...tabProps("landing")} /> :
       activeTab === "roc"     ? <C172RateOfClimbTab  {...tabProps("roc")}     /> :
@@ -7867,9 +7997,10 @@ null}
       </MobileContext.Provider>
       );
     }
-    function AircraftMenu({ onSelect, theme, toggleTheme }) {
+    function AircraftMenu({ onSelect, theme, toggleTheme, user, onSignOut, onSignIn }) {
       const C = useC();
       const mobile = useIsMobile();
+      const [showAuth, setShowAuth] = useState(false);
       const aircraft = [
       {
       id: "pa28",
@@ -7898,26 +8029,34 @@ null}
       ];
       return (
       <MobileContext.Provider value={mobile}>
-      <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: mobile ? "24px 16px" : "48px 24px" }}>
-      <div style={{ width: "100%", maxWidth: "760px", display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
-      <button onClick={toggleTheme} style={{ background: "none", border: `${C.cardBorder} solid ${C.borderDim}`, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" }}>
+      <div style={{ minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: mobile ? "24px 16px" : "48px 40px" }}>
+      <div style={{ width: "100%", maxWidth: "1100px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        {user
+          ? <>
+              <span style={{ fontSize: "10px", color: C.dimmest, fontFamily: mono, letterSpacing: "1px" }}>{user.email}</span>
+              <button onClick={onSignOut} style={{ background: "none", border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "7px 14px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: "600" }}>SIGN OUT</button>
+            </>
+          : <button onClick={() => setShowAuth(true)} style={{ background: C.green, border: "none", borderRadius: "3px", padding: "8px 16px", color: C.btnText, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: "bold" }}>SIGN IN</button>
+        }
+      </div>
+      <button onClick={toggleTheme} style={{ background: C.input, border: `${C.cardBorder} solid ${C.border}`, borderRadius: "3px", padding: "8px 14px", color: C.text, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: "600" }}>
       {theme === "dark" ? "☀ LIGHT" : "☾ DARK"}
       </button>
       </div>
-      <div style={{ textAlign: "center", marginBottom: mobile ? "32px" : "48px" }}>
-      <div style={{ fontSize: mobile ? "11px" : "14px", letterSpacing: "6px", color: C.green, marginBottom: "12px" }}>POH PERFORMANCE CALCULATOR · v1.5.0</div>
-      <div style={{ fontSize: mobile ? "28px" : "42px", fontWeight: "bold", letterSpacing: "2px" }}>AERO</div>
-      <div style={{ fontSize: mobile ? "28px" : "42px", fontWeight: "bold", letterSpacing: "2px", color: C.green }}>CALC</div>
-      <div style={{ fontSize: mobile ? "12px" : "14px", color: C.dim, marginTop: "12px", letterSpacing: "2px" }}>SELECT AIRCRAFT</div>
-      <div style={{ fontSize: "11px", color: C.isLight ? C.dim : C.dimmest, fontWeight: C.isLight ? "600" : "normal", marginTop: "8px", letterSpacing: "2px" }}>v1.5.0</div>
+      <div style={{ textAlign: "center", marginBottom: mobile ? "32px" : "56px" }}>
+      <div style={{ fontSize: mobile ? "11px" : "16px", letterSpacing: "6px", color: C.green, marginBottom: "16px" }}>POH PERFORMANCE CALCULATOR · v1.5.0</div>
+      <div style={{ fontSize: mobile ? "28px" : "64px", fontWeight: "bold", letterSpacing: mobile ? "2px" : "6px" }}>AERO</div>
+      <div style={{ fontSize: mobile ? "28px" : "64px", fontWeight: "bold", letterSpacing: mobile ? "2px" : "6px", color: C.green }}>CALC</div>
+      <div style={{ fontSize: mobile ? "12px" : "16px", color: C.dim, marginTop: "16px", letterSpacing: "4px" }}>SELECT AIRCRAFT</div>
       </div>
-      <div style={{ display: "flex", flexDirection: mobile ? "column" : "row", flexWrap: "wrap", gap: "16px", width: "100%", maxWidth: "760px" }}>
+      <div style={{ display: "flex", flexDirection: mobile ? "column" : "row", flexWrap: "wrap", gap: mobile ? "16px" : "24px", width: "100%", maxWidth: "1100px" }}>
       {aircraft.map(ac => (
       <button key={ac.id} onClick={() => ac.available && onSelect(ac.id)}
       style={{
       flex: 1, background: ac.available ? C.card : C.bg,
-      border: `1px solid ${ac.available ? C.border : C.borderDim}`,
-      borderRadius: "6px", padding: "28px 24px", textAlign: "left",
+      border: `${C.cardBorder} solid ${ac.available ? C.border : C.borderDim}`,
+      borderRadius: "8px", padding: mobile ? "24px 20px" : "36px 32px", textAlign: "left",
       cursor: ac.available ? "pointer" : "default",
       opacity: ac.available ? 1 : 0.5,
       transition: "border-color 0.15s",
@@ -7928,8 +8067,8 @@ null}
       >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
       <div>
-      <div style={{ fontSize: "22px", fontWeight: "bold", color: ac.available ? C.text : C.dim, letterSpacing: "2px" }}>{ac.name}</div>
-      <div style={{ fontSize: "14px", color: ac.available ? C.green : C.dimmest, letterSpacing: "3px", marginTop: "2px" }}>{ac.sub}</div>
+      <div style={{ fontSize: mobile ? "22px" : "28px", fontWeight: "bold", color: ac.available ? C.text : C.dim, letterSpacing: "2px" }}>{ac.name}</div>
+      <div style={{ fontSize: mobile ? "14px" : "16px", color: ac.available ? C.green : C.dimmest, letterSpacing: "3px", marginTop: "2px" }}>{ac.sub}</div>
       </div>
       {ac.available
       ? <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.green, background: "rgba(106,170,122,0.15)", border: `1px solid ${C.green}55`, padding: "3px 8px", borderRadius: "2px" }}>AVAILABLE</div>
@@ -7953,11 +8092,92 @@ null}
       <div style={{ marginTop: "40px", fontSize: "11px", color: C.isLight ? C.dim : C.dimmest, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "2px" }}>AEROCALC v1.5.0 · POH PERFORMANCE CALCULATOR</div>
       <div style={{ marginTop: "8px", fontSize: "10px", color: C.isLight ? C.dim : C.dimmest, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px" }}>(Calc is short for calculator)</div>
       </div>
+      {showAuth && (
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "24px" }}
+        onClick={() => setShowAuth(false)}>
+        <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: "380px" }}>
+          <AuthScreen theme={theme} toggleTheme={toggleTheme} onAuth={(u) => { setShowAuth(false); if (u && onSignIn) onSignIn(u); }} inline={true} />
+        </div>
+      </div>
+      )}
       </MobileContext.Provider>
       );
     }
+    function AuthScreen({ theme, toggleTheme, onAuth, inline }) {
+      const C = useC();
+      const mono = "'Courier New', monospace";
+      const [mode, setMode] = useState("login");
+      const [email, setEmail] = useState("");
+      const [password, setPassword] = useState("");
+      const [msg, setMsg] = useState("");
+      const [loading, setLoading] = useState(false);
+      const submit = async () => {
+        setLoading(true); setMsg("");
+        try {
+          if (mode === "reset") {
+            var res = await sbClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+            if (res.error) { setMsg(res.error.message); }
+            else { setMsg("Password reset email sent — check your inbox."); }
+          } else {
+            var res = mode === "login"
+              ? await sbClient.auth.signInWithPassword({ email, password })
+              : await sbClient.auth.signUp({ email, password });
+            if (res.error) { setMsg(res.error.message); }
+            else if (mode === "signup") { setMsg("Account created — you can now log in."); }
+            else { onAuth(res.data.user); }
+          }
+        } catch(e) { setMsg("Something went wrong."); }
+        setLoading(false);
+      };
+      return (
+      <ThemeContext.Provider value={theme}>
+      <div style={{ minHeight: inline ? "0" : "100vh", background: inline ? "transparent" : C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: inline ? "0" : "24px 16px" }}>
+      <div style={{ width: "100%", maxWidth: "400px" }}>
+        {!inline && <div style={{ textAlign: "center", marginBottom: "32px" }}>
+          <div style={{ fontSize: "36px", fontWeight: "bold", letterSpacing: "3px" }}>AERO</div>
+          <div style={{ fontSize: "36px", fontWeight: "bold", letterSpacing: "3px", color: C.green }}>CALC</div>
+          <div style={{ fontSize: "11px", letterSpacing: "3px", color: C.dim, marginTop: "8px" }}>POH PERFORMANCE CALCULATOR</div>
+        </div>}
+        <div style={{ background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "6px", padding: "28px", boxShadow: C.isLight ? "0 2px 12px rgba(0,0,0,0.10)" : "none" }}>
+          {mode !== "reset" && <div style={{ display: "flex", marginBottom: "20px", border: C.cardBorder + " solid " + C.border, borderRadius: "4px", overflow: "hidden" }}>
+            {["login","signup"].map(m => (
+              <button key={m} onClick={() => { setMode(m); setMsg(""); }} style={{ flex: 1, padding: "8px", background: mode === m ? C.green : C.input, border: "none", color: mode === m ? C.btnText : C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", textTransform: "uppercase" }}>
+                {m === "login" ? "LOG IN" : "SIGN UP"}
+              </button>
+            ))}
+          </div>}
+          {mode === "reset" && <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.dim, marginBottom: "16px", textAlign: "center" }}>RESET PASSWORD</div>}
+          <div style={{ marginBottom: "12px" }}>
+            <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "5px" }}>EMAIL</div>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && submit()}
+              style={{ width: "100%", background: C.isLight ? "#fff" : C.input, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "15px", boxSizing: "border-box" }} />
+          </div>
+          {mode !== "reset" && <div style={{ marginBottom: "8px" }}>
+            <div style={{ fontSize: "10px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "5px" }}>PASSWORD</div>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && submit()}
+              style={{ width: "100%", background: C.isLight ? "#fff" : C.input, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "15px", boxSizing: "border-box" }} />
+          </div>}
+          {mode === "login" && <div style={{ textAlign: "right", marginBottom: "16px" }}>
+            <button onClick={() => { setMode("reset"); setMsg(""); }} style={{ background: "none", border: "none", color: C.dimmest, fontFamily: mono, fontSize: "10px", letterSpacing: "1px", cursor: "pointer", padding: 0 }}>Forgot password?</button>
+          </div>}
+          {mode !== "login" && mode !== "reset" && <div style={{ marginBottom: "20px" }} />}
+          {msg && <div style={{ fontSize: "12px", color: msg.includes("sent") || msg.includes("created") ? C.green : C.error, marginBottom: "12px", letterSpacing: "0.5px" }}>{msg}</div>}
+          <button onClick={submit} disabled={loading} style={{ width: "100%", padding: "12px", background: C.green, border: "none", borderRadius: "3px", color: C.btnText, fontFamily: mono, fontSize: "12px", letterSpacing: "2px", cursor: "pointer", fontWeight: "bold" }}>
+            {loading ? "..." : mode === "login" ? "LOG IN" : mode === "signup" ? "CREATE ACCOUNT" : "SEND RESET EMAIL"}
+          </button>
+          {mode === "reset" && <button onClick={() => { setMode("login"); setMsg(""); }} style={{ width: "100%", padding: "10px", background: "none", border: "none", color: C.dimmest, fontFamily: mono, fontSize: "10px", letterSpacing: "1px", cursor: "pointer", marginTop: "4px" }}>← BACK TO LOGIN</button>}
+          {!inline && <button onClick={() => onAuth(null)} style={{ width: "100%", padding: "10px", background: "none", border: "none", color: C.dimmest, fontFamily: mono, fontSize: "10px", letterSpacing: "1px", cursor: "pointer", marginTop: "8px" }}>CONTINUE WITHOUT ACCOUNT</button>}
+        </div>
+{!inline && <div style={{ textAlign: "right", marginTop: "12px" }}><button onClick={toggleTheme} style={{ background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", padding: "5px 10px", color: C.dim, fontFamily: mono, fontSize: "10px", letterSpacing: "2px", cursor: "pointer" }}>{theme === "dark" ? "☀ LIGHT" : "☾ DARK"}</button></div>}
+      </div>
+      </div>
+      </ThemeContext.Provider>
+      );
+    }
+
     function Root() {
       const [aircraft, setAircraft] = useState(null);
+      const [user, setUser] = useState(undefined); // undefined = loading, null = logged out
       const [theme, setTheme] = useState(() => {
         try { return localStorage.getItem("aerocalc-theme") || "dark"; } catch(e) { return "dark"; }
       });
@@ -7967,14 +8187,25 @@ null}
         return next;
       });
       React.useEffect(() => {
-      document.body.style.background = THEMES[theme].bg;
-      document.body.style.color = THEMES[theme].text;
-      document.body.classList.toggle("light-mode", theme === "light");
+        document.body.style.background = THEMES[theme].bg;
+        document.body.style.color = THEMES[theme].text;
+        document.body.classList.toggle("light-mode", theme === "light");
       }, [theme]);
-      if (!aircraft) return <ThemeContext.Provider value={theme}><AircraftMenu onSelect={setAircraft} theme={theme} toggleTheme={toggleTheme} /></ThemeContext.Provider>;
-      if (aircraft === "c172s") return <ThemeContext.Provider value={theme}><C172App onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} /></ThemeContext.Provider>;
-      if (aircraft === "pa44")  return <ThemeContext.Provider value={theme}><SeminoleApp onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} /></ThemeContext.Provider>;
-      return <ThemeContext.Provider value={theme}><App onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} /></ThemeContext.Provider>;
+      React.useEffect(() => {
+        sbClient.auth.getSession().then(({ data }) => {
+          setUser(data.session ? data.session.user : null);
+        });
+        var { data: listener } = sbClient.auth.onAuthStateChange((_event, session) => {
+          setUser(session ? session.user : null);
+        });
+        return () => listener.subscription.unsubscribe();
+      }, []);
+      if (user === undefined) return null; // loading
+      const wrapTheme = (el) => <ThemeContext.Provider value={theme}>{el}</ThemeContext.Provider>;
+      if (!aircraft) return wrapTheme(<AircraftMenu onSelect={setAircraft} theme={theme} toggleTheme={toggleTheme} user={user} onSignOut={async () => { await sbClient.auth.signOut(); setUser(null); }} onSignIn={setUser} />);
+      if (aircraft === "c172s") return wrapTheme(<C172App onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} user={user} />);
+      if (aircraft === "pa44")  return wrapTheme(<SeminoleApp onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} user={user} />);
+      return wrapTheme(<App onBack={() => setAircraft(null)} theme={theme} toggleTheme={toggleTheme} user={user} />);
     }
     ReactDOM.createRoot(document.getElementById("root")).render(<Root />);</script>
 </body>
