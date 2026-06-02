@@ -3634,7 +3634,7 @@
       const hasLanding = fbg > 0 && landingWeight > 0;
       const fwdLimit  = (w) => 82 + (88.6-82) * (Math.min(Math.max(w,2050),2550)-2050) / (2550-2050);
       const aftLimit  = 93.0;
-      const inEnvelope  = totalWeight >= 2050 && totalWeight <= MAX_GW && cg >= fwdLimit(totalWeight) && cg <= aftLimit;
+      const inEnvelope  = totalWeight > 0 && totalWeight <= MAX_GW && cg >= fwdLimit(totalWeight) && cg <= aftLimit;
       const overMaxGW   = totalWeight > MAX_GW;
       const overBaggage = bg > MAX_BAGGAGE;
       const overFuel    = fg > MAX_FUEL_GAL;
