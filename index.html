@@ -5658,9 +5658,11 @@
 
                     // Check if TOC or TOD falls within this leg
                     var specialRows = [];
+                    // Normalize TOC/TOD distances to legs coordinate space
+                    var distScale = tocTod && tocTod.totalDist > 0 ? totalDist / tocTod.totalDist : 1;
                     if (tocTod && !tocTod.infeasible) {
-                      var tocDist = tocTod.tocNM;
-                      var todDist = tocTod.totalDist - tocTod.todNM;
+                      var tocDist = tocTod.tocNM * distScale;
+                      var todDist = (tocTod.totalDist - tocTod.todNM) * distScale;
                       if (tocDist > prevCumDist && tocDist <= cumDist) {
                         var tocDistIntoLeg = tocDist - prevCumDist;
                         specialRows.push(
@@ -5817,7 +5819,17 @@
                             </React.Fragment>
                           );
                         })()}
-                        <td style={{ ...cell, borderRight: C.cardBorder + " solid " + C.borderDim }}>{leg.dist}</td>
+                        {(() => {
+                          // If TOC or TOD falls within this leg, show distance from that point to waypoint
+                          var dispLegDist = parseFloat(leg.dist);
+                          if (tocTod && !tocTod.infeasible) {
+                            var tocD = tocTod.tocNM * distScale;
+                            var todD = (tocTod.totalDist - tocTod.todNM) * distScale;
+                            if (tocD > prevCumDist && tocD <= cumDist) dispLegDist = cumDist - tocD;
+                            else if (todD > prevCumDist && todD <= cumDist) dispLegDist = cumDist - todD;
+                          }
+                          return React.createElement("td", { style: { ...cell, borderRight: C.cardBorder + " solid " + C.borderDim } }, dispLegDist.toFixed(1));
+                        })()}
                         <td style={{ ...cell, color: C.isLight ? C.text : C.dim, borderRight: C.cardBorder + " solid " + C.border }}>{cumDist.toFixed(1)}</td>
                         {(() => {
                           var oatC4 = legTemps[wk] !== undefined ? legTemps[wk] : undefined;
