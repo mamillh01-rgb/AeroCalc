@@ -49,7 +49,6 @@
     input:focus { outline: 2px solid #5a8a6a !important; }
     body.light-mode input:focus { outline: 2px solid #1a7a3a !important; }
     body.light-mode { -webkit-font-smoothing: antialiased; }
-    body.light-mode svg line, body.light-mode svg path, body.light-mode svg polyline { stroke-width: 1.5 !important; }
     @keyframes dotPulse {
       0%, 100% { opacity: 0.2; transform: scale(0.8); }
       50% { opacity: 1; transform: scale(1.2); }
@@ -1864,26 +1863,26 @@
       {/* Sky background */}
       <defs>
       <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor={C.isLight ? "#dce8f5" : C.card} />
-        <stop offset="100%" stopColor={C.isLight ? C.rwyBg : C.card} />
+        <stop offset="0%" stopColor={C.isLight ? "#c8dff5" : C.card} />
+        <stop offset="100%" stopColor={C.isLight ? "#ddeaf7" : C.card} />
       </linearGradient>
       </defs>
       <rect x="0" y="0" width="460" height="165" fill="url(#skyGrad)" />
       <defs>
       <linearGradient id="rwyGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stopColor={C.rwyAsphalt} />
-      <stop offset="100%" stopColor={C.rwyBg} />
+      <stop offset="0%" stopColor={C.isLight ? "#2c2c2c" : C.rwyAsphalt} />
+      <stop offset="100%" stopColor={C.isLight ? "#4a4a4a" : C.rwyBg} />
       </linearGradient>
       </defs>
       {/* Runway */}
-      <rect x="18" y="84" width="424" height="30" rx="2" fill="url(#rwyGrad)" stroke={C.rwyAsphalt} strokeWidth="1" />
+      <rect x="18" y="84" width="424" height="30" rx="2" fill="url(#rwyGrad)" stroke={C.isLight ? "#1a1a1a" : C.rwyAsphalt} strokeWidth="1" />
       {/* Threshold bars */}
       {[0,1,2,3].map(i => (
-      <rect key={i} x={22 + i*6} y="88" width="3" height="22" rx="1" fill={C.rwyAsphalt} />
+      <rect key={i} x={22 + i*6} y="88" width="3" height="22" rx="1" fill={C.isLight ? "#e8ecf0" : C.rwyAsphalt} />
       ))}
       {/* Centerline dashes */}
       {Array.from({length: 18}).map((_, i) => (
-      <rect key={i} x={55 + i*22} y="98" width="12" height="2" rx="1" fill={centerlineColor} />
+      <rect key={i} x={55 + i*22} y="98" width="12" height="2" rx="1" fill={C.isLight ? "#e0e6ec" : centerlineColor} />
       ))}
       {/* Climb arc path */}
       <path
@@ -1930,7 +1929,7 @@
       })()}
       {/* Runway number near threshold */}
       {result.rwyNum && (
-      <text x="36" y="102" textAnchor="middle" fill={C.rwyText} fontSize="11" fontFamily="Courier New" fontWeight="bold" letterSpacing="1">{String(result.rwyNum).padStart(2,'0')}</text>
+      <text x="36" y="102" textAnchor="middle" fill={C.isLight ? "#e8ecf0" : C.rwyText} fontSize="11" fontFamily="Courier New" fontWeight="bold" letterSpacing="1">{String(result.rwyNum).padStart(2,'0')}</text>
       )}
       {/* Wind arrow — top LEFT to avoid plane overlap */}
       {result.windComponents && (() => {
@@ -1961,8 +1960,8 @@
       {/* Animated Archer — same real SVG silhouette as landing viz */}
       <g transform={`translate(${px},${py}) rotate(${-angle}) scale(-0.11, 0.11)`}>
       <g transform="translate(-290,-110)">
-      <g transform="translate(0,241) scale(0.1,-0.1)" fill={C.isLight ? "#2d7a4f" : markerColorRoll} stroke="none">
-      <path d="M5515 2261 c-146 -7 -165 -14 -214 -81 -30 -42 -53 -70 -158 -195 -38 -45 -86 -103 -108 -130 -173 -211 -239 -278 -320 -324 -95 -55 -136 -61 -397 -61 -132 0 -238 4 -238 9 0 12 85 128 122 168 17 17 28 37 26 43 -2 7 -46 -40 -98 -104 l-95 -117 -116 5 c-64 4 -181 15 -260 27 -79 11 -163 23 -186 26 -39 5 -55 16 -35 25 14 5 152 184 152 197 0 6 -7 11 -16 11 -16 0 -58 -35 -194 -159 -32 -29 -65 -51 -78 -51 -12 0 -68 7 -123 15 -56 9 -262 36 -458 61 -543 70 -832 72 -1011 7 -76 -28 -405 -202 -484 -256 -23 -16 -54 -22 -160 -28 -261 -15 -605 -60 -735 -96 -21 -5 -23 -4 -15 13 13 26 10 214 -6 437 -11 162 -15 187 -29 185 -11 -2 -17 -16 -18 -48 -2 -25 -10 -130 -19 -234 -8 -104 -14 -232 -13 -284 l2 -94 -56 -22 c-63 -26 -138 -69 -161 -92 -23 -22 -20 -59 7 -76 31 -20 125 -56 169 -65 l37 -8 5 -160 c3 -88 10 -198 16 -245 5 -47 10 -114 10 -150 0 -77 8 -110 25 -110 13 0 19 43 30 220 22 321 22 335 9 380 -14 47 -9 67 9 35 18 -34 90 -100 138 -129 38 -21 48 -34 53 -61 4 -19 11 -35 16 -35 6 0 10 -27 10 -60 0 -64 8 -73 33 -38 l16 23 0 -22 c1 -29 8 -29 32 -1 10 13 18 39 19 61 0 42 21 51 37 14 11 -24 53 -42 125 -52 34 -4 45 -10 42 -20 -3 -7 -1 -16 4 -19 9 -5 -8 -102 -23 -125 -3 -6 -17 -11 -30 -11 -36 0 -155 -66 -203 -113 -50 -49 -54 -81 -15 -129 32 -39 44 -48 54 -42 4 2 14 -7 23 -21 9 -13 36 -36 61 -51 36 -21 54 -25 86 -21 56 7 110 38 137 77 12 19 29 35 36 36 8 1 66 19 131 40 100 33 121 44 145 74 45 58 82 132 71 143 -6 6 -62 3 -159 -8 -147 -17 -235 -15 -248 6 -3 6 6 24 21 39 30 31 30 24 -1 130 -4 14 -4 22 0 19 3 -3 35 0 71 6 52 10 127 10 363 0 163 -8 442 -17 618 -21 l321 -7 2 -57 1 -57 -42 -7 c-137 -22 -257 -134 -219 -204 15 -27 57 -50 110 -58 26 -4 41 -12 41 -21 0 -23 71 -82 108 -89 32 -6 32 -7 32 -65 l0 -59 35 0 35 0 0 65 c0 50 3 65 15 65 22 0 86 61 101 96 12 27 24 35 81 54 130 42 149 51 166 80 20 32 22 66 6 76 -6 4 -61 19 -123 34 -100 24 -111 29 -108 48 2 11 -4 34 -12 51 -30 56 -27 58 97 60 63 1 135 -3 162 -9 38 -9 50 -8 59 3 8 10 56 18 164 27 85 6 156 9 159 6 8 -8 -28 -47 -38 -41 -11 8 -23 -15 -12 -26 4 -4 26 -6 47 -2 30 5 44 15 65 44 20 30 33 38 56 39 17 0 47 4 68 9 l37 9 0 -344 c0 -296 2 -344 15 -344 12 0 15 22 18 113 l3 112 2 -112 c2 -93 5 -113 17 -113 13 0 15 45 15 345 l0 344 33 5 c17 3 212 26 432 51 220 25 436 50 480 55 113 14 307 37 465 55 130 15 176 20 231 30 16 2 41 -5 65 -20 61 -38 108 -30 85 14 -10 17 -5 20 57 30 123 21 190 54 214 106 10 21 18 23 149 30 104 5 139 10 139 20 0 13 -12 16 -201 46 l-77 13 -12 51 c-13 56 -19 30 117 490 20 66 48 163 64 215 15 52 42 142 59 200 42 141 50 172 44 182 -6 9 -98 8 -309 -1z"/>
+      <g transform="translate(0,241) scale(0.1,-0.1)" fill={C.isLight ? "#1a3a5c" : markerColorRoll} stroke="none">
+      <path style={{ paintOrder: "stroke fill" }} stroke={C.isLight ? "white" : "none"} strokeWidth={C.isLight ? "35" : "0"} d="M5515 2261 c-146 -7 -165 -14 -214 -81 -30 -42 -53 -70 -158 -195 -38 -45 -86 -103 -108 -130 -173 -211 -239 -278 -320 -324 -95 -55 -136 -61 -397 -61 -132 0 -238 4 -238 9 0 12 85 128 122 168 17 17 28 37 26 43 -2 7 -46 -40 -98 -104 l-95 -117 -116 5 c-64 4 -181 15 -260 27 -79 11 -163 23 -186 26 -39 5 -55 16 -35 25 14 5 152 184 152 197 0 6 -7 11 -16 11 -16 0 -58 -35 -194 -159 -32 -29 -65 -51 -78 -51 -12 0 -68 7 -123 15 -56 9 -262 36 -458 61 -543 70 -832 72 -1011 7 -76 -28 -405 -202 -484 -256 -23 -16 -54 -22 -160 -28 -261 -15 -605 -60 -735 -96 -21 -5 -23 -4 -15 13 13 26 10 214 -6 437 -11 162 -15 187 -29 185 -11 -2 -17 -16 -18 -48 -2 -25 -10 -130 -19 -234 -8 -104 -14 -232 -13 -284 l2 -94 -56 -22 c-63 -26 -138 -69 -161 -92 -23 -22 -20 -59 7 -76 31 -20 125 -56 169 -65 l37 -8 5 -160 c3 -88 10 -198 16 -245 5 -47 10 -114 10 -150 0 -77 8 -110 25 -110 13 0 19 43 30 220 22 321 22 335 9 380 -14 47 -9 67 9 35 18 -34 90 -100 138 -129 38 -21 48 -34 53 -61 4 -19 11 -35 16 -35 6 0 10 -27 10 -60 0 -64 8 -73 33 -38 l16 23 0 -22 c1 -29 8 -29 32 -1 10 13 18 39 19 61 0 42 21 51 37 14 11 -24 53 -42 125 -52 34 -4 45 -10 42 -20 -3 -7 -1 -16 4 -19 9 -5 -8 -102 -23 -125 -3 -6 -17 -11 -30 -11 -36 0 -155 -66 -203 -113 -50 -49 -54 -81 -15 -129 32 -39 44 -48 54 -42 4 2 14 -7 23 -21 9 -13 36 -36 61 -51 36 -21 54 -25 86 -21 56 7 110 38 137 77 12 19 29 35 36 36 8 1 66 19 131 40 100 33 121 44 145 74 45 58 82 132 71 143 -6 6 -62 3 -159 -8 -147 -17 -235 -15 -248 6 -3 6 6 24 21 39 30 31 30 24 -1 130 -4 14 -4 22 0 19 3 -3 35 0 71 6 52 10 127 10 363 0 163 -8 442 -17 618 -21 l321 -7 2 -57 1 -57 -42 -7 c-137 -22 -257 -134 -219 -204 15 -27 57 -50 110 -58 26 -4 41 -12 41 -21 0 -23 71 -82 108 -89 32 -6 32 -7 32 -65 l0 -59 35 0 35 0 0 65 c0 50 3 65 15 65 22 0 86 61 101 96 12 27 24 35 81 54 130 42 149 51 166 80 20 32 22 66 6 76 -6 4 -61 19 -123 34 -100 24 -111 29 -108 48 2 11 -4 34 -12 51 -30 56 -27 58 97 60 63 1 135 -3 162 -9 38 -9 50 -8 59 3 8 10 56 18 164 27 85 6 156 9 159 6 8 -8 -28 -47 -38 -41 -11 8 -23 -15 -12 -26 4 -4 26 -6 47 -2 30 5 44 15 65 44 20 30 33 38 56 39 17 0 47 4 68 9 l37 9 0 -344 c0 -296 2 -344 15 -344 12 0 15 22 18 113 l3 112 2 -112 c2 -93 5 -113 17 -113 13 0 15 45 15 345 l0 344 33 5 c17 3 212 26 432 51 220 25 436 50 480 55 113 14 307 37 465 55 130 15 176 20 231 30 16 2 41 -5 65 -20 61 -38 108 -30 85 14 -10 17 -5 20 57 30 123 21 190 54 214 106 10 21 18 23 149 30 104 5 139 10 139 20 0 13 -12 16 -201 46 l-77 13 -12 51 c-13 56 -19 30 117 490 20 66 48 163 64 215 15 52 42 142 59 200 42 141 50 172 44 182 -6 9 -98 8 -309 -1z"/>
       </g>
       </g>
       </g>
@@ -2748,6 +2747,100 @@
       );
     }
     const GLIDE_NM_PER_FT = 19 / 10000;
+    // PA-28-181 Archer III — 2700 RPM Full Throttle, ISA, Best Economy Mixture
+    // Source: POH Section 5 Speed Power Chart, digitized via WebPlotDigitizer
+    var ARCHER_2700_TAS = [
+      [0,     133.0],
+      [1000,  132.7],
+      [2000,  132.4],
+      [3000,  132.1],
+      [4000,  131.6],
+      [5000,  131.0],
+      [6000,  130.1],
+      [7000,  129.0],
+      [8000,  127.7],
+      [9000,  126.2],
+      [10000, 124.3],
+    ];
+    function archerTAS2700(altFt) {
+      var t = ARCHER_2700_TAS;
+      if (altFt <= t[0][0]) return t[0][1];
+      if (altFt >= t[t.length-1][0]) return t[t.length-1][1];
+      for (var i = 0; i < t.length - 1; i++) {
+        if (altFt >= t[i][0] && altFt <= t[i+1][0]) {
+          var frac = (altFt - t[i][0]) / (t[i+1][0] - t[i][0]);
+          return t[i][1] + frac * (t[i+1][1] - t[i][1]);
+        }
+      }
+    }
+
+    function AirRace2700Tab({ savedState, onStateChange }) {
+      const C = useC();
+      const mobile = useIsMobileInner();
+      const mono = "'Courier New', monospace";
+      const [altFt, setAltFt] = useState(savedState.altFt || "");
+
+      React.useEffect(function() { onStateChange({ altFt }); }, [altFt]);
+
+      const alt = parseFloat(altFt);
+      const valid = !isNaN(alt) && alt >= 0 && alt <= 10000;
+      const tas = valid ? archerTAS2700(alt) : null;
+
+      return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ background: C.card, border: `${C.cardBorder} solid ${C.border}`, borderRadius: "4px", padding: mobile ? "16px" : "24px" }}>
+          <div style={{ fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "4px", textTransform: "uppercase" }}>Air Race 2700 RPM</div>
+          <div style={{ fontSize: "11px", color: C.dim, letterSpacing: "2px", marginBottom: "20px" }}>FULL THROTTLE · BEST ECONOMY MIXTURE · ISA · 2550 LB</div>
+
+          <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "6px" }}>PRESSURE ALTITUDE</div>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "20px" }}>
+            <input
+              type="number"
+              value={altFt}
+              onChange={function(e) { setAltFt(e.target.value); }}
+              placeholder="e.g. 5000"
+              style={{ flex: 1, minWidth: 0, background: C.isLight ? "#fff" : C.bg, border: `${C.cardBorder} solid ${valid || !altFt ? C.green : C.border}`, borderRadius: "3px", padding: "10px 12px", color: C.text, fontFamily: mono, fontSize: "18px" }}
+            />
+            <div style={{ color: C.dim, fontFamily: mono, fontSize: "13px", letterSpacing: "2px" }}>FT MSL</div>
+          </div>
+
+          {!valid && altFt && (
+            <div style={{ fontSize: "11px", letterSpacing: "2px", color: C.warm, marginBottom: "12px" }}>Altitude must be 0–10,000 ft (ISA chart range)</div>
+          )}
+
+          {tas !== null && (
+            <div style={{ background: C.isLight ? "#f1f5f9" : C.bg, border: `${C.cardBorder} solid ${C.green}`, borderRadius: "4px", padding: "20px", textAlign: "center" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "3px", color: C.dim, marginBottom: "6px" }}>TRUE AIRSPEED</div>
+              <div style={{ fontSize: "52px", fontWeight: "bold", color: C.green, fontFamily: mono, letterSpacing: "2px", lineHeight: 1 }}>{tas.toFixed(1)}</div>
+              <div style={{ fontSize: "16px", letterSpacing: "3px", color: C.dim, marginTop: "4px" }}>KTAS</div>
+              <div style={{ fontSize: "12px", letterSpacing: "2px", color: C.dim, marginTop: "14px", paddingTop: "14px", borderTop: `${C.cardBorder} solid ${C.border}` }}>ISA CONDITIONS ASSUMED</div>
+            </div>
+          )}
+
+          {tas !== null && (
+            <div style={{ marginTop: "16px", background: C.card, border: `${C.cardBorder} solid ${C.border}`, borderRadius: "4px", overflow: "hidden" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)" }}>
+                <div style={{ padding: "14px 16px", borderRight: `${C.cardBorder} solid ${C.border}` }}>
+                  <div style={{ fontSize: "9px", letterSpacing: "2px", color: C.dim, marginBottom: "5px" }}>POWER SETTING</div>
+                  <div style={{ fontFamily: mono, fontSize: "17px", color: C.text, fontWeight: "bold", letterSpacing: "1px" }}>2700 RPM</div>
+                </div>
+                <div style={{ padding: "14px 16px" }}>
+                  <div style={{ fontSize: "9px", letterSpacing: "2px", color: C.dim, marginBottom: "5px" }}>NOTE</div>
+                  <div style={{ fontFamily: mono, fontSize: "13px", color: C.dim, letterSpacing: "1px" }}>−3 KT W/O WHEEL PANTS</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div style={{ marginTop: "20px", padding: "14px 16px", background: C.isLight ? "#f8f9fa" : C.card, border: `${C.cardBorder} solid ${C.border}`, borderRadius: "4px", textAlign: "center" }}>
+            <div style={{ fontSize: "13px", letterSpacing: "2px", color: C.green, fontFamily: mono }}>GOOD LUCK, AIR RACE TEAM!</div>
+            <div style={{ fontSize: "10px", letterSpacing: "1px", color: C.dimmest, fontFamily: mono, marginTop: "4px" }}>FLY FAST · FLY SAFE</div>
+          </div>
+        </div>
+      </div>
+      );
+    }
+
     function GlideTab({ savedState, onStateChange }) {
       const C = useC();
       const [cruiseAlt, setCruiseAlt] = useState(savedState.cruiseAlt || "");
@@ -3988,6 +4081,8 @@
       const C = useC();
       const mobile = useIsMobileInner();
       const mono = "'Courier New', monospace";
+      const themeRef = React.useRef(C.isLight);
+      React.useEffect(function() { themeRef.current = C.isLight; }, [C.isLight]);
 
       // C172 descent approximation (no POH chart exists)
       function calculateC172Descent(cruiseAltFt, destAltFt) {
@@ -4031,6 +4126,7 @@
       const mapRef = React.useRef(null);
       const leafletMap = React.useRef(null);
       const routeLayerRef = React.useRef(null);
+      const routeOutlineRef = React.useRef(null);
       const markersRef = React.useRef([]);
       const tocTodMarkersRef = React.useRef([]);
       const hasFitRef = React.useRef(false);
@@ -4063,6 +4159,17 @@
       const [profileZoom, setProfileZoom] = React.useState(1);
       const [profilePanX, setProfilePanX] = React.useState(0);
       const profileDragRef = React.useRef(null);
+      const profileSvgRef = React.useRef(null);
+      const [hoveredAirspace, setHoveredAirspace] = React.useState(null);
+      // Attach non-passive wheel listener to profile SVG to prevent page scroll
+      React.useEffect(function() {
+        var el = profileSvgRef.current;
+        if (!el) return;
+        var handler = function(e) { e.preventDefault(); };
+        el.addEventListener('wheel', handler, { passive: false });
+        return function() { el.removeEventListener('wheel', handler); };
+      }, [profileOpen, profileData]);
+
       const setWaypointsRef = React.useRef(setWaypoints);
 
       // Persist state when it changes
@@ -4623,6 +4730,7 @@
         markersRef.current.forEach(function(m) { map.removeLayer(m); });
         markersRef.current = [];
         if (routeLayerRef.current) { map.removeLayer(routeLayerRef.current); routeLayerRef.current = null; }
+        if (routeOutlineRef.current) { map.removeLayer(routeOutlineRef.current); routeOutlineRef.current = null; }
         if (waypoints.length === 0) return;
 
         // Draw markers - draggable to reorder
@@ -4665,7 +4773,11 @@
 
         // Draw visible route line
         var latlngs = waypoints.map(function(wp) { return [wp.lat, wp.lon]; });
-        routeLayerRef.current = L.polyline(latlngs, { color: "#6d28d9", weight: 5, opacity: 1.0 }).addTo(map);
+        routeLayerRef.current = L.polyline(latlngs, { color: "#6d28d9", weight: 9, opacity: 1.0 }).addTo(map);
+        var routeOutline = L.polyline(latlngs, { color: "white", weight: 13, opacity: 0.5 }).addTo(map);
+        routeOutlineRef.current = routeOutline;
+        routeOutline.bringToBack();
+        routeLayerRef.current.bringToFront();
 
         // Invisible wider hit-area line for drag-to-insert
         var hitLine = L.polyline(latlngs, { color: "transparent", weight: 20, opacity: 0 }).addTo(map);
@@ -4856,7 +4968,7 @@
           map.fitBounds(routeLayerRef.current.getBounds(), { padding: [40, 40] });
         }
         if (waypoints.length === 0) hasFitRef.current = false;
-      }, [waypoints, wpNames]);
+      }, [waypoints, wpNames, C.isLight]);
 
       // Draw TOC/TOD markers whenever tocTod or waypoints change
       React.useEffect(() => {
@@ -6053,30 +6165,33 @@
                         // Skip parachute drop zones (DZ in name) and glider/sport areas
                         if (asName.indexOf(' DZ ') >= 0 || asName.indexOf('DZ ') === 0 || asName.indexOf(' DZ') === asName.length - 3) return;
                         if (asName.indexOf('PARACHUTE') >= 0 || asName.indexOf('SKYDIVE') >= 0 || asName.indexOf('DROP ZONE') >= 0) return;
-                        var poly = as.geometry.coordinates[0]; // outer ring [lon,lat]
-                        if (!poly || poly.length < 3) return;
+                        var geomType = as.geometry.type;
+                        var rings = [];
+                        if (geomType === 'Polygon') {
+                          rings = [as.geometry.coordinates[0]];
+                        } else if (geomType === 'MultiPolygon') {
+                          rings = as.geometry.coordinates.map(function(poly) { return poly[0]; });
+                        }
+                        if (!rings.length) return;
 
-                        // Find all entry/exit NM distances along the full route
-                        var crossings = []; // {nm, entering}
+                        var crossings = [];
                         var legStartNM = 0;
                         for (var wi = 0; wi < waypoints.length - 1; wi++) {
                           var from = [waypoints[wi].lon, waypoints[wi].lat];
                           var to = [waypoints[wi+1].lon, waypoints[wi+1].lat];
                           var dx = to[0]-from[0], dy = to[1]-from[1];
                           var legNM = Math.sqrt(dx*dx+dy*dy)*60;
-                          // Check each polygon edge
-                          for (var pi = 0; pi < poly.length-1; pi++) {
-                            var t = segmentsIntersect(from, to, poly[pi], poly[pi+1]);
-                            if (t !== null) {
-                              crossings.push({ nm: legStartNM + t * legNM });
+                          rings.forEach(function(poly) {
+                            for (var pi = 0; pi < poly.length-1; pi++) {
+                              var t = segmentsIntersect(from, to, poly[pi], poly[pi+1]);
+                              if (t !== null) crossings.push({ nm: legStartNM + t * legNM });
                             }
-                          }
+                          });
                           legStartNM += legNM;
                         }
                         crossings.sort(function(a,b){return a.nm-b.nm;});
 
-                        // Check if route start is inside polygon
-                        var startInside = pointInPolygon([waypoints[0].lon, waypoints[0].lat], poly);
+                        var startInside = rings.some(function(poly) { return pointInPolygon([waypoints[0].lon, waypoints[0].lat], poly); });
                         var segments = [];
                         if (startInside) crossings.unshift({ nm: 0 });
                         if (crossings.length % 2 !== 0) crossings.push({ nm: totalNM });
@@ -6094,15 +6209,19 @@
                         var isSpecial = specialTypes.indexOf(asType) >= 0;
                         var color = isSpecial ? (asColors[asType] || '#f97316') : (asColors[asClass] || asColors[asType] || '#94a3b8');
                         var label = isSpecial ? (typeLabels[asType] || asType.slice(0,3)) : (asClass && asClass !== 'UNK' && asClass !== 'UNCLASSIFIED' ? asClass : (typeLabels[asType] || asType.slice(0,3)));
-                        var lowerFt = Math.max(as.lowerFt || 0, yMin);
-                        var upperFt = Math.min(as.upperFt || yMax, yMax);
-                        if (upperFt <= lowerFt || upperFt <= 0) return;
+                        var lowerFt = as.lowerFt || 0;
+                        var upperFt = as.upperFt >= 99999 ? yMax : as.upperFt;
+                        // Clamp to visible y range
+                        var rectTop = Math.max(yScale(upperFt), PAD_T);
+                        var rectBot = Math.min(yScale(lowerFt), PAD_T + plotH);
+                        if (asClassCheck === 'C') {} // debug removed
+                        if (rectBot <= rectTop) return; // entirely outside chart
 
                         segments.forEach(function(seg) {
                           if (seg.toNM <= seg.fromNM) return;
                           airspaceRects.push({
                             fromNM: seg.fromNM, toNM: seg.toNM,
-                            y1: yScale(upperFt), y2: yScale(lowerFt),
+                            y1: rectTop, y2: rectBot,
                             color: color, name: as.name, asClass: asClass, label: label,
                             lower: lowerFt, upper: as.upperFt
                           });
@@ -6247,12 +6366,13 @@
                     // Zoomed xScale — stretches content horizontally
                     function xScaleZ(nm) { if (!totalNM) return PAD_L; return PAD_L + ((nm / totalNM) * plotW * profileZoom) - clampedPanX; }
 
-                    return React.createElement("div", { style: { position: "relative" } },
+                    return React.createElement("div", { style: { position: "relative", userSelect: "none" } },
                       profileZoom > 1 && React.createElement("button", {
                         onClick: function() { setProfileZoom(1); setProfilePanX(0); },
                         style: { position: "absolute", top: 4, right: 4, zIndex: 10, padding: "2px 8px", fontFamily: mono, fontSize: "10px", letterSpacing: "1px", background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", color: C.dim, cursor: "pointer" }
                       }, "RESET"),
                     React.createElement("svg", {
+                      ref: profileSvgRef,
                       viewBox: "0 0 " + W + " " + H,
                       style: { width: "100%", height: "auto", display: "block", cursor: profileZoom > 1 ? "grab" : "default", userSelect: "none" },
                       xmlns: "http://www.w3.org/2000/svg",
@@ -6277,27 +6397,6 @@
                       }),
                       // All zoomable content in a clipped group
                       React.createElement("g", { clipPath: "url(#profileClip)" },
-                      airspaceRects.filter(function(ar) {
-                        return isFinite(ar.y1) && isFinite(ar.y2) && ar.y2 > ar.y1 && ar.label && ar.label.length > 0;
-                      }).map(function(ar, ai) {
-                        var x1 = xScaleZ(ar.fromNM), x2 = xScaleZ(ar.toNM);
-                        if (!isFinite(x1) || !isFinite(x2) || x2 < x1 + 1) return null;
-                        return React.createElement("g", { key: "as" + ai },
-                          React.createElement("rect", {
-                            x: x1, y: ar.y1,
-                            width: Math.max(x2 - x1, 2),
-                            height: Math.max(ar.y2 - ar.y1, 2),
-                            fill: ar.color, fillOpacity: 0.25,
-                            stroke: ar.color, strokeWidth: 1.5, strokeOpacity: 0.9,
-                            strokeDasharray: ar.asClass === 'E' || ar.asClass === 'G' ? "4,3" : "none"
-                          }),
-                          React.createElement("text", {
-                            x: Math.max(x1 + 1, x1 + (x2-x1)/2), y: ar.y1 + 9,
-                            textAnchor: "middle", fill: ar.color,
-                            fontSize: 8, fontFamily: mono, opacity: 0.9
-                          }, ar.label)
-                        );
-                      }),
                       // Warning zones
                       warnSegs.map(function(seg, si) {
                         var x1 = xScaleZ(dists[seg.from]), x2 = xScaleZ(dists[seg.to]);
@@ -6341,6 +6440,40 @@
                         points: flightPathPts.map(function(p) { return xScaleZ(p.nm) + "," + yScale(p.ft); }).join(" "),
                         fill: "none", stroke: C.green, strokeWidth: 2
                       }),
+                      // Airspace rectangles — rendered on top of terrain/flight path
+                      airspaceRects.filter(function(ar) {
+                        return isFinite(ar.y1) && isFinite(ar.y2) && ar.y2 > ar.y1 && ar.label && ar.label.length > 0;
+                      }).map(function(ar, ai) {
+                        var x1 = xScaleZ(ar.fromNM), x2 = xScaleZ(ar.toNM);
+                        if (!isFinite(x1) || !isFinite(x2) || x2 < x1 + 1) return null;
+                        var isHovered = hoveredAirspace && hoveredAirspace.ai === ai;
+                        return React.createElement("g", { key: "as" + ai },
+                          React.createElement("rect", {
+                            x: x1, y: ar.y1,
+                            width: Math.max(x2 - x1, 2),
+                            height: Math.max(ar.y2 - ar.y1, 2),
+                            fill: ar.color, fillOpacity: isHovered ? 0.45 : 0.2,
+                            stroke: ar.color, strokeWidth: isHovered ? 2.5 : 1.5, strokeOpacity: 0.9,
+                            strokeDasharray: ar.asClass === 'E' || ar.asClass === 'G' ? "4,3" : "none",
+                            style: { cursor: "pointer" },
+                            onMouseEnter: function(e) {
+                              var svgRect = profileSvgRef.current && profileSvgRef.current.getBoundingClientRect();
+                              setHoveredAirspace({ ai: ai, ar: ar, x: e.clientX, y: e.clientY, svgRect: svgRect });
+                            },
+                            onMouseMove: function(e) {
+                              setHoveredAirspace(function(prev) { return prev ? Object.assign({}, prev, { x: e.clientX, y: e.clientY }) : prev; });
+                            },
+                            onMouseLeave: function() { setHoveredAirspace(null); }
+                          }),
+                          React.createElement("text", {
+                            x: Math.max(x1 + 1, x1 + (x2-x1)/2), y: ar.y1 + 9,
+                            textAnchor: "middle", fill: ar.color,
+                            fontSize: 8, fontFamily: mono, opacity: isHovered ? 1 : 0.9,
+                            fontWeight: isHovered ? "bold" : "normal",
+                            style: { pointerEvents: "none" }
+                          }, ar.label)
+                        );
+                      }),
                       // TOC/TOD dots and labels
                       tocTodSvg,
                       // Dep/dest dots
@@ -6362,7 +6495,37 @@
                       }),
                       // Border — always fixed
                       React.createElement("rect", { x: PAD_L, y: PAD_T, width: plotW, height: plotH, fill: "none", stroke: C.border, strokeWidth: 1 })
-                    )); // close svg + wrapper div
+                    ) // close svg
+                    , // comma — tooltip is second child of wrapper div
+                    (function() {
+                      var tt = hoveredAirspace;
+                      if (!tt) return null;
+                      var ar2 = tt.ar;
+                      var floorStr = ar2.lower <= 0 ? 'SFC' : ar2.lower >= 18000 ? 'FL' + Math.round(ar2.lower/100) : ar2.lower.toLocaleString() + ' ft';
+                      var ceilStr = ar2.upper >= 99999 ? 'UNLIMITED' : ar2.upper >= 18000 ? 'FL' + Math.round(ar2.upper/100) : ar2.upper.toLocaleString() + ' ft';
+                      var svgR = tt.svgRect;
+                      var tipX = svgR ? Math.min(tt.x - svgR.left + 12, svgR.width - 220) : 12;
+                      var tipY = svgR ? Math.max(4, tt.y - svgR.top - 80) : 4;
+                      return React.createElement("div", { key: "tip", style: {
+                        position: "absolute", left: tipX, top: tipY,
+                        background: C.isLight ? "#fff" : "#0f1923",
+                        border: "1.5px solid " + ar2.color,
+                        borderLeft: "4px solid " + ar2.color,
+                        borderRadius: "4px", padding: "7px 11px",
+                        pointerEvents: "none", zIndex: 100,
+                        boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+                        minWidth: "140px", maxWidth: "200px"
+                      }},
+                        React.createElement("div", { style: { fontFamily: mono, fontSize: "10px", color: ar2.color, fontWeight: "bold", letterSpacing: "2px", marginBottom: "4px" } }, ar2.label),
+                        React.createElement("div", { style: { fontFamily: mono, fontSize: "11px", color: C.text, marginBottom: "3px", lineHeight: 1.3 } }, ar2.name),
+                        React.createElement("div", { style: { fontFamily: mono, fontSize: "10px", color: C.dim, marginTop: "4px", letterSpacing: "1px" } },
+                          React.createElement("span", { style: { color: ar2.color, opacity: 0.8 } }, "\u25B2 "), ceilStr,
+                          React.createElement("br", null),
+                          React.createElement("span", { style: { color: ar2.color, opacity: 0.8 } }, "\u25BC "), floorStr
+                        )
+                      );
+                    })()
+                    ); // close wrapper div
                   })()}
                 </div>
               )}
@@ -6541,6 +6704,7 @@
       { id: "glide",    label: "GLIDE",          fig: "5-39" },
       { id: "landing",  label: "LANDING",        fig: "5-41·5-43" },
       { id: "speeds",   label: "SPEEDS",         fig: "" },
+      { id: "airrace",  label: "AIR RACE",       fig: "2700 RPM" },
       ];
       const tabProps = (id) => ({ savedState: tabStates[id] || {}, onStateChange: (s) => saveTabState(id, s) });
       return (
@@ -6560,7 +6724,7 @@
       <div style={{ fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" }}>PA-28-181 ARCHER III · POH PERFORMANCE</div>
       <div style={{ fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px", textTransform: "uppercase" }}>PERFORMANCE CALCULATOR</div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr 1fr 1fr 1fr" : "repeat(8, 1fr)", marginBottom: mobile ? "14px" : "24px", border: `${C.cardBorder} solid ${C.border}`, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr 1fr 1fr 1fr" : "repeat(9, 1fr)", marginBottom: mobile ? "14px" : "24px", border: `${C.cardBorder} solid ${C.border}`, borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" }}>
       {tabs.map((tab, i) => (
       <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
       padding: mobile ? "10px 4px" : "14px 6px",
@@ -6585,6 +6749,7 @@
       activeTab === "cruise"   ? <CruiseTab        {...tabProps("cruise")}   /> :
       activeTab === "glide"    ? <GlideTab         {...tabProps("glide")}    /> :
       activeTab === "speeds"   ? <ArcherSpeedsTab  {...tabProps("speeds")}   /> :
+      activeTab === "airrace"  ? <AirRace2700Tab   {...tabProps("airrace")}  /> :
       activeTab === "wb"       ? <ArcherWBTab      {...tabProps("wb")} user={user}      /> : null}
       </div>
       <div style={{ marginTop: "24px", fontSize: "12px", color: C.dim, letterSpacing: "2px" }}>PA-28-181 ARCHER III · VB-2749 · ISSUED DEC 2017</div>
@@ -10701,7 +10866,7 @@ null}
       name: "PA-28-181",
       sub: "Archer III",
       desc: "VB-2749 · Issued Dec 2017",
-      tags: ["W&B", "Takeoff", "Landing", "Climb", "Time·Fuel·Dist", "Cruise", "Glide", "Speeds"],
+      tags: ["W&B", "Takeoff", "Landing", "Climb", "Time·Fuel·Dist", "Cruise", "Glide", "Speeds", "Air Race"],
       available: true,
       },
       {
