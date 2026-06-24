@@ -4161,6 +4161,153 @@
       const profileDragRef = React.useRef(null);
       const profileSvgRef = React.useRef(null);
       const [hoveredAirspace, setHoveredAirspace] = React.useState(null);
+      const airspaceHighlightRef = React.useRef(null);
+      const mapViewBeforeHighlightRef = React.useRef(null);
+      const isHighlightingRef = React.useRef(false);
+      const airspaceOverlayRef = React.useRef(null);
+      const [mapReady, setMapReady] = React.useState(false);
+
+      // Permanent airspace overlay on map — viewport-aware, refetches on pan/zoom
+      React.useEffect(function() {
+        var map = leafletMap.current;
+        if (!map) return;
+
+        var asColors = {
+          'A': '#ef4444', 'B': '#1d4ed8', 'C': '#d946ef', 'D': '#60a5fa',
+          'MOA': '#c2185b', 'RESTRICTED': '#1565c0', 'PROHIBITED': '#dc2626',
+          'DANGER': '#ef4444', 'CTR': '#60a5fa', 'TMA': '#1d4ed8',
+        };
+
+        function drawAirspaces(spaces) {
+          if (airspaceOverlayRef.current) {
+            try { map.removeLayer(airspaceOverlayRef.current); } catch(e) {}
+            airspaceOverlayRef.current = null;
+          }
+          if (!spaces || !spaces.length) return;
+          var group = L.layerGroup();
+          spaces.forEach(function(as) {
+            if (!as.geometry) return;
+            var asClass = String(as.asClass || '').toUpperCase();
+            var asType = String(as.type || '').toUpperCase();
+            var asName = String(as.name || '').toUpperCase();
+            var skip = ['E','F','G','UNCLASSIFIED'];
+            if (skip.indexOf(asClass) >= 0) return;
+            // Detect MOAs by name
+            if (asName.indexOf('MOA') >= 0 || asName.match(/\bRACER\b|\bBOMBER\b|\bFIGHTER\b|\bGUN\b/)) asType = 'MOA';
+            var specialTypes = ['MOA','RESTRICTED','PROHIBITED','DANGER','WARNING','ALERT'];
+            var isSpecial = specialTypes.indexOf(asType) >= 0;
+            var color = isSpecial ? (asColors[asType] || '#f97316') : (asColors[asClass] || '#94a3b8');
+            var dashArray = asClass === 'D' ? "5,4" : (asType === 'MOA' ? "8,5" : null);
+            var weight = asClass === 'B' ? 5 : asClass === 'C' ? 4 : 3;
+            try {
+              var rings;
+              if (as.geometry.type === 'Polygon') {
+                rings = [[as.geometry.coordinates[0].map(function(c) { return [c[1], c[0]]; })]];
+              } else if (as.geometry.type === 'MultiPolygon') {
+                rings = as.geometry.coordinates.map(function(poly) {
+                  return [poly[0].map(function(c) { return [c[1], c[0]]; })];
+                });
+              }
+              if (!rings) return;
+              rings.forEach(function(latlngs) {
+                // White backing for contrast
+                L.polygon(latlngs, {
+                  color: "white", weight: weight + 3, opacity: 0.7,
+                  fill: false, interactive: false
+                }).addTo(group);
+                // Colored line on top
+                L.polygon(latlngs, {
+                  color: color, weight: weight, opacity: 1,
+                  fill: false, dashArray: dashArray, interactive: false
+                }).addTo(group);
+              });
+            } catch(e) {}
+          });
+          group.addTo(map);
+          airspaceOverlayRef.current = group;
+        }
+
+        var fetchTimer = null;
+        function scheduleFetch() {
+          clearTimeout(fetchTimer);
+          fetchTimer = setTimeout(function() {
+            var b = map.getBounds();
+            var minLat = b.getSouth().toFixed(4), maxLat = b.getNorth().toFixed(4);
+            var minLon = b.getWest().toFixed(4), maxLon = b.getEast().toFixed(4);
+            fetch("https://metar-proxy.mamillh01.workers.dev/?type=airspaces&minLat=" + minLat + "&maxLat=" + maxLat + "&minLon=" + minLon + "&maxLon=" + maxLon + "&t=" + Math.floor(Date.now()/120000))
+              .then(function(r) { return r.json(); })
+              .then(function(d) { if (d && d.airspaces) drawAirspaces(d.airspaces); })
+              .catch(function() {});
+          }, 400);
+        }
+
+        map.on("moveend", scheduleFetch);
+        map.on("zoomend", scheduleFetch);
+        scheduleFetch(); // initial draw
+
+        return function() {
+          map.off("moveend", scheduleFetch);
+          map.off("zoomend", scheduleFetch);
+          clearTimeout(fetchTimer);
+          if (airspaceOverlayRef.current) {
+            try { map.removeLayer(airspaceOverlayRef.current); } catch(e) {}
+            airspaceOverlayRef.current = null;
+          }
+        };
+      }, [mapReady]);
+      // Highlight airspace polygon on map when hovered in profile
+      React.useEffect(function() {
+        var map = leafletMap.current;
+        // Remove existing highlight
+        if (airspaceHighlightRef.current) {
+          try { airspaceHighlightRef.current.remove(map); } catch(e) {}
+          airspaceHighlightRef.current = null;
+        }
+        if (!map) return;
+        if (!hoveredAirspace) {
+          // Restore previous map view
+          if (mapViewBeforeHighlightRef.current) {
+            var prev = mapViewBeforeHighlightRef.current;
+            isHighlightingRef.current = false;
+            map.setView(prev.center, prev.zoom, { animate: true, duration: 0.4 });
+            mapViewBeforeHighlightRef.current = null;
+          }
+          return;
+        }
+        var as = hoveredAirspace.ar;
+        if (!as || !as.geometry) return;
+        var color = as.color || "#d946ef";
+        try {
+          var latlngs;
+          if (as.geometry.type === "Polygon") {
+            latlngs = [as.geometry.coordinates[0].map(function(c) { return [c[1], c[0]]; })];
+          } else if (as.geometry.type === "MultiPolygon") {
+            latlngs = as.geometry.coordinates.map(function(poly) {
+              return poly[0].map(function(c) { return [c[1], c[0]]; });
+            });
+          }
+          if (!latlngs) return;
+          // White halo behind for contrast against busy sectional
+          var halo = L.polygon(latlngs, {
+            color: "white", weight: 6, opacity: 0.6,
+            fill: false, dashArray: "8,4"
+          }).addTo(map);
+          var layer = L.polygon(latlngs, {
+            color: color, weight: 3, opacity: 1,
+            fillColor: color, fillOpacity: 0.35,
+            dashArray: "8,4"
+          }).addTo(map);
+          // Store both so we can remove both
+          airspaceHighlightRef.current = { layer: layer, halo: halo, remove: function(m) { try { m.removeLayer(layer); m.removeLayer(halo); } catch(e) {} } };
+          // Save current view ONLY before the first highlight (not mid-sequence)
+          if (!isHighlightingRef.current) {
+            mapViewBeforeHighlightRef.current = { center: map.getCenter(), zoom: map.getZoom() };
+            isHighlightingRef.current = true;
+          }
+          // Fit map to airspace, clamped to zoom 11 (~3 mi) so FAA chart stays visible
+          map.fitBounds(layer.getBounds(), { animate: true, duration: 0.4, padding: [40, 40], maxZoom: 11 });
+        } catch(e) {}
+      }, [hoveredAirspace]);
       // Attach non-passive wheel listener to profile SVG to prevent page scroll
       React.useEffect(function() {
         var el = profileSvgRef.current;
@@ -4556,6 +4703,7 @@
         if (!mapRef.current || leafletMap.current) return;
         var map = L.map(mapRef.current, { center: [39.5, -98.35], zoom: 7, minZoom: 8, maxZoom: 19, zoomControl: true });
         leafletMap.current = map;
+        setMapReady(true);
         var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" });
         var sectional = L.tileLayer(
           "https://tiles.arcgis.com/tiles/ssFJjBXIUyZDrSYZ/arcgis/rest/services/VFR_Sectional/MapServer/tile/{z}/{y}/{x}",
@@ -6223,7 +6371,8 @@
                             fromNM: seg.fromNM, toNM: seg.toNM,
                             y1: rectTop, y2: rectBot,
                             color: color, name: as.name, asClass: asClass, label: label,
-                            lower: lowerFt, upper: as.upperFt
+                            lower: lowerFt, upper: as.upperFt,
+                            geometry: as.geometry
                           });
                         });
                         } catch(e) {} // skip malformed airspace
