@@ -24,15 +24,16 @@
     }
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AeroCalc v1.8.0 · POH Performance Calculator</title>
+  <title>AeroCalc v1.9.0 · POH Performance Calculator</title>
   <meta property="og:title" content="AeroCalc" />
   <meta property="og:description" content="POH Performance Calculator — PA-28-181 Archer III & Cessna 172S" />
   <meta property="og:type" content="website" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
   <script>
     const SUPABASE_URL = "https://udrzcdcywyeletqfwhpc.supabase.co";
@@ -46,8 +47,8 @@
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
     input:focus { outline: 2px solid #5a8a6a !important; }
-    body.light-mode input:focus { outline: 2px solid #1a7a3a !important; }
-    body.light-mode { -webkit-font-smoothing: antialiased; }
+    body.light-mode input:focus { outline: 2px solid #166534 !important; }
+    body.light-mode { -webkit-font-smoothing: antialiased; font-weight: 500; }
     .wx-tooltip { background: #1e293b; border: 1px solid #475569; color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 1px; white-space: pre; padding: 6px 10px; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
     .wx-tooltip::before { display: none; }
     @keyframes dotPulse {
@@ -515,16 +516,17 @@ var THEMES = {
     rwyBg: "#080c06", rwyAsphalt: "#2a3a1a", rwyStripe: "#3a4a2a", rwyText: "#4a6a3a", markerBg: "#060a0f"
   },
   light: {
-    bg: "#f0f2f5", card: "#ffffff", input: "#edf0f5",
-    border: "#9da8b8", borderDim: "#c8d0da",
-    green: "#1a7a3a", text: "#111827",
-    dim: "#374151", dimmer: "#4b5563", dimmest: "#6b7280",
-    surface: "#f5f7fa",
-    note: "#1a5a2a",
-    error: "#cc2222", errorBg: "#fef2f2", errorBorder: "#fca5a5",
-    warm: "#b45309", cool: "#1d4ed8",
+    // "Paper chart" light theme: warm-neutral paper, ink text, deep aviation green
+    bg: "#e9e6df", card: "#fbfaf6", input: "#ffffff",
+    border: "#a3a094", borderDim: "#d9d6cc",
+    green: "#166534", text: "#1c1917",
+    dim: "#33302c", dimmer: "#453f38", dimmest: "#5c564d",
+    surface: "#f4f2ec",
+    note: "#166534",
+    error: "#b91c1c", errorBg: "#fdf0ec", errorBorder: "#e8a692",
+    warm: "#9a5b0b", cool: "#1e5cb3",
     btnText: "#ffffff",
-    label: "#111827",
+    label: "#1c1917",
     rwyBg: "#c8d4e0", rwyAsphalt: "#1e2a38", rwyStripe: "#e8ecf0", rwyText: "#f9fafb", markerBg: "#ffffff"
   }
 };
@@ -541,13 +543,13 @@ function Grid3(_ref2) {var children = _ref2.children,style = _ref2.style;
 function Card(_ref3) {var children = _ref3.children;
   var C = useC();
   var mobile = React.useContext(MobileContext);
-  return /*#__PURE__*/React.createElement("div", { style: { background: C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", padding: mobile ? "16px" : "32px", boxShadow: C.isLight ? "0 2px 12px rgba(0,0,0,0.10)" : "0 0 80px rgba(90,138,106,0.10)" } }, children);
+  return /*#__PURE__*/React.createElement("div", { style: { background: C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", padding: mobile ? "16px" : "32px", boxShadow: C.isLight ? "0 1px 3px rgba(87,72,42,0.14), 0 4px 16px rgba(87,72,42,0.08)" : "0 0 80px rgba(90,138,106,0.10)" } }, children);
 }
 function TempField(_ref4) {var value = _ref4.value,_onChange = _ref4.onChange,unit = _ref4.unit,onUnitChange = _ref4.onUnitChange,_ref4$label = _ref4.label,label = _ref4$label === void 0 ? "OAT AT DEPARTURE" : _ref4$label,_ref4$hint = _ref4.hint,hint = _ref4$hint === void 0 ? "−25°C to 50°C chart range" : _ref4$hint,_ref4$filled = _ref4.filled,filled = _ref4$filled === void 0 ? false : _ref4$filled;
   var C = useC();
   return (/*#__PURE__*/
     React.createElement("div", null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "8px" } },
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "8px" } },
     label,
     filled && /*#__PURE__*/React.createElement("span", { style: { fontSize: "11px", background: C.green, color: C.btnText, borderRadius: "3px", padding: "2px 6px", letterSpacing: "1px", fontWeight: "bold" } }, "\u2713 METAR")
     ), /*#__PURE__*/
@@ -570,7 +572,7 @@ function InputField(_ref6) {var label = _ref6.label,unit = _ref6.unit,value = _r
   var C = useC();
   return (/*#__PURE__*/
     React.createElement("div", null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "8px" } },
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "8px" } },
     label,
     filled && /*#__PURE__*/React.createElement("span", { style: { fontSize: "11px", background: C.green, color: C.btnText, borderRadius: "3px", padding: "2px 6px", letterSpacing: "1px", fontWeight: "bold" } }, "\u2713 METAR")
     ), /*#__PURE__*/
@@ -640,7 +642,7 @@ function ISABadgeRow(_ref0) {var label = _ref0.label,isaLabel = _ref0.isaLabel,i
   var C = useC();
   return (/*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal" } }, label), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal" } }, label), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "1px", color: isaDeviation > 5 ? C.warm : isaDeviation < -5 ? C.cool : C.dim, background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.border), padding: "4px 10px", borderRadius: "2px" } },
     isaLabel, " \xB7 ISA std ", isaTemp.toFixed(1), "\xB0C"
     )
@@ -688,7 +690,7 @@ function ToggleRow(_ref12) {var label = _ref12.label,options = _ref12.options,va
   var C = useC();
   return (/*#__PURE__*/
     React.createElement("div", null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px", textTransform: "uppercase" } }, label), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px", textTransform: "uppercase" } }, label), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", gap: "8px" } },
     options.map(function (opt) {return (/*#__PURE__*/
         React.createElement("button", { key: String(opt.val), onClick: function onClick() {return onChange(opt.val);}, style: {
@@ -742,7 +744,7 @@ function TimeFuelDistTab(_ref13) {var savedState = _ref13.savedState,onStateChan
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "28px", paddingBottom: "20px", borderBottom: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" } }, "CLIMB \xB7 FIG 5-17"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" } }, "CLIMB \xB7 FIG 5-17"), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "10px" } }, /*#__PURE__*/
     React.createElement(AltOATRow, { altLabel: "DEPARTURE ALT.", altValue: departAlt, onAltChange: setDepartAlt, altHint: "0 \u2013 12,000 ft", altPlaceholder: "e.g. 800", oatValue: oatDep, onOatChange: setOatDep, unit: tempUnit, onUnitChange: setTempUnit }), /*#__PURE__*/
     React.createElement(AltOATRow, { altLabel: "CRUISE ALT.", altValue: cruiseAlt, onAltChange: setCruiseAlt, altHint: "Above departure", altPlaceholder: "e.g. 6000", oatValue: oatCruise, onOatChange: setOatCruise, unit: tempUnit, onUnitChange: setTempUnit })
@@ -773,14 +775,14 @@ function TimeFuelDistTab(_ref13) {var savedState = _ref13.savedState,onStateChan
     React.createElement("div", { style: { marginTop: "28px" } }, /*#__PURE__*/
     React.createElement(ChartClampWarning, { items: result.clampWarnings }), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal" } }, "RESULTS"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal" } }, "RESULTS"), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", gap: "6px" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "1px", color: result.isaDevDep > 5 ? C.warm : result.isaDevDep < -5 ? C.cool : C.dim, background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.border), padding: "3px 8px", borderRadius: "2px" } }, "DEP ", formatISA(result.isaDevDep)), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "1px", color: result.isaDevCruise > 5 ? C.warm : result.isaDevCruise < -5 ? C.cool : C.dim, background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.border), padding: "3px 8px", borderRadius: "2px" } }, "CRZ ", formatISA(result.isaDevCruise))
     )
     ), /*#__PURE__*/
 
-    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "CLIMB \xB7 FIG 5-17"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "CLIMB \xB7 FIG 5-17"), /*#__PURE__*/
     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "12px" } }, /*#__PURE__*/
     React.createElement(ResultCard, { label: "TIME", value: result.timeMin.toFixed(1), unit: "MIN", color: C.green }), /*#__PURE__*/
     React.createElement(ResultCard, { label: "FUEL", value: result.fuelGal.toFixed(2), unit: "GAL", color: C.green }), /*#__PURE__*/
@@ -878,7 +880,7 @@ function RateOfClimbTab(_ref14) {var savedState = _ref14.savedState,onStateChang
     React.createElement(ChartClampWarning, { items: result.clampWarnings }), /*#__PURE__*/
     React.createElement(ISABadgeRow, { label: "RESULTS", isaLabel: formatISA(result.isaDeviation), isaDeviation: result.isaDeviation, isaTemp: result.isaTemp }), /*#__PURE__*/
     React.createElement("div", { style: { background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "3px", padding: "28px", textAlign: "center", marginBottom: "12px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px" } }, "RATE OF CLIMB"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px" } }, "RATE OF CLIMB"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "60px", color: rocColor, lineHeight: 1, fontWeight: "bold" } }, Math.round(result.roc)), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "14px", color: C.dimmer, marginTop: "8px", letterSpacing: "3px" } }, "FT / MIN")
     ), /*#__PURE__*/
@@ -891,7 +893,7 @@ function RateOfClimbTab(_ref14) {var savedState = _ref14.savedState,onStateChang
 
 
     React.createElement("div", { style: { marginTop: "24px", paddingTop: "20px", borderTop: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "14px" } }, "CLIMB GRADIENT CHECKER"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "14px" } }, "CLIMB GRADIENT CHECKER"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", color: C.isLight ? C.dimmer : C.dim, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px", marginBottom: "14px" } }, "Convert ft/nm departure procedure gradient to required FPM"), /*#__PURE__*/
     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px" } }, /*#__PURE__*/
     React.createElement("div", null, /*#__PURE__*/
@@ -994,7 +996,7 @@ function CruiseTab(_ref15) {var savedState = _ref15.savedState,onStateChange = _
     React.createElement(ResultCard, { label: "FUEL FLOW", value: result.fuelFlow.toFixed(1), unit: "GPH" })
     ), /*#__PURE__*/
     React.createElement("div", { style: { background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.borderDim), borderRadius: "3px", padding: "12px 14px", marginBottom: "12px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" } }, "ENDURANCE & RANGE \xB7 ",
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" } }, "ENDURANCE & RANGE \xB7 ",
     reserve === "45min" ? "45 MIN RESERVE" : "NO RESERVE"
     ), /*#__PURE__*/
     React.createElement("div", { style: { overflowX: "auto", WebkitOverflowScrolling: "touch" } }, /*#__PURE__*/
@@ -1419,7 +1421,7 @@ function MetarFetch(_ref16) {var onFill = _ref16.onFill;
   return (/*#__PURE__*/
     React.createElement("div", { style: { background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "3px", padding: "12px 14px", marginBottom: "8px" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal" } }, "WEATHER AUTO-FILL"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "700" : "normal" } }, "WEATHER AUTO-FILL"), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", gap: "0px", borderRadius: "3px", overflow: "hidden", border: "".concat(C.cardBorder, " solid ").concat(C.border) } },
     ["current", "forecast"].map(function (m2) {return (/*#__PURE__*/
         React.createElement("button", { key: m2, onClick: function onClick() {return setMode(m2);}, style: {
@@ -1572,7 +1574,7 @@ function TakeoffTab(_ref17) {var savedState = _ref17.savedState,onStateChange = 
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "20px", paddingBottom: "16px", borderBottom: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "10px" } }, "TAKEOFF PERFORMANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "10px" } }, "TAKEOFF PERFORMANCE"), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", gap: "8px" } },
     [{ val: "up", label: "FLAPS UP", fig: "5-7" }, { val: "25", label: "FLAPS 25°", fig: "5-9 · 5-13" }].map(function (opt) {return (/*#__PURE__*/
         React.createElement("button", { key: opt.val, onClick: function onClick() {setFlaps(opt.val);setResult(null);}, style: {
@@ -1875,18 +1877,21 @@ function RunwayViz(_ref20) {var result = _ref20.result,airportRunways = _ref20.a
     }(), /*#__PURE__*/
     React.createElement("div", { style: { background: C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", padding: "14px 14px 10px", marginBottom: "14px" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal" } }, "FLAPS 25\xB0 TAKEOFF"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal" } }, "FLAPS 25\xB0 TAKEOFF"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.dimmer } }, "FULL THROTTLE \xB7 PAVED/LEVEL/DRY \xB7 A/C OFF")
     ), /*#__PURE__*/
-    React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block" } }, /*#__PURE__*/
+    React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block", borderRadius: "8px" } }, /*#__PURE__*/
 
     React.createElement("defs", null, /*#__PURE__*/
     React.createElement("linearGradient", { id: "skyGrad", x1: "0", y1: "0", x2: "0", y2: "1" }, /*#__PURE__*/
-    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#c8dff5" : C.card }), /*#__PURE__*/
-    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? "#ddeaf7" : C.card })
+    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#b9d2ea" : C.card }), /*#__PURE__*/
+    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? "#e9e7dc" : C.card })
     )
     ), /*#__PURE__*/
-    React.createElement("rect", { x: "0", y: "0", width: "460", height: "165", fill: "url(#skyGrad)" }), /*#__PURE__*/
+    React.createElement("rect", { x: "0", y: "0", width: "460", height: "165", fill: "url(#skyGrad)" }),
+
+    C.isLight && /*#__PURE__*/React.createElement("rect", { x: "0", y: "99", width: "460", height: "66", fill: "#dde1cf" }),
+    C.isLight && /*#__PURE__*/React.createElement("rect", { x: "0", y: "99", width: "460", height: "3", fill: "#ccd2ba" }), /*#__PURE__*/
     React.createElement("defs", null, /*#__PURE__*/
     React.createElement("linearGradient", { id: "rwyGrad", x1: "0", y1: "0", x2: "1", y2: "0" }, /*#__PURE__*/
     React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#2c2c2c" : C.rwyAsphalt }), /*#__PURE__*/
@@ -1900,14 +1905,14 @@ function RunwayViz(_ref20) {var result = _ref20.result,airportRunways = _ref20.a
         React.createElement("rect", { key: i, x: 22 + i * 6, y: "88", width: "3", height: "22", rx: "1", fill: C.isLight ? "#e8ecf0" : C.rwyAsphalt }));}
     ),
 
-    Array.from({ length: 18 }).map(function (_, i) {return (/*#__PURE__*/
-        React.createElement("rect", { key: i, x: 55 + i * 22, y: "98", width: "12", height: "2", rx: "1", fill: C.isLight ? "#e0e6ec" : centerlineColor }));}
+    Array.from({ length: 17 }).map(function (_, i) {return (/*#__PURE__*/
+        React.createElement("rect", { key: i, x: 70 + i * 22, y: "98", width: "12", height: "2", rx: "1", fill: C.isLight ? "#e0e6ec" : centerlineColor }));}
     ), /*#__PURE__*/
 
     React.createElement("path", {
       d: "M ".concat(xGr, " ").concat(yRwy, " C ").concat(cp1X, " ").concat(cp1Y, " ").concat(cp2X, " ").concat(cp2Y, " ").concat(xEnd, " ").concat(yEnd),
-      fill: "none", stroke: markerColor50, strokeWidth: "1.5",
-      strokeDasharray: "5,3", opacity: done ? 0.5 : 0.15 }
+      fill: "none", stroke: markerColor50, strokeWidth: C.isLight ? "2" : "1.5",
+      strokeDasharray: "5,3", opacity: done ? C.isLight ? 0.8 : 0.5 : C.isLight ? 0.3 : 0.15 }
     ), /*#__PURE__*/
 
     React.createElement("line", { x1: xGr, y1: "84", x2: xGr, y2: "116", stroke: markerColorRoll, strokeWidth: "1.5", strokeDasharray: "3,2" }), /*#__PURE__*/
@@ -1948,7 +1953,7 @@ function RunwayViz(_ref20) {var result = _ref20.result,airportRunways = _ref20.a
     }(),
 
     result.rwyNum && /*#__PURE__*/
-    React.createElement("text", { x: "36", y: "102", textAnchor: "middle", fill: C.isLight ? "#e8ecf0" : C.rwyText, fontSize: "11", fontFamily: "Courier New", fontWeight: "bold", letterSpacing: "1" }, String(result.rwyNum).padStart(2, '0')),
+    React.createElement("text", { x: "55", y: "102", textAnchor: "middle", fill: C.isLight ? "#e8ecf0" : C.rwyText, fontSize: "11", fontFamily: "Courier New", fontWeight: "bold", letterSpacing: "1" }, String(result.rwyNum).padStart(2, '0')),
 
 
     result.windComponents && function () {
@@ -1967,11 +1972,11 @@ function RunwayViz(_ref20) {var result = _ref20.result,airportRunways = _ref20.a
         React.createElement("circle", { cx: cx, cy: cy, r: "22", fill: C.markerBg, stroke: C.border, strokeWidth: "1" }),
         [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) {
           var r2 = (a - 90) * Math.PI / 180;
-          return /*#__PURE__*/React.createElement("line", { key: a, x1: cx + Math.cos(r2) * 16, y1: cy + Math.sin(r2) * 16, x2: cx + Math.cos(r2) * 20, y2: cy + Math.sin(r2) * 20, stroke: C.borderDim, strokeWidth: "1" });
+          return /*#__PURE__*/React.createElement("line", { key: a, x1: cx + Math.cos(r2) * 16, y1: cy + Math.sin(r2) * 16, x2: cx + Math.cos(r2) * 20, y2: cy + Math.sin(r2) * 20, stroke: C.isLight ? "#8f8a7a" : C.borderDim, strokeWidth: C.isLight ? "1.4" : "1" });
         }), /*#__PURE__*/
         React.createElement("line", { x1: x1, y1: y1, x2: x2, y2: y2, stroke: C.cool, strokeWidth: "2" }), /*#__PURE__*/
         React.createElement("polygon", { points: "".concat(x2, ",").concat(y2, " ").concat(hx1, ",").concat(hy1, " ").concat(hx2, ",").concat(hy2), fill: C.cool }), /*#__PURE__*/
-        React.createElement("text", { x: cx, y: cy - 27, textAnchor: "middle", fill: C.dimmest, fontSize: "8", fontFamily: "Courier New", letterSpacing: "1" }, "WIND / RWY"), /*#__PURE__*/
+        React.createElement("text", { x: cx, y: cy - 27, textAnchor: "middle", fill: C.isLight ? C.dimmer : C.dimmest, fontSize: "8", fontFamily: "Courier New", letterSpacing: "1" }, "WIND / RWY"), /*#__PURE__*/
         React.createElement("text", { x: cx, y: cy + 33, textAnchor: "middle", fill: C.cool, fontSize: "9", fontFamily: "Courier New" }, result.windSpd, "KT/", wc.angle === 0 ? 'HW' : wc.angle === 180 ? 'TW' : "XW-".concat(wc.crossDir))
         ));
 
@@ -2340,7 +2345,7 @@ function LandingTab(_ref22) {var savedState = _ref22.savedState,onStateChange = 
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "28px", paddingBottom: "20px", borderBottom: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "LANDING PERFORMANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "LANDING PERFORMANCE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "28px", fontWeight: "bold", letterSpacing: "2px", color: C.text } }, "FLAPS 40\xB0"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" } }, "POWER OFF \xB7 66 KIAS \xB7 FULL STALL \xB7 MAX BRAKING \xB7 PAVED/LEVEL/DRY \xB7 FIG 5-41")
     ), /*#__PURE__*/
@@ -2522,8 +2527,8 @@ function LandingViz(_ref24) {var result = _ref24.result,airportRunways = _ref24.
     return (/*#__PURE__*/
       React.createElement("g", { transform: "translate(".concat(x, ",").concat(y, ") rotate(").concat(-ang, ") scale(-0.11, 0.11)") }, /*#__PURE__*/
       React.createElement("g", { transform: "translate(-290,-110)" }, /*#__PURE__*/
-      React.createElement("g", { transform: "translate(0,241) scale(0.1,-0.1)", fill: color, stroke: "none" }, /*#__PURE__*/
-      React.createElement("path", { d: "M5515 2261 c-146 -7 -165 -14 -214 -81 -30 -42 -53 -70 -158 -195 -38 -45 -86 -103 -108 -130 -173 -211 -239 -278 -320 -324 -95 -55 -136 -61 -397 -61 -132 0 -238 4 -238 9 0 12 85 128 122 168 17 17 28 37 26 43 -2 7 -46 -40 -98 -104 l-95 -117 -116 5 c-64 4 -181 15 -260 27 -79 11 -163 23 -186 26 -39 5 -55 16 -35 25 14 5 152 184 152 197 0 6 -7 11 -16 11 -16 0 -58 -35 -194 -159 -32 -29 -65 -51 -78 -51 -12 0 -68 7 -123 15 -56 9 -262 36 -458 61 -543 70 -832 72 -1011 7 -76 -28 -405 -202 -484 -256 -23 -16 -54 -22 -160 -28 -261 -15 -605 -60 -735 -96 -21 -5 -23 -4 -15 13 13 26 10 214 -6 437 -11 162 -15 187 -29 185 -11 -2 -17 -16 -18 -48 -2 -25 -10 -130 -19 -234 -8 -104 -14 -232 -13 -284 l2 -94 -56 -22 c-63 -26 -138 -69 -161 -92 -23 -22 -20 -59 7 -76 31 -20 125 -56 169 -65 l37 -8 5 -160 c3 -88 10 -198 16 -245 5 -47 10 -114 10 -150 0 -77 8 -110 25 -110 13 0 19 43 30 220 22 321 22 335 9 380 -14 47 -9 67 9 35 18 -34 90 -100 138 -129 38 -21 48 -34 53 -61 4 -19 11 -35 16 -35 6 0 10 -27 10 -60 0 -64 8 -73 33 -38 l16 23 0 -22 c1 -29 8 -29 32 -1 10 13 18 39 19 61 0 42 21 51 37 14 11 -24 53 -42 125 -52 34 -4 45 -10 42 -20 -3 -7 -1 -16 4 -19 9 -5 -8 -102 -23 -125 -3 -6 -17 -11 -30 -11 -36 0 -155 -66 -203 -113 -50 -49 -54 -81 -15 -129 32 -39 44 -48 54 -42 4 2 14 -7 23 -21 9 -13 36 -36 61 -51 36 -21 54 -25 86 -21 56 7 110 38 137 77 12 19 29 35 36 36 8 1 66 19 131 40 100 33 121 44 145 74 45 58 82 132 71 143 -6 6 -62 3 -159 -8 -147 -17 -235 -15 -248 6 -3 6 6 24 21 39 30 31 30 24 -1 130 -4 14 -4 22 0 19 3 -3 35 0 71 6 52 10 127 10 363 0 163 -8 442 -17 618 -21 l321 -7 2 -57 1 -57 -42 -7 c-137 -22 -257 -134 -219 -204 15 -27 57 -50 110 -58 26 -4 41 -12 41 -21 0 -23 71 -82 108 -89 32 -6 32 -7 32 -65 l0 -59 35 0 35 0 0 65 c0 50 3 65 15 65 22 0 86 61 101 96 12 27 24 35 81 54 130 42 149 51 166 80 20 32 22 66 6 76 -6 4 -61 19 -123 34 -100 24 -111 29 -108 48 2 11 -4 34 -12 51 -30 56 -27 58 97 60 63 1 135 -3 162 -9 38 -9 50 -8 59 3 8 10 56 18 164 27 85 6 156 9 159 6 8 -8 -28 -47 -38 -41 -11 8 -23 -15 -12 -26 4 -4 26 -6 47 -2 30 5 44 15 65 44 20 30 33 38 56 39 17 0 47 4 68 9 l37 9 0 -344 c0 -296 2 -344 15 -344 12 0 15 22 18 113 l3 112 2 -112 c2 -93 5 -113 17 -113 13 0 15 45 15 345 l0 344 33 5 c17 3 212 26 432 51 220 25 436 50 480 55 113 14 307 37 465 55 130 15 176 20 231 30 16 2 41 -5 65 -20 61 -38 108 -30 85 14 -10 17 -5 20 57 30 123 21 190 54 214 106 10 21 18 23 149 30 104 5 139 10 139 20 0 13 -12 16 -201 46 l-77 13 -12 51 c-13 56 -19 30 117 490 20 66 48 163 64 215 15 52 42 142 59 200 42 141 50 172 44 182 -6 9 -98 8 -309 -1z" }), /*#__PURE__*/
+      React.createElement("g", { transform: "translate(0,241) scale(0.1,-0.1)", fill: C.isLight ? "#1a3a5c" : color, stroke: "none" }, /*#__PURE__*/
+      React.createElement("path", { style: { paintOrder: "stroke fill" }, stroke: C.isLight ? "white" : "none", strokeWidth: C.isLight ? "35" : "0", d: "M5515 2261 c-146 -7 -165 -14 -214 -81 -30 -42 -53 -70 -158 -195 -38 -45 -86 -103 -108 -130 -173 -211 -239 -278 -320 -324 -95 -55 -136 -61 -397 -61 -132 0 -238 4 -238 9 0 12 85 128 122 168 17 17 28 37 26 43 -2 7 -46 -40 -98 -104 l-95 -117 -116 5 c-64 4 -181 15 -260 27 -79 11 -163 23 -186 26 -39 5 -55 16 -35 25 14 5 152 184 152 197 0 6 -7 11 -16 11 -16 0 -58 -35 -194 -159 -32 -29 -65 -51 -78 -51 -12 0 -68 7 -123 15 -56 9 -262 36 -458 61 -543 70 -832 72 -1011 7 -76 -28 -405 -202 -484 -256 -23 -16 -54 -22 -160 -28 -261 -15 -605 -60 -735 -96 -21 -5 -23 -4 -15 13 13 26 10 214 -6 437 -11 162 -15 187 -29 185 -11 -2 -17 -16 -18 -48 -2 -25 -10 -130 -19 -234 -8 -104 -14 -232 -13 -284 l2 -94 -56 -22 c-63 -26 -138 -69 -161 -92 -23 -22 -20 -59 7 -76 31 -20 125 -56 169 -65 l37 -8 5 -160 c3 -88 10 -198 16 -245 5 -47 10 -114 10 -150 0 -77 8 -110 25 -110 13 0 19 43 30 220 22 321 22 335 9 380 -14 47 -9 67 9 35 18 -34 90 -100 138 -129 38 -21 48 -34 53 -61 4 -19 11 -35 16 -35 6 0 10 -27 10 -60 0 -64 8 -73 33 -38 l16 23 0 -22 c1 -29 8 -29 32 -1 10 13 18 39 19 61 0 42 21 51 37 14 11 -24 53 -42 125 -52 34 -4 45 -10 42 -20 -3 -7 -1 -16 4 -19 9 -5 -8 -102 -23 -125 -3 -6 -17 -11 -30 -11 -36 0 -155 -66 -203 -113 -50 -49 -54 -81 -15 -129 32 -39 44 -48 54 -42 4 2 14 -7 23 -21 9 -13 36 -36 61 -51 36 -21 54 -25 86 -21 56 7 110 38 137 77 12 19 29 35 36 36 8 1 66 19 131 40 100 33 121 44 145 74 45 58 82 132 71 143 -6 6 -62 3 -159 -8 -147 -17 -235 -15 -248 6 -3 6 6 24 21 39 30 31 30 24 -1 130 -4 14 -4 22 0 19 3 -3 35 0 71 6 52 10 127 10 363 0 163 -8 442 -17 618 -21 l321 -7 2 -57 1 -57 -42 -7 c-137 -22 -257 -134 -219 -204 15 -27 57 -50 110 -58 26 -4 41 -12 41 -21 0 -23 71 -82 108 -89 32 -6 32 -7 32 -65 l0 -59 35 0 35 0 0 65 c0 50 3 65 15 65 22 0 86 61 101 96 12 27 24 35 81 54 130 42 149 51 166 80 20 32 22 66 6 76 -6 4 -61 19 -123 34 -100 24 -111 29 -108 48 2 11 -4 34 -12 51 -30 56 -27 58 97 60 63 1 135 -3 162 -9 38 -9 50 -8 59 3 8 10 56 18 164 27 85 6 156 9 159 6 8 -8 -28 -47 -38 -41 -11 8 -23 -15 -12 -26 4 -4 26 -6 47 -2 30 5 44 15 65 44 20 30 33 38 56 39 17 0 47 4 68 9 l37 9 0 -344 c0 -296 2 -344 15 -344 12 0 15 22 18 113 l3 112 2 -112 c2 -93 5 -113 17 -113 13 0 15 45 15 345 l0 344 33 5 c17 3 212 26 432 51 220 25 436 50 480 55 113 14 307 37 465 55 130 15 176 20 231 30 16 2 41 -5 65 -20 61 -38 108 -30 85 14 -10 17 -5 20 57 30 123 21 190 54 214 106 10 21 18 23 149 30 104 5 139 10 139 20 0 13 -12 16 -201 46 l-77 13 -12 51 c-13 56 -19 30 117 490 20 66 48 163 64 215 15 52 42 142 59 200 42 141 50 172 44 182 -6 9 -98 8 -309 -1z" }), /*#__PURE__*/
       React.createElement("path", { d: "M3165 1457 c-22 -4 -51 -6 -65 -3 -14 2 -32 1 -40 -4 -8 -4 -38 -10 -67 -13 -29 -3 -57 -8 -62 -12 -6 -3 -20 -1 -32 6 -15 8 -19 8 -15 0 7 -11 -8 -13 -126 -16 -21 -1 -41 -5 -45 -8 -3 -4 -17 -7 -29 -7 -13 0 -25 -3 -28 -8 -4 -8 33 -7 94 3 29 4 105 12 281 30 97 10 209 29 209 36 0 9 -20 8 -75 -4z" })
       )
       )
@@ -2573,43 +2578,45 @@ function LandingViz(_ref24) {var result = _ref24.result,airportRunways = _ref24.
 
     React.createElement("div", { style: { background: C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", padding: "14px 14px 10px", marginBottom: "14px" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal" } }, "FLAPS 40\xB0 LANDING"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal" } }, "FLAPS 40\xB0 LANDING"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.dimmer } }, "POWER OFF \xB7 MAX BRAKING \xB7 PAVED/LEVEL/DRY")
     ), /*#__PURE__*/
-    React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block" } }, /*#__PURE__*/
+    React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block", borderRadius: "8px" } }, /*#__PURE__*/
 
     React.createElement("defs", null, /*#__PURE__*/
     React.createElement("linearGradient", { id: "skyGrad", x1: "0", y1: "0", x2: "0", y2: "1" }, /*#__PURE__*/
-    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#dce8f5" : C.card }), /*#__PURE__*/
-    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? C.rwyBg : C.card })
+    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#b9d2ea" : C.card }), /*#__PURE__*/
+    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? "#e9e7dc" : C.card })
     )
     ), /*#__PURE__*/
-    React.createElement("rect", { x: "0", y: "0", width: "460", height: "165", fill: "url(#skyGrad)" }), /*#__PURE__*/
+    React.createElement("rect", { x: "0", y: "0", width: "460", height: "165", fill: "url(#skyGrad)" }),
+    C.isLight && /*#__PURE__*/React.createElement("rect", { x: "0", y: "99", width: "460", height: "66", fill: "#dde1cf" }),
+    C.isLight && /*#__PURE__*/React.createElement("rect", { x: "0", y: "99", width: "460", height: "3", fill: "#ccd2ba" }), /*#__PURE__*/
     React.createElement("defs", null, /*#__PURE__*/
     React.createElement("linearGradient", { id: "rwyGradLd", x1: "0", y1: "0", x2: "1", y2: "0" }, /*#__PURE__*/
-    React.createElement("stop", { offset: "0%", stopColor: C.rwyAsphalt }), /*#__PURE__*/
-    React.createElement("stop", { offset: "100%", stopColor: C.rwyBg })
+    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#2c2c2c" : C.rwyAsphalt }), /*#__PURE__*/
+    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? "#4a4a4a" : C.rwyBg })
     )
     ), /*#__PURE__*/
 
-    React.createElement("rect", { x: "18", y: "84", width: "424", height: "30", rx: "2", fill: "url(#rwyGradLd)", stroke: C.rwyAsphalt, strokeWidth: "1" }),
+    React.createElement("rect", { x: "18", y: "84", width: "424", height: "30", rx: "2", fill: "url(#rwyGradLd)", stroke: C.isLight ? "#1a1a1a" : C.rwyAsphalt, strokeWidth: "1" }),
 
     [0, 1, 2, 3].map(function (i) {return (/*#__PURE__*/
-        React.createElement("rect", { key: i, x: 22 + i * 6, y: "88", width: "3", height: "22", rx: "1", fill: C.rwyAsphalt }));}
+        React.createElement("rect", { key: i, x: 22 + i * 6, y: "88", width: "3", height: "22", rx: "1", fill: C.isLight ? "#e8ecf0" : C.rwyAsphalt }));}
     ),
 
     result.windComponents && result.rwyNum && /*#__PURE__*/
-    React.createElement("text", { x: "44", y: "102", textAnchor: "middle", fill: C.rwyText, fontSize: "11", fontFamily: "Courier New", fontWeight: "bold", letterSpacing: "1" }, String(result.rwyNum).padStart(2, '0')),
+    React.createElement("text", { x: "55", y: "102", textAnchor: "middle", fill: C.isLight ? "#e8ecf0" : C.rwyText, fontSize: "11", fontFamily: "Courier New", fontWeight: "bold", letterSpacing: "1" }, String(result.rwyNum).padStart(2, '0')),
 
 
-    Array.from({ length: 18 }).map(function (_, i) {return (/*#__PURE__*/
-        React.createElement("rect", { key: i, x: 55 + i * 22, y: "98", width: "12", height: "2", rx: "1", fill: centerlineColor }));}
+    Array.from({ length: 17 }).map(function (_, i) {return (/*#__PURE__*/
+        React.createElement("rect", { key: i, x: 70 + i * 22, y: "98", width: "12", height: "2", rx: "1", fill: C.isLight ? "#e0e6ec" : centerlineColor }));}
     ), /*#__PURE__*/
 
     React.createElement("path", {
       d: "M ".concat(xStart, " ").concat(yStart, " C ").concat(cp1X, " ").concat(cp1Y, " ").concat(cp2X, " ").concat(cp2Y, " ").concat(xTd, " ").concat(yRwy),
-      fill: "none", stroke: markerColor50, strokeWidth: "1.5",
-      strokeDasharray: "5,3", opacity: done ? 0.45 : 0.12 }
+      fill: "none", stroke: markerColor50, strokeWidth: C.isLight ? "2" : "1.5",
+      strokeDasharray: "5,3", opacity: done ? C.isLight ? 0.8 : 0.45 : C.isLight ? 0.3 : 0.12 }
     ), /*#__PURE__*/
 
     React.createElement("line", { x1: xObs, y1: "56", x2: xObs, y2: "116", stroke: markerColor50, strokeWidth: "2" }), /*#__PURE__*/
@@ -2675,11 +2682,11 @@ function LandingViz(_ref24) {var result = _ref24.result,airportRunways = _ref24.
         React.createElement("circle", { cx: cx, cy: cy, r: "22", fill: C.markerBg, stroke: C.border, strokeWidth: "1" }),
         [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) {
           var r2 = (a - 90) * Math.PI / 180;
-          return /*#__PURE__*/React.createElement("line", { key: a, x1: cx + Math.cos(r2) * 16, y1: cy + Math.sin(r2) * 16, x2: cx + Math.cos(r2) * 20, y2: cy + Math.sin(r2) * 20, stroke: C.borderDim, strokeWidth: "1" });
+          return /*#__PURE__*/React.createElement("line", { key: a, x1: cx + Math.cos(r2) * 16, y1: cy + Math.sin(r2) * 16, x2: cx + Math.cos(r2) * 20, y2: cy + Math.sin(r2) * 20, stroke: C.isLight ? "#8f8a7a" : C.borderDim, strokeWidth: C.isLight ? "1.4" : "1" });
         }), /*#__PURE__*/
         React.createElement("line", { x1: x1, y1: y1, x2: x2, y2: y2, stroke: C.cool, strokeWidth: "2" }), /*#__PURE__*/
         React.createElement("polygon", { points: "".concat(x2, ",").concat(y2, " ").concat(hx1, ",").concat(hy1, " ").concat(hx2, ",").concat(hy2), fill: C.cool }), /*#__PURE__*/
-        React.createElement("text", { x: cx, y: cy - 27, textAnchor: "middle", fill: C.dimmest, fontSize: "8", fontFamily: "Courier New", letterSpacing: "1" }, "WIND / RWY"), /*#__PURE__*/
+        React.createElement("text", { x: cx, y: cy - 27, textAnchor: "middle", fill: C.isLight ? C.dimmer : C.dimmest, fontSize: "8", fontFamily: "Courier New", letterSpacing: "1" }, "WIND / RWY"), /*#__PURE__*/
         React.createElement("text", { x: cx, y: cy + 33, textAnchor: "middle", fill: C.cool, fontSize: "9", fontFamily: "Courier New" }, result.windSpd, "KT/", wc.angle === 0 ? 'HW' : wc.angle === 180 ? 'TW' : "XW-".concat(wc.crossDir))
         ));
 
@@ -2808,7 +2815,7 @@ function AirRace2700Tab(_ref27) {var savedState = _ref27.savedState,onStateChang
   return (/*#__PURE__*/
     React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "16px" } }, /*#__PURE__*/
     React.createElement("div", { style: { background: C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", padding: mobile ? "16px" : "24px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "4px", textTransform: "uppercase" } }, "Air Race 2700 RPM"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "4px", textTransform: "uppercase" } }, "Air Race 2700 RPM"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", color: C.dim, letterSpacing: "2px", marginBottom: "20px" } }, "FULL THROTTLE \xB7 BEST ECONOMY MIXTURE \xB7 ISA \xB7 2550 LB"), /*#__PURE__*/
 
     React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "6px" } }, "PRESSURE ALTITUDE"), /*#__PURE__*/
@@ -2828,7 +2835,7 @@ function AirRace2700Tab(_ref27) {var savedState = _ref27.savedState,onStateChang
 
 
     tas !== null && /*#__PURE__*/
-    React.createElement("div", { style: { background: C.isLight ? "#f1f5f9" : C.bg, border: "".concat(C.cardBorder, " solid ").concat(C.green), borderRadius: "4px", padding: "20px", textAlign: "center" } }, /*#__PURE__*/
+    React.createElement("div", { style: { background: C.isLight ? "#f4f2ec" : C.bg, border: "".concat(C.cardBorder, " solid ").concat(C.green), borderRadius: "4px", padding: "20px", textAlign: "center" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.dim, marginBottom: "6px" } }, "TRUE AIRSPEED"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "52px", fontWeight: "bold", color: C.green, fontFamily: mono, letterSpacing: "2px", lineHeight: 1 } }, tas.toFixed(1)), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "16px", letterSpacing: "3px", color: C.dim, marginTop: "4px" } }, "KTAS"), /*#__PURE__*/
@@ -2851,7 +2858,7 @@ function AirRace2700Tab(_ref27) {var savedState = _ref27.savedState,onStateChang
     ), /*#__PURE__*/
 
 
-    React.createElement("div", { style: { marginTop: "20px", padding: "14px 16px", background: C.isLight ? "#f8f9fa" : C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", textAlign: "center" } }, /*#__PURE__*/
+    React.createElement("div", { style: { marginTop: "20px", padding: "14px 16px", background: C.isLight ? "#f4f2ec" : C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", textAlign: "center" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.green, fontFamily: mono } }, "GOOD LUCK, AIR RACE TEAM!"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "10px", letterSpacing: "1px", color: C.dimmest, fontFamily: mono, marginTop: "4px" } }, "FLY FAST \xB7 FLY SAFE")
     )
@@ -2887,7 +2894,7 @@ function GlideTab(_ref28) {var savedState = _ref28.savedState,onStateChange = _r
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "28px", paddingBottom: "20px", borderBottom: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "GLIDE RANGE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "GLIDE RANGE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "28px", fontWeight: "bold", letterSpacing: "2px", color: C.text } }, "POWER OFF"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" } }, "FLAPS UP \xB7 76 KIAS \xB7 2,250 LB \xB7 NO WIND \xB7 FIG 5-39")
     ), /*#__PURE__*/
@@ -2906,23 +2913,23 @@ function GlideTab(_ref28) {var savedState = _ref28.savedState,onStateChange = _r
 
         React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" } }, /*#__PURE__*/
         React.createElement("div", { style: { background: C.input, border: "1px solid ".concat(C.green), borderRadius: "3px", padding: "18px 12px", textAlign: "center" } }, /*#__PURE__*/
-        React.createElement("div", { style: { fontSize: "12px", letterSpacing: "2px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "GLIDE RANGE"), /*#__PURE__*/
+        React.createElement("div", { style: { fontSize: "12px", letterSpacing: "2px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "GLIDE RANGE"), /*#__PURE__*/
         React.createElement("div", { style: { fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" } }, result.netRange.toFixed(1)), /*#__PURE__*/
         React.createElement("div", { style: { fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "2px" } }, "NAUTICAL MILES")
         ), /*#__PURE__*/
         React.createElement("div", { style: { background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "3px", padding: "18px 12px", textAlign: "center" } }, /*#__PURE__*/
-        React.createElement("div", { style: { fontSize: "12px", letterSpacing: "2px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "HEIGHT AGL"), /*#__PURE__*/
+        React.createElement("div", { style: { fontSize: "12px", letterSpacing: "2px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "HEIGHT AGL"), /*#__PURE__*/
         React.createElement("div", { style: { fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" } }, agl.toLocaleString()), /*#__PURE__*/
         React.createElement("div", { style: { fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "2px" } }, "FEET")
         )
         ), /*#__PURE__*/
 
         React.createElement("div", { style: { background: C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", padding: "16px", marginBottom: "14px" } }, /*#__PURE__*/
-        React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px" } }, "ALTITUDE PROFILE"), /*#__PURE__*/
+        React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px" } }, "ALTITUDE PROFILE"), /*#__PURE__*/
         React.createElement("div", { style: { position: "relative", height: "120px", display: "flex", alignItems: "flex-end", gap: "24px", padding: "0 8px" } }, /*#__PURE__*/
 
         React.createElement("div", { style: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" } }, /*#__PURE__*/
-        React.createElement("div", { style: { fontSize: "12px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "4px", letterSpacing: "1px" } }, result.cruise.toLocaleString(), " ft"), /*#__PURE__*/
+        React.createElement("div", { style: { fontSize: "12px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "4px", letterSpacing: "1px" } }, result.cruise.toLocaleString(), " ft"), /*#__PURE__*/
         React.createElement("div", { style: { width: "100%", background: "rgba(106,170,122,0.25)", border: "1px solid ".concat(C.green), borderRadius: "2px 2px 0 0", height: "".concat(pctCruise * 100, "%"), minHeight: "4px", position: "relative" } }, /*#__PURE__*/
         React.createElement("div", { style: { position: "absolute", bottom: 0, left: 0, right: 0, height: "".concat(pctTerrain / pctCruise * 100, "%"), background: "rgba(106,170,122,0.15)", borderTop: "1px dashed ".concat(C.dimmer) } })
         ), /*#__PURE__*/
@@ -2931,7 +2938,7 @@ function GlideTab(_ref28) {var savedState = _ref28.savedState,onStateChange = _r
 
         React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", paddingBottom: "20px" } }, /*#__PURE__*/
         React.createElement("div", { style: { fontSize: "28px", color: C.green, lineHeight: 1 } }, "\u2192"), /*#__PURE__*/
-        React.createElement("div", { style: { fontSize: "12px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px", marginTop: "4px" } }, result.netRange.toFixed(1), " nm")
+        React.createElement("div", { style: { fontSize: "12px", color: C.green, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px", marginTop: "4px" } }, result.netRange.toFixed(1), " nm")
         ), /*#__PURE__*/
 
         React.createElement("div", { style: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" } }, /*#__PURE__*/
@@ -2982,7 +2989,7 @@ function ArcherSpeedsTab(_ref29) {var savedState = _ref29.savedState,onStateChan
 
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "24px" } }, "SPEEDS REFERENCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "24px" } }, "SPEEDS REFERENCE"), /*#__PURE__*/
 
     React.createElement("div", { style: { marginBottom: "20px" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "6px" } }, "GROSS WEIGHT"), /*#__PURE__*/
@@ -2999,7 +3006,7 @@ function ArcherSpeedsTab(_ref29) {var savedState = _ref29.savedState,onStateChan
     weightVal < 2000 && weight !== "" && /*#__PURE__*/React.createElement("div", { style: { fontSize: "11px", color: C.error, marginTop: "4px", letterSpacing: "1px" } }, "Minimum chart weight is 2,000 lb")
     ), /*#__PURE__*/
 
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "MANEUVERING SPEED (Va)"),
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "MANEUVERING SPEED (Va)"),
     va !== null ? /*#__PURE__*/
     React.createElement("div", { style: { background: C.input, border: "2px solid " + C.cool, borderRadius: "4px", padding: "20px", textAlign: "center", marginBottom: "20px" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.cool, marginBottom: "6px" } }, "Va AT ", Math.round(weightVal).toLocaleString(), " LB"), /*#__PURE__*/
@@ -3013,7 +3020,7 @@ function ArcherSpeedsTab(_ref29) {var savedState = _ref29.savedState,onStateChan
     ), /*#__PURE__*/
 
 
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "STALL SPEED (Vs) \xB7 FIG 5-5"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "STALL SPEED (Vs) \xB7 FIG 5-5"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", color: C.isLight ? C.dimmer : C.dim, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px", marginBottom: "14px" } }, "Power off \xB7 A/C off \xB7 KIAS"), /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "14px" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "6px" } }, "FLAP SETTING"), /*#__PURE__*/
@@ -3326,7 +3333,7 @@ function C172WBTab(_ref30) {var savedState = _ref30.savedState,onStateChange = _
 
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "12px" } }, "WEIGHT AND BALANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "12px" } }, "WEIGHT AND BALANCE"), /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "16px" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" } },
     profiles.map(function (p, i) {
@@ -3510,7 +3517,7 @@ function C172WBTab(_ref30) {var savedState = _ref30.savedState,onStateChange = _
     ),
     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr auto", padding: "10px 14px", alignItems: "center", borderBottom: hasLanding ? "1px solid " + C.borderDim : "none" } },
     React.createElement("div", null,
-    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "2px", display: "flex", alignItems: "center", gap: "6px" } },
+    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "2px", display: "flex", alignItems: "center", gap: "6px" } },
     React.createElement("svg", { width: "12", height: "12", viewBox: "0 0 12 12" },
     React.createElement("circle", { cx: "6", cy: "6", r: "5", fill: "none", stroke: C.green, strokeWidth: "2" }),
     React.createElement("circle", { cx: "6", cy: "6", r: "2", fill: C.green })
@@ -3520,8 +3527,8 @@ function C172WBTab(_ref30) {var savedState = _ref30.savedState,onStateChange = _
     React.createElement("div", { style: { fontSize: "10px", color: C.isLight ? C.dim : C.dimmest, fontWeight: C.isLight ? "600" : "normal", marginTop: "2px", letterSpacing: "1px" } }, "-1.5 gal start/taxi (9.0 lb)")
     ),
     React.createElement("div", { style: { textAlign: "right" } },
-    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "2px" } }, "CG"),
-    React.createElement("div", { style: { fontSize: "16px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal" } }, takeoffCG.toFixed(2) + '"')
+    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "2px" } }, "CG"),
+    React.createElement("div", { style: { fontSize: "16px", color: C.green, fontWeight: C.isLight ? "600" : "normal" } }, takeoffCG.toFixed(2) + '"')
     )
     ),
     hasLanding && React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr auto", padding: "10px 14px", alignItems: "center" } },
@@ -3793,7 +3800,7 @@ function ArcherWBTab(_ref38) {var savedState = _ref38.savedState,onStateChange =
 
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "12px" } }, "WEIGHT AND BALANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "12px" } }, "WEIGHT AND BALANCE"), /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "16px" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" } },
     profiles.map(function (p, i) {
@@ -4170,6 +4177,10 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
   var _React$useState39 = React.useState(0),_React$useState40 = _slicedToArray(_React$useState39, 2),radarFrameIdx = _React$useState40[0],setRadarFrameIdx = _React$useState40[1];
   var _React$useState41 = React.useState(false),_React$useState42 = _slicedToArray(_React$useState41, 2),radarOn = _React$useState42[0],setRadarOn = _React$useState42[1];
   var _React$useState43 = React.useState(true),_React$useState44 = _slicedToArray(_React$useState43, 2),airspaceOn = _React$useState44[0],setAirspaceOn = _React$useState44[1];
+  var airspaceOnRef = React.useRef(airspaceOn);
+  var scheduleAeroFetchRef = React.useRef(null);
+  var drawAeronauticalRef = React.useRef(null);
+  React.useEffect(function () {airspaceOnRef.current = airspaceOn;}, [airspaceOn]);
   var _React$useState45 = React.useState(false),_React$useState46 = _slicedToArray(_React$useState45, 2),cloudsOn = _React$useState46[0],setCloudsOn = _React$useState46[1];
   var _React$useState47 = React.useState(false),_React$useState48 = _slicedToArray(_React$useState47, 2),wxOn = _React$useState48[0],setWxOn = _React$useState48[1];
   var radarLayerRef = React.useRef(null);
@@ -4188,18 +4199,22 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
   var mapViewBeforeHighlightRef = React.useRef(null);
   var isHighlightingRef = React.useRef(false);
   var airspaceOverlayRef = React.useRef(null);
+  // Persist across effect re-runs (e.g. rapid AERO toggle spam) so we don't
+  // re-fetch/re-hit-rate-limits for an area we already have fresh data for.
+  var aeroCellCacheRef = React.useRef({}); // { "<snappedCellKey>": { airspaces, airports, ts } }
+  var lastGoodAirspacesRef = React.useRef(null);
+  var lastGoodAirportsRef = React.useRef(null);
+  var aeroFetchTimerRef = React.useRef(null);
+  var aeroFetchSeqRef = React.useRef(0);
   var _React$useState63 = React.useState(false),_React$useState64 = _slicedToArray(_React$useState63, 2),mapReady = _React$useState64[0],setMapReady = _React$useState64[1];
 
-  // Permanent airspace overlay on map — viewport-aware, refetches on pan/zoom
+  // Permanent airspace overlay on map — mounts ONCE per map lifetime. The on/off toggle
+  // (below, in a separate effect) never tears this down — it only shows/hides the layer.
+  // This is what makes rapid toggling and panning safe: there is exactly one long-lived
+  // fetchTimer/fetchSeq for the life of the map, not a fresh one per toggle click.
   React.useEffect(function () {
     var map = leafletMap.current;
     if (!map) return;
-    // Remove existing overlay
-    if (airspaceOverlayRef.current) {
-      try {map.removeLayer(airspaceOverlayRef.current);} catch (e) {}
-      airspaceOverlayRef.current = null;
-    }
-    if (!airspaceOn) return; // toggle off — just remove and stop
 
     var asColors = {
       'A': '#ef4444', 'B': '#1d4ed8', 'C': '#d946ef', 'D': '#60a5fa',
@@ -4212,6 +4227,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
         try {map.removeLayer(airspaceOverlayRef.current);} catch (e) {}
         airspaceOverlayRef.current = null;
       }
+      if (!airspaceOnRef.current) return; // toggled off since this fetch started — don't draw
       var group = L.layerGroup();
 
       // Draw airspaces
@@ -4250,36 +4266,30 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
       // Draw airport icons
       if (airports && airports.length) {
         // OpenAIP airport type: 0=Airport, 1=Glider, 2=Airfield, 3=Ultralight, 4=Heliport, 5=Civil/Military, 6=Military, 7=Closed, 8=Seaplane
-        var skipTypes = [1, 3, 4, 7, 8]; // skip glider, ultralight, heliport, closed, seaplane
+        var skipTypes = [1, 4, 6, 7, 8, 10, 11, 12, 13]; // skip glider, heliports, ultralight, closed, water, strips
         airports.forEach(function (ap) {
           if (!ap.geometry || !ap.geometry.coordinates) return;
           var apType = ap.type;
           if (skipTypes.indexOf(apType) >= 0) return;
+          // Skip private airports: PPR flag, private flag, or "private"/PVT in the name
+          if (ap.ppr === true) return; // ppr = private USE; OpenAIP `private` = privately OWNED (C81 etc. are public-use)
+          if (/\bPRIVATE\b|\(PVT\)|\bPVT\b/i.test(String(ap.name || ''))) return;
           var lat = ap.geometry.coordinates[1];
           var lon = ap.geometry.coordinates[0];
-          var isTowered = ap.controlled === true || apType === 6; // military always towered
+          var isTowered = ap.controlled === true || apType === 5; // type 5 = military aerodrome
           var color = isTowered ? '#1d4ed8' : '#d02a9c'; // sectional convention: blue=towered, magenta=non-towered
           var icao = ap.icaoCode || ap.iataCode || '';
           var name = ap.name || icao;
           try {
             var sz = 24,c = sz / 2;
             var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + sz + '" height="' + sz + '" viewBox="0 0 24 24" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.45))">' +
-            // White halo (disk + bar backing) to lift off the chart
             '<circle cx="12" cy="12" r="10.2" fill="white"/>' +
             '<rect x="0" y="8.4" width="24" height="7.2" rx="2.6" fill="white"/>' +
-            // Colored ring
             '<circle cx="12" cy="12" r="8" fill="white" stroke="' + color + '" stroke-width="2.4"/>' + (
-            // Military: inner second ring
-            apType === 6 ? '<circle cx="12" cy="12" r="5.2" fill="none" stroke="' + color + '" stroke-width="1.3"/>' : '') +
-            // Runway bar through the circle, extending past the ring
+            apType === 5 ? '<circle cx="12" cy="12" r="5.2" fill="none" stroke="' + color + '" stroke-width="1.3"/>' : '') +
             '<rect x="1" y="10" width="22" height="4" rx="1.4" fill="' + color + '"/>' +
             '</svg>';
-            var icon = L.divIcon({
-              className: '',
-              html: svg,
-              iconSize: [sz, sz],
-              iconAnchor: [c, c]
-            });
+            var icon = L.divIcon({ className: '', html: svg, iconSize: [sz, sz], iconAnchor: [c, c] });
             var marker = L.marker([lat, lon], { icon: icon, interactive: true });
             marker.bindTooltip(icao + (name !== icao ? '\n' + name : ''), { sticky: true, className: "wx-tooltip", direction: "top" });
             marker.addTo(group);
@@ -4290,39 +4300,104 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
       group.addTo(map);
       airspaceOverlayRef.current = group;
     }
+    scheduleAeroFetchRef.current = function () {scheduleFetch();};
+    drawAeronauticalRef.current = drawAeronautical;
 
-    var fetchTimer = null;
+    var CELL = 1.0; // must match worker's grid — keeps client cache hits aligned with server cache hits
+    var CELL_TTL_MS = 8 * 60 * 1000; // 8 min — a little under the worker's 15 min edge cache
     function scheduleFetch() {
-      clearTimeout(fetchTimer);
-      fetchTimer = setTimeout(function () {
+      clearTimeout(aeroFetchTimerRef.current);
+      aeroFetchTimerRef.current = setTimeout(function () {
+        if (!airspaceOnRef.current) return; // off — nothing to fetch right now
+
+        // Below this zoom the viewport can span a huge chunk of the country (e.g. the
+        // map's default whole-US view before any route is plotted). Querying OpenAIP with
+        // a bbox that large is exactly the kind of request that gets rejected/rate-limited.
+        // Just skip — there's nothing useful to show this zoomed out anyway.
+        if (map.getZoom() < 8) {
+          if (airspaceOverlayRef.current) {
+            try {map.removeLayer(airspaceOverlayRef.current);} catch (e) {}
+            airspaceOverlayRef.current = null;
+          }
+          return;
+        }
+
         var b = map.getBounds();
-        var minLat = b.getSouth().toFixed(4),maxLat = b.getNorth().toFixed(4);
-        var minLon = b.getWest().toFixed(4),maxLon = b.getEast().toFixed(4);
+        var minLat = b.getSouth(),maxLat = b.getNorth();
+        var minLon = b.getWest(),maxLon = b.getEast();
+
+        // Defense-in-depth: hard-clamp the query span even if zoom-level math ever
+        // allows a wide bbox through, so we can never accidentally send a giant query.
+        var MAX_SPAN = 3.0; // degrees
+        if (maxLat - minLat > MAX_SPAN) {
+          var latC = (minLat + maxLat) / 2;
+          minLat = latC - MAX_SPAN / 2;maxLat = latC + MAX_SPAN / 2;
+        }
+        if (maxLon - minLon > MAX_SPAN) {
+          var lonC = (minLon + maxLon) / 2;
+          minLon = lonC - MAX_SPAN / 2;maxLon = lonC + MAX_SPAN / 2;
+        }
+
+        var sMinLat = Math.floor(minLat / CELL) * CELL,sMaxLat = Math.ceil(maxLat / CELL) * CELL;
+        var sMinLon = Math.floor(minLon / CELL) * CELL,sMaxLon = Math.ceil(maxLon / CELL) * CELL;
+        var cellKey = sMinLat + "," + sMinLon + "," + sMaxLat + "," + sMaxLon;
+
+        var cached = aeroCellCacheRef.current[cellKey];
+        if (cached && Date.now() - cached.ts < CELL_TTL_MS) {
+          drawAeronautical(cached.airspaces, cached.airports);
+          return;
+        }
+
+        var mySeq = ++aeroFetchSeqRef.current;
         var base = "https://metar-proxy.mamillh01.workers.dev/";
-        var qs = "&minLat=" + minLat + "&maxLat=" + maxLat + "&minLon=" + minLon + "&maxLon=" + maxLon + "&t=" + Math.floor(Date.now() / 120000);
+        var qs = "&minLat=" + minLat.toFixed(4) + "&maxLat=" + maxLat.toFixed(4) + "&minLon=" + minLon.toFixed(4) + "&maxLon=" + maxLon.toFixed(4) + "&t=" + Math.floor(Date.now() / 120000);
         Promise.all([
         fetch(base + "?type=airspaces" + qs).then(function (r) {return r.json();}).catch(function () {return null;}),
         fetch(base + "?type=airports" + qs).then(function (r) {return r.json();}).catch(function () {return null;})]
         ).then(function (results) {
-          drawAeronautical(results[0] && results[0].airspaces, results[1] && results[1].airports);
+          if (mySeq !== aeroFetchSeqRef.current) return; // a newer fetch superseded this one
+          var gotAirspaces = results[0] && results[0].airspaces && results[0].airspaces.length > 0;
+          var gotAirports = results[1] && results[1].airports && results[1].airports.length > 0;
+          var asResult = gotAirspaces ? results[0].airspaces : lastGoodAirspacesRef.current;
+          var apResult = gotAirports ? results[1].airports : lastGoodAirportsRef.current;
+          if (gotAirspaces) lastGoodAirspacesRef.current = results[0].airspaces;
+          if (gotAirports) lastGoodAirportsRef.current = results[1].airports;
+          if (gotAirspaces || gotAirports) {
+            aeroCellCacheRef.current[cellKey] = { airspaces: asResult, airports: apResult, ts: Date.now() };
+          }
+          drawAeronautical(asResult, apResult);
         });
-      }, 400);
+      }, 700);
     }
 
     map.on("moveend", scheduleFetch);
     map.on("zoomend", scheduleFetch);
-    scheduleFetch(); // initial draw
+    if (airspaceOnRef.current) scheduleFetch(); // initial draw, only if on
 
     return function () {
       map.off("moveend", scheduleFetch);
       map.off("zoomend", scheduleFetch);
-      clearTimeout(fetchTimer);
+    };
+  }, [mapReady]);
+
+  // AERO toggle — shows/hides instantly WITHOUT tearing down the fetch machinery above.
+  React.useEffect(function () {
+    var map = leafletMap.current;
+    if (!map || !mapReady) return;
+    if (!airspaceOn) {
       if (airspaceOverlayRef.current) {
         try {map.removeLayer(airspaceOverlayRef.current);} catch (e) {}
         airspaceOverlayRef.current = null;
       }
-    };
-  }, [mapReady, airspaceOn]);
+    } else {
+      // Turning on: draw instantly from last-good/cache if we have it, then also
+      // kick a fresh fetch in case the view has moved since we last had data.
+      if (drawAeronauticalRef.current && (lastGoodAirspacesRef.current || lastGoodAirportsRef.current)) {
+        drawAeronauticalRef.current(lastGoodAirspacesRef.current, lastGoodAirportsRef.current);
+      }
+      if (scheduleAeroFetchRef.current) scheduleAeroFetchRef.current();
+    }
+  }, [airspaceOn, mapReady]);
   // Highlight airspace polygon on map when hovered in profile
   React.useEffect(function () {
     var map = leafletMap.current;
@@ -4991,8 +5066,19 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
       });
     }),
     fetch("https://metar-proxy.mamillh01.workers.dev/?type=airspaces&minLat=" + minLat + "&maxLat=" + maxLat + "&minLon=" + minLon + "&maxLon=" + maxLon + "&t=" + Math.floor(Date.now() / 60000)).
-    then(function (r) {return r.json();}).
-    catch(function () {return {};})]
+    then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).
+    catch(function () {
+      // Retry once after a short delay — covers transient rate-limit blips
+      return new Promise(function (resolve) {setTimeout(resolve, 1500);}).
+      then(function () {
+        return fetch("https://metar-proxy.mamillh01.workers.dev/?type=airspaces&minLat=" + minLat + "&maxLat=" + maxLat + "&minLon=" + minLon + "&maxLon=" + maxLon + "&t=" + Math.floor(Date.now() / 60000)).
+        then(function (r) {return r.json();}).
+        catch(function () {return {};});
+      });
+    })]
     ).then(function (results) {
       setProfileLoading(false);
       var elevData = results[0],asData = results[1];
@@ -5906,7 +5992,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
   return (/*#__PURE__*/
     React.createElement("div", { style: { width: "100%", maxWidth: "1100px", margin: "0 auto" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal" } }, "NAVLOG \xB7 ROUTE PLANNER"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal" } }, "NAVLOG \xB7 ROUTE PLANNER"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "10px", color: C.dimmest, letterSpacing: "1px" } }, "FAA VFR SECTIONAL \xB7 56-DAY CYCLE")
     ), /*#__PURE__*/
 
@@ -6059,7 +6145,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
       var dk = dep.lat.toFixed(4) + "," + dep.lon.toFixed(4);
       return (/*#__PURE__*/
         React.createElement("tr", { style: { background: "transparent" } }, /*#__PURE__*/
-        React.createElement("td", { style: _objectSpread(_objectSpread({}, cell), {}, { fontWeight: "bold", color: C.isLight ? C.text : C.green, borderRight: C.cardBorder + " solid " + C.border, textAlign: "left", paddingLeft: "6px" }) }, dep.id, dep.name ? /*#__PURE__*/React.createElement("span", { style: { fontWeight: "normal", color: C.dim, fontSize: "10px", marginLeft: "5px" } }, dep.name.length > 14 ? dep.name.slice(0, 14) + "…" : dep.name) : null), /*#__PURE__*/
+        React.createElement("td", { style: _objectSpread(_objectSpread({}, cell), {}, { fontWeight: "bold", color: C.green, borderRight: C.cardBorder + " solid " + C.border, textAlign: "left", paddingLeft: "6px" }) }, dep.id, dep.name ? /*#__PURE__*/React.createElement("span", { style: { fontWeight: "normal", color: C.dim, fontSize: "10px", marginLeft: "5px" } }, dep.name.length > 14 ? dep.name.slice(0, 14) + "…" : dep.name) : null), /*#__PURE__*/
         React.createElement("td", { style: _objectSpread(_objectSpread({}, cell), {}, { borderRight: C.cardBorder + " solid " + C.border, color: C.dim }) },
         dep.elev != null ? dep.elev : "—"
         ),
@@ -6214,7 +6300,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
           return tas ? tas + "kt" : "—";
         }()
         ), /*#__PURE__*/
-        React.createElement("td", { style: _objectSpread(_objectSpread({}, cell), {}, { fontWeight: "bold", color: C.isLight ? C.text : C.green, borderRight: C.cardBorder + " solid " + C.border }) }, leg.tc, "\xB0"),
+        React.createElement("td", { style: _objectSpread(_objectSpread({}, cell), {}, { fontWeight: "bold", color: C.green, borderRight: C.cardBorder + " solid " + C.border }) }, leg.tc, "\xB0"),
         function () {
           var oatC2 = legTemps[wk] !== undefined ? legTemps[wk] : undefined;
           var cruiseFt3 = parseFloat(cruiseAlt) || 0;
@@ -6715,7 +6801,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
       // Y-axis gridlines and labels — fixed, not zoomed
       yTicks.map(function (t) {
         return React.createElement(React.Fragment, { key: t },
-        React.createElement("line", { x1: PAD_L, y1: yScale(t), x2: PAD_L + plotW, y2: yScale(t), stroke: C.isLight ? "#cbd5e1" : "#1e293b", strokeWidth: 1 }),
+        React.createElement("line", { x1: PAD_L, y1: yScale(t), x2: PAD_L + plotW, y2: yScale(t), stroke: C.isLight ? "#d9d6cc" : "#1e293b", strokeWidth: 1 }),
         React.createElement("text", { x: PAD_L - 4, y: yScale(t) + 4, textAnchor: "end", fill: C.dimmest, fontSize: 9, fontFamily: mono }, (t / 1000).toFixed(0) + "k")
         );
       }),
@@ -7027,9 +7113,10 @@ function App(_ref46) {var onBack = _ref46.onBack,theme = _ref46.theme,toggleThem
   { id: "cruise", label: "CRUISE", fig: "5-21–25" },
   { id: "glide", label: "GLIDE", fig: "5-39" },
   { id: "landing", label: "LANDING", fig: "5-41·5-43" },
-  { id: "speeds", label: "SPEEDS", fig: "" },
-  { id: "airrace", label: "AIR RACE", fig: "2700 RPM" }];
-
+  { id: "speeds", label: "SPEEDS", fig: "" }
+  // DISABLED (temporarily hidden, code intact — re-enable by uncommenting):
+  // { id: "airrace",  label: "AIR RACE",       fig: "2700 RPM" },
+  ];
   var tabProps = function tabProps(id) {return { savedState: tabStates[id] || {}, onStateChange: function onStateChange(s) {return saveTabState(id, s);} };};
   return (/*#__PURE__*/
     React.createElement(MobileContext.Provider, { value: mobile }, /*#__PURE__*/
@@ -7048,7 +7135,7 @@ function App(_ref46) {var onBack = _ref46.onBack,theme = _ref46.theme,toggleThem
     React.createElement("div", { style: { fontSize: mobile ? "11px" : "18px", letterSpacing: mobile ? "3px" : "6px", color: C.green, marginBottom: "6px" } }, "PA-28-181 ARCHER III \xB7 POH PERFORMANCE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px", textTransform: "uppercase" } }, "PERFORMANCE CALCULATOR")
     ), /*#__PURE__*/
-    React.createElement("div", { style: { display: "grid", gridTemplateColumns: mobile ? "1fr 1fr 1fr 1fr" : "repeat(9, 1fr)", marginBottom: mobile ? "14px" : "24px", border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" } },
+    React.createElement("div", { style: { display: "grid", gridTemplateColumns: mobile ? "1fr 1fr 1fr 1fr" : "repeat(8, 1fr)", marginBottom: mobile ? "14px" : "24px", border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", overflow: "hidden", width: "100%", maxWidth: "860px" } },
     tabs.map(function (tab, i) {return (/*#__PURE__*/
         React.createElement("button", { key: tab.id, onClick: function onClick() {return setActiveTab(tab.id);}, style: {
             padding: mobile ? "10px 4px" : "14px 6px",
@@ -7168,7 +7255,7 @@ function C172RateOfClimbTab(_ref47) {var savedState = _ref47.savedState,onStateC
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "28px", paddingBottom: "20px", borderBottom: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "RATE OF CLIMB"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "RATE OF CLIMB"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "28px", fontWeight: "bold", letterSpacing: "2px" } }, "MAX CLIMB"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" } }, "FLAPS UP \xB7 FULL THROTTLE \xB7 2,550 LB \xB7 FIG 5-6")
     ), /*#__PURE__*/
@@ -7181,7 +7268,7 @@ function C172RateOfClimbTab(_ref47) {var savedState = _ref47.savedState,onStateC
     React.createElement("div", { style: { marginTop: "28px" } }, /*#__PURE__*/
     React.createElement(ISABadgeRow, { label: "RESULTS", isaLabel: formatISA(result.isaDeviation), isaDeviation: result.isaDeviation, isaTemp: result.isaTemp }), /*#__PURE__*/
     React.createElement("div", { style: { background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "3px", padding: "28px", textAlign: "center", marginBottom: "12px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px" } }, "RATE OF CLIMB"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px" } }, "RATE OF CLIMB"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "60px", color: rocColor, lineHeight: 1, fontWeight: "bold" } }, result.roc), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "14px", color: C.dimmer, marginTop: "8px", letterSpacing: "3px" } }, "FT / MIN")
     ), /*#__PURE__*/
@@ -7198,7 +7285,7 @@ function C172RateOfClimbTab(_ref47) {var savedState = _ref47.savedState,onStateC
 
 
     React.createElement("div", { style: { marginTop: "24px", paddingTop: "20px", borderTop: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "14px" } }, "CLIMB GRADIENT CHECKER"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "14px" } }, "CLIMB GRADIENT CHECKER"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", color: C.isLight ? C.dimmer : C.dim, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px", marginBottom: "14px" } }, "Convert ft/nm departure procedure gradient to required FPM"), /*#__PURE__*/
     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px" } }, /*#__PURE__*/
     React.createElement("div", null, /*#__PURE__*/
@@ -7320,7 +7407,7 @@ function C172TimeFuelDistTab(_ref48) {var savedState = _ref48.savedState,onState
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "28px", paddingBottom: "20px", borderBottom: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "TIME \xB7 FUEL \xB7 DISTANCE TO CLIMB"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "TIME \xB7 FUEL \xB7 DISTANCE TO CLIMB"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "28px", fontWeight: "bold", letterSpacing: "2px" } }, "CLIMB PLANNING"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" } }, "FLAPS UP \xB7 FULL THROTTLE \xB7 2,550 LB \xB7 FIG 5-7")
     ), /*#__PURE__*/
@@ -7527,7 +7614,7 @@ function C172CruiseTab(_ref49) {var savedState = _ref49.savedState,onStateChange
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "28px", paddingBottom: "20px", borderBottom: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "CRUISE PERFORMANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "CRUISE PERFORMANCE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "28px", fontWeight: "bold", letterSpacing: "2px" } }, "CRUISE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" } }, "REC. LEAN MIXTURE \xB7 2,550 LB \xB7 FIG 5-8")
     ), /*#__PURE__*/
@@ -7782,27 +7869,29 @@ function C172RunwayViz(_ref51) {var result = _ref51.result,airportRunways = _ref
     React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.green } }, "FLAPS 10\xB0 TAKEOFF"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.dimmer } }, "FULL THROTTLE \xB7 PAVED/LEVEL/DRY")
     ), /*#__PURE__*/
-    React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block" } }, /*#__PURE__*/
+    React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block", borderRadius: "8px" } }, /*#__PURE__*/
     React.createElement("defs", null, /*#__PURE__*/
     React.createElement("linearGradient", { id: "skyGrad", x1: "0", y1: "0", x2: "0", y2: "1" }, /*#__PURE__*/
-    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#dce8f5" : C.card }), /*#__PURE__*/
-    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? C.rwyBg : C.card })
+    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#b9d2ea" : C.card }), /*#__PURE__*/
+    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? "#e9e7dc" : C.card })
     )
     ), /*#__PURE__*/
-    React.createElement("rect", { x: "0", y: "0", width: "460", height: "165", fill: "url(#skyGrad)" }), /*#__PURE__*/
+    React.createElement("rect", { x: "0", y: "0", width: "460", height: "165", fill: "url(#skyGrad)" }),
+    C.isLight && /*#__PURE__*/React.createElement("rect", { x: "0", y: "99", width: "460", height: "66", fill: "#dde1cf" }),
+    C.isLight && /*#__PURE__*/React.createElement("rect", { x: "0", y: "99", width: "460", height: "3", fill: "#ccd2ba" }), /*#__PURE__*/
     React.createElement("defs", null, /*#__PURE__*/
     React.createElement("linearGradient", { id: "rwyGradC172", x1: "0", y1: "0", x2: "1", y2: "0" }, /*#__PURE__*/
-    React.createElement("stop", { offset: "0%", stopColor: C.rwyAsphalt }), /*#__PURE__*/
-    React.createElement("stop", { offset: "100%", stopColor: C.rwyBg })
+    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#2c2c2c" : C.rwyAsphalt }), /*#__PURE__*/
+    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? "#4a4a4a" : C.rwyBg })
     )
     ), /*#__PURE__*/
 
-    React.createElement("rect", { x: "18", y: "84", width: "424", height: "30", rx: "2", fill: "url(#rwyGradC172)", stroke: C.rwyAsphalt, strokeWidth: "1" }),
-    [0, 1, 2, 3].map(function (i) {return /*#__PURE__*/React.createElement("rect", { key: i, x: 22 + i * 6, y: "88", width: "3", height: "22", rx: "1", fill: C.rwyAsphalt });}),
-    Array.from({ length: 18 }).map(function (_, i) {return /*#__PURE__*/React.createElement("rect", { key: i, x: 55 + i * 22, y: "98", width: "12", height: "2", rx: "1", fill: C.rwyStripe });}),
-    result.rwyNum && /*#__PURE__*/React.createElement("text", { x: "36", y: "102", textAnchor: "middle", fill: C.rwyText, fontSize: "11", fontFamily: "Courier New", fontWeight: "bold" }, String(result.rwyNum).padStart(2, "0")), /*#__PURE__*/
+    React.createElement("rect", { x: "18", y: "84", width: "424", height: "30", rx: "2", fill: "url(#rwyGradC172)", stroke: C.isLight ? "#1a1a1a" : C.rwyAsphalt, strokeWidth: "1" }),
+    [0, 1, 2, 3].map(function (i) {return /*#__PURE__*/React.createElement("rect", { key: i, x: 22 + i * 6, y: "88", width: "3", height: "22", rx: "1", fill: C.isLight ? "#e8ecf0" : C.rwyAsphalt });}),
+    Array.from({ length: 17 }).map(function (_, i) {return /*#__PURE__*/React.createElement("rect", { key: i, x: 70 + i * 22, y: "98", width: "12", height: "2", rx: "1", fill: C.isLight ? "#e0e6ec" : C.rwyStripe });}),
+    result.rwyNum && /*#__PURE__*/React.createElement("text", { x: "55", y: "102", textAnchor: "middle", fill: C.isLight ? "#e8ecf0" : C.rwyText, fontSize: "11", fontFamily: "Courier New", fontWeight: "bold" }, String(result.rwyNum).padStart(2, "0")), /*#__PURE__*/
 
-    React.createElement("path", { d: "M ".concat(xGr, " ").concat(yRwy, " C ").concat(cp1X, " ").concat(cp1Y, " ").concat(cp2X, " ").concat(cp2Y, " ").concat(xEnd, " ").concat(yEnd), fill: "none", stroke: c50, strokeWidth: "1.5", strokeDasharray: "5,3", opacity: "0.5" }), /*#__PURE__*/
+    React.createElement("path", { d: "M ".concat(xGr, " ").concat(yRwy, " C ").concat(cp1X, " ").concat(cp1Y, " ").concat(cp2X, " ").concat(cp2Y, " ").concat(xEnd, " ").concat(yEnd), fill: "none", stroke: c50, strokeWidth: C.isLight ? "2" : "1.5", strokeDasharray: "5,3", opacity: C.isLight ? 0.8 : 0.5 }), /*#__PURE__*/
 
     React.createElement("line", { x1: "18", y1: "75", x2: xGr, y2: "75", stroke: cRoll, strokeWidth: "1", opacity: "0.7" }), /*#__PURE__*/
     React.createElement("line", { x1: "18", y1: "72", x2: "18", y2: "78", stroke: cRoll, strokeWidth: "1" }), /*#__PURE__*/
@@ -7835,10 +7924,10 @@ function C172RunwayViz(_ref51) {var result = _ref51.result,airportRunways = _ref
       var hLen = 7,hAng = 0.4;
       return /*#__PURE__*/React.createElement("g", { opacity: "0.9" }, /*#__PURE__*/
       React.createElement("circle", { cx: cx2, cy: cy2, r: "22", fill: C.markerBg, stroke: C.border, strokeWidth: "1" }),
-      [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) {var r2 = (a - 90) * Math.PI / 180;return /*#__PURE__*/React.createElement("line", { key: a, x1: cx2 + Math.cos(r2) * 16, y1: cy2 + Math.sin(r2) * 16, x2: cx2 + Math.cos(r2) * 20, y2: cy2 + Math.sin(r2) * 20, stroke: C.borderDim, strokeWidth: "1" });}), /*#__PURE__*/
+      [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) {var r2 = (a - 90) * Math.PI / 180;return /*#__PURE__*/React.createElement("line", { key: a, x1: cx2 + Math.cos(r2) * 16, y1: cy2 + Math.sin(r2) * 16, x2: cx2 + Math.cos(r2) * 20, y2: cy2 + Math.sin(r2) * 20, stroke: C.isLight ? "#8f8a7a" : C.borderDim, strokeWidth: C.isLight ? "1.4" : "1" });}), /*#__PURE__*/
       React.createElement("line", { x1: x1, y1: y1, x2: x2, y2: y2, stroke: C.cool, strokeWidth: "2" }), /*#__PURE__*/
       React.createElement("polygon", { points: "".concat(x2, ",").concat(y2, " ").concat(x2 - hLen * Math.cos(rad2 - hAng), ",").concat(y2 - hLen * Math.sin(rad2 - hAng), " ").concat(x2 - hLen * Math.cos(rad2 + hAng), ",").concat(y2 - hLen * Math.sin(rad2 + hAng)), fill: C.cool }), /*#__PURE__*/
-      React.createElement("text", { x: cx2, y: cy2 - 27, textAnchor: "middle", fill: C.dimmest, fontSize: "8", fontFamily: "Courier New", letterSpacing: "1" }, "WIND / RWY"), /*#__PURE__*/
+      React.createElement("text", { x: cx2, y: cy2 - 27, textAnchor: "middle", fill: C.isLight ? C.dimmer : C.dimmest, fontSize: "8", fontFamily: "Courier New", letterSpacing: "1" }, "WIND / RWY"), /*#__PURE__*/
       React.createElement("text", { x: cx2, y: cy2 + 33, textAnchor: "middle", fill: C.cool, fontSize: "9", fontFamily: "Courier New" }, result.windSpd, "KT/", wc.angle === 0 ? "HW" : wc.angle === 180 ? "TW" : "XW-".concat(wc.crossDir))
       );
     }(), /*#__PURE__*/
@@ -7850,17 +7939,30 @@ function C172RunwayViz(_ref51) {var result = _ref51.result,airportRunways = _ref
 }
 function C172Plane(_ref52) {var x = _ref52.x,y = _ref52.y,ang = _ref52.ang,color = _ref52.color;
   var C = useC();
-  var planeColor = C.isLight ? "#2d7a4f" : color;
+  var planeColor = C.isLight ? "#1a3a5c" : color;
   return (/*#__PURE__*/
-    React.createElement("g", { transform: "translate(".concat(x, ",").concat(y, ") rotate(").concat(-ang, ")") }, /*#__PURE__*/
-    React.createElement("g", { transform: "scale(-0.13, 0.13) translate(-1300, -190)" },
+    React.createElement("g", { transform: "translate(".concat(x, ",").concat(y, ") rotate(").concat(-ang, ")") },
+    C.isLight && /*#__PURE__*/
+    React.createElement("defs", null, /*#__PURE__*/
+    React.createElement("filter", { id: "c172LightOutline", x: "-30%", y: "-30%", width: "160%", height: "160%" }, /*#__PURE__*/
+    React.createElement("feMorphology", { in: "SourceAlpha", operator: "dilate", radius: "9", result: "dilated" }), /*#__PURE__*/
+    React.createElement("feFlood", { floodColor: "white", result: "whiteFlood" }), /*#__PURE__*/
+    React.createElement("feComposite", { in: "whiteFlood", in2: "dilated", operator: "in", result: "outline" }), /*#__PURE__*/
+    React.createElement("feMerge", null, /*#__PURE__*/
+    React.createElement("feMergeNode", { in: "outline" }), /*#__PURE__*/
+    React.createElement("feMergeNode", { in: "SourceGraphic" })
+    )
+    )
+    ), /*#__PURE__*/
+
+    React.createElement("g", { transform: "scale(-0.13, 0.13) translate(-1300, -190)", style: C.isLight ? { filter: "url(#c172LightOutline)" } : undefined },
     C.isLight && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/
-    React.createElement("path", { d: "M1283.31,289.497L1339.45,290.033C1343.44,289.855 1350.02,297.562 1349.16,306.385C1348.29,315.456 1341.09,313.89 1336.24,318.674C1309.79,322.126 1293.33,324.507 1272.24,322.959C1261.51,316.822 1255.51,313.097 1255.38,308.706C1256.31,299.082 1275.57,287.712 1283.31,289.497Z Z", fill: "#2d7a4f", stroke: "none" }), /*#__PURE__*/
-    React.createElement("path", { d: "M1140.69,295.895L1187.77,296.343C1191.11,296.194 1196.63,302.646 1195.91,310.033C1195.18,317.627 1189.14,316.317 1185.08,320.322C1162.89,323.212 1149.1,325.205 1131.4,323.91C1122.41,318.772 1117.38,315.653 1117.27,311.977C1118.05,303.919 1134.2,294.4 1140.69,295.895Z Z", fill: "#2d7a4f", stroke: "none" }), /*#__PURE__*/
-    React.createElement("path", { d: "M1136.93,324.421C1139.31,336.701 1155.59,342.245 1165.72,323.411 Z", fill: "#2d7a4f", stroke: "none" }), /*#__PURE__*/
-    React.createElement("path", { d: "M1277.59,323.029C1280.35,337.496 1304.75,342.007 1310.93,321.334 Z", fill: "#2d7a4f", stroke: "none" })
+    React.createElement("path", { d: "M1283.31,289.497L1339.45,290.033C1343.44,289.855 1350.02,297.562 1349.16,306.385C1348.29,315.456 1341.09,313.89 1336.24,318.674C1309.79,322.126 1293.33,324.507 1272.24,322.959C1261.51,316.822 1255.51,313.097 1255.38,308.706C1256.31,299.082 1275.57,287.712 1283.31,289.497Z Z", fill: "#1a3a5c", stroke: "none" }), /*#__PURE__*/
+    React.createElement("path", { d: "M1140.69,295.895L1187.77,296.343C1191.11,296.194 1196.63,302.646 1195.91,310.033C1195.18,317.627 1189.14,316.317 1185.08,320.322C1162.89,323.212 1149.1,325.205 1131.4,323.91C1122.41,318.772 1117.38,315.653 1117.27,311.977C1118.05,303.919 1134.2,294.4 1140.69,295.895Z Z", fill: "#1a3a5c", stroke: "none" }), /*#__PURE__*/
+    React.createElement("path", { d: "M1136.93,324.421C1139.31,336.701 1155.59,342.245 1165.72,323.411 Z", fill: "#1a3a5c", stroke: "none" }), /*#__PURE__*/
+    React.createElement("path", { d: "M1277.59,323.029C1280.35,337.496 1304.75,342.007 1310.93,321.334 Z", fill: "#1a3a5c", stroke: "none" })
     ),
-    C.isLight && /*#__PURE__*/React.createElement("path", { d: "M1138.97,190.558C1153.97,190.558 1168.97,190.558 1176.12,187.879C1185.76,170.736 1205.04,158.869 1215.94,156.272C1222.73,145.282 1228.14,140.632 1236.47,138.236C1258.91,134.769 1327.89,136.054 1351.83,143.593C1365.47,147.888 1375.76,148.107 1382.54,159.486C1400.76,168.187 1403.97,170.379 1422.37,184.486C1425.94,184.486 1588.08,167.343 1590.94,167.343C1593.79,167.343 1634.69,160.915 1640.58,157.879C1646.4,154.88 1658.54,141.777 1668.79,130.201C1672.15,126.415 1724.69,64.129 1724.69,64.129L1779.87,65.736L1741.65,184.486C1745.86,193.652 1745.41,199.037 1742.72,206.45C1739.03,211.51 1727.13,212.105 1719.51,213.772C1589.45,240.855 1387.84,275.855 1312.37,280.2 L1165.4,280.379 C1220.18,283.321 1256.05,283.161 1298.86,280.871 L1152.88,279.382 C1135.56,278.489 1118.23,272.71 1107.19,265.558C1096.4,258.568 1090.09,242.648 1083.44,223.415C1083.44,223.415 1052.19,220.022 1052.37,209.665C1052.52,200.557 1083.79,199.486 1083.79,199.486C1083.31,193.021 1090,191.688 1096.28,191.495C1107.24,191.159 1129.92,190.157 1140.4,190.558 Z", fill: "#2d7a4f", stroke: "none" }), /*#__PURE__*/
+    C.isLight && /*#__PURE__*/React.createElement("path", { d: "M1138.97,190.558C1153.97,190.558 1168.97,190.558 1176.12,187.879C1185.76,170.736 1205.04,158.869 1215.94,156.272C1222.73,145.282 1228.14,140.632 1236.47,138.236C1258.91,134.769 1327.89,136.054 1351.83,143.593C1365.47,147.888 1375.76,148.107 1382.54,159.486C1400.76,168.187 1403.97,170.379 1422.37,184.486C1425.94,184.486 1588.08,167.343 1590.94,167.343C1593.79,167.343 1634.69,160.915 1640.58,157.879C1646.4,154.88 1658.54,141.777 1668.79,130.201C1672.15,126.415 1724.69,64.129 1724.69,64.129L1779.87,65.736L1741.65,184.486C1745.86,193.652 1745.41,199.037 1742.72,206.45C1739.03,211.51 1727.13,212.105 1719.51,213.772C1589.45,240.855 1387.84,275.855 1312.37,280.2 L1165.4,280.379 C1220.18,283.321 1256.05,283.161 1298.86,280.871 L1152.88,279.382 C1135.56,278.489 1118.23,272.71 1107.19,265.558C1096.4,258.568 1090.09,242.648 1083.44,223.415C1083.44,223.415 1052.19,220.022 1052.37,209.665C1052.52,200.557 1083.79,199.486 1083.79,199.486C1083.31,193.021 1090,191.688 1096.28,191.495C1107.24,191.159 1129.92,190.157 1140.4,190.558 Z", fill: "#1a3a5c", stroke: "none" }), /*#__PURE__*/
     React.createElement("path", { d: "M1138.97,190.558C1153.97,190.558 1168.97,190.558 1176.12,187.879C1185.76,170.736 1205.04,158.869 1215.94,156.272C1222.73,145.282 1228.14,140.632 1236.47,138.236C1258.91,134.769 1327.89,136.054 1351.83,143.593C1365.47,147.888 1375.76,148.107 1382.54,159.486C1400.76,168.187 1403.97,170.379 1422.37,184.486C1425.94,184.486 1588.08,167.343 1590.94,167.343C1593.79,167.343 1634.69,160.915 1640.58,157.879C1646.4,154.88 1658.54,141.777 1668.79,130.201C1672.15,126.415 1724.69,64.129 1724.69,64.129L1779.87,65.736L1741.65,184.486C1745.86,193.652 1745.41,199.037 1742.72,206.45C1739.03,211.51 1727.13,212.105 1719.51,213.772C1589.45,240.855 1387.84,275.855 1312.37,280.2", fill: "none", stroke: planeColor, strokeWidth: C.isLight ? 15 : 6, strokeLinecap: "round", strokeLinejoin: "round" }), /*#__PURE__*/
     React.createElement("path", { d: "M1152.88,279.382C1135.56,278.489 1118.23,272.71 1107.19,265.558C1096.4,258.568 1090.09,242.648 1083.44,223.415C1083.44,223.415 1052.19,220.022 1052.37,209.665C1052.52,200.557 1083.79,199.486 1083.79,199.486C1083.31,193.021 1090,191.688 1096.28,191.495C1107.24,191.159 1129.92,190.157 1140.4,190.558", fill: "none", stroke: planeColor, strokeWidth: C.isLight ? 15 : 6, strokeLinecap: "round", strokeLinejoin: "round" }), /*#__PURE__*/
     React.createElement("path", { d: "M1165.4,280.379C1220.18,283.321 1256.05,283.161 1298.86,280.871", fill: "none", stroke: planeColor, strokeWidth: C.isLight ? 15 : 6, strokeLinecap: "round", strokeLinejoin: "round" }), /*#__PURE__*/
@@ -7962,7 +8064,7 @@ function C172TakeoffTab(_ref53) {var savedState = _ref53.savedState,onStateChang
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "28px", paddingBottom: "20px", borderBottom: "".concat(C.cardBorder, " solid ").concat(C.border) } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "TAKEOFF PERFORMANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "TAKEOFF PERFORMANCE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "28px", fontWeight: "bold", letterSpacing: "2px" } }, "SHORT FIELD"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" } }, "FLAPS 10\xB0 \xB7 FULL THROTTLE \xB7 PAVED/LEVEL/DRY \xB7 FIG 5-5")
     ), /*#__PURE__*/
@@ -8355,25 +8457,27 @@ function C172LandingViz(_ref56) {var result = _ref56.result,airportRunways = _re
     React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.green } }, "SHORT FIELD LANDING"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.dimmer } }, "FLAPS ", result.flaps === "up" ? "UP" : "FULL", " \xB7 IDLE \xB7 MAX BRAKING")
     ), /*#__PURE__*/
-    React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block" } }, /*#__PURE__*/
+    React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block", borderRadius: "8px" } }, /*#__PURE__*/
     React.createElement("defs", null, /*#__PURE__*/
     React.createElement("linearGradient", { id: "skyGrad", x1: "0", y1: "0", x2: "0", y2: "1" }, /*#__PURE__*/
-    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#dce8f5" : C.card }), /*#__PURE__*/
-    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? C.rwyBg : C.card })
+    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#b9d2ea" : C.card }), /*#__PURE__*/
+    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? "#e9e7dc" : C.card })
     )
     ), /*#__PURE__*/
-    React.createElement("rect", { x: "0", y: "0", width: "460", height: "165", fill: "url(#skyGrad)" }), /*#__PURE__*/
+    React.createElement("rect", { x: "0", y: "0", width: "460", height: "165", fill: "url(#skyGrad)" }),
+    C.isLight && /*#__PURE__*/React.createElement("rect", { x: "0", y: "99", width: "460", height: "66", fill: "#dde1cf" }),
+    C.isLight && /*#__PURE__*/React.createElement("rect", { x: "0", y: "99", width: "460", height: "3", fill: "#ccd2ba" }), /*#__PURE__*/
     React.createElement("defs", null, /*#__PURE__*/
     React.createElement("linearGradient", { id: "rwyGradC172Ldg", x1: "0", y1: "0", x2: "1", y2: "0" }, /*#__PURE__*/
-    React.createElement("stop", { offset: "0%", stopColor: C.rwyBg }), /*#__PURE__*/
-    React.createElement("stop", { offset: "100%", stopColor: C.rwyAsphalt })
+    React.createElement("stop", { offset: "0%", stopColor: C.isLight ? "#4a4a4a" : C.rwyBg }), /*#__PURE__*/
+    React.createElement("stop", { offset: "100%", stopColor: C.isLight ? "#2c2c2c" : C.rwyAsphalt })
     )
     ), /*#__PURE__*/
-    React.createElement("rect", { x: "18", y: "84", width: "424", height: "30", rx: "2", fill: "url(#rwyGradC172Ldg)", stroke: C.rwyAsphalt, strokeWidth: "1" }),
-    Array.from({ length: 18 }).map(function (_, i) {return /*#__PURE__*/React.createElement("rect", { key: i, x: 55 + i * 22, y: "98", width: "12", height: "2", rx: "1", fill: C.rwyStripe });}),
-    result.rwyNum && /*#__PURE__*/React.createElement("text", { x: "424", y: "102", textAnchor: "middle", fill: C.rwyText, fontSize: "11", fontFamily: "Courier New", fontWeight: "bold" }, String(result.rwyNum).padStart(2, "0")), /*#__PURE__*/
+    React.createElement("rect", { x: "18", y: "84", width: "424", height: "30", rx: "2", fill: "url(#rwyGradC172Ldg)", stroke: C.isLight ? "#1a1a1a" : C.rwyAsphalt, strokeWidth: "1" }),
+    Array.from({ length: 17 }).map(function (_, i) {return /*#__PURE__*/React.createElement("rect", { key: i, x: 70 + i * 22, y: "98", width: "12", height: "2", rx: "1", fill: C.isLight ? "#e0e6ec" : C.rwyStripe });}),
+    result.rwyNum && /*#__PURE__*/React.createElement("text", { x: "410", y: "102", textAnchor: "middle", fill: C.isLight ? "#e8ecf0" : C.rwyText, fontSize: "11", fontFamily: "Courier New", fontWeight: "bold" }, String(result.rwyNum).padStart(2, "0")), /*#__PURE__*/
 
-    React.createElement("path", { d: "M ".concat(xStart, " ").concat(yStart, " C ").concat(cp1X, " ").concat(cp1Y, " ").concat(cp2X, " ").concat(cp2Y, " ").concat(xTd, " ").concat(yRwy), fill: "none", stroke: c50, strokeWidth: "1.5", strokeDasharray: "5,3", opacity: "0.5" }), /*#__PURE__*/
+    React.createElement("path", { d: "M ".concat(xStart, " ").concat(yStart, " C ").concat(cp1X, " ").concat(cp1Y, " ").concat(cp2X, " ").concat(cp2Y, " ").concat(xTd, " ").concat(yRwy), fill: "none", stroke: c50, strokeWidth: C.isLight ? "2" : "1.5", strokeDasharray: "5,3", opacity: C.isLight ? 0.8 : 0.5 }), /*#__PURE__*/
 
     React.createElement("line", { x1: xObs, y1: "52", x2: xObs, y2: "114", stroke: c50, strokeWidth: "2" }), /*#__PURE__*/
     React.createElement("rect", { x: xObs - 8, y: "52", width: "17", height: "11", rx: "1.5", fill: c50 }), /*#__PURE__*/
@@ -8406,10 +8510,10 @@ function C172LandingViz(_ref56) {var result = _ref56.result,airportRunways = _re
       var hLen = 7,hAng = 0.4;
       return /*#__PURE__*/React.createElement("g", { opacity: "0.9" }, /*#__PURE__*/
       React.createElement("circle", { cx: cx2, cy: cy2, r: "22", fill: C.markerBg, stroke: C.border, strokeWidth: "1" }),
-      [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) {var r2 = (a - 90) * Math.PI / 180;return /*#__PURE__*/React.createElement("line", { key: a, x1: cx2 + Math.cos(r2) * 16, y1: cy2 + Math.sin(r2) * 16, x2: cx2 + Math.cos(r2) * 20, y2: cy2 + Math.sin(r2) * 20, stroke: C.borderDim, strokeWidth: "1" });}), /*#__PURE__*/
+      [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) {var r2 = (a - 90) * Math.PI / 180;return /*#__PURE__*/React.createElement("line", { key: a, x1: cx2 + Math.cos(r2) * 16, y1: cy2 + Math.sin(r2) * 16, x2: cx2 + Math.cos(r2) * 20, y2: cy2 + Math.sin(r2) * 20, stroke: C.isLight ? "#8f8a7a" : C.borderDim, strokeWidth: C.isLight ? "1.4" : "1" });}), /*#__PURE__*/
       React.createElement("line", { x1: x1, y1: y1, x2: x2, y2: y2, stroke: C.cool, strokeWidth: "2" }), /*#__PURE__*/
       React.createElement("polygon", { points: "".concat(x2, ",").concat(y2, " ").concat(x2 - hLen * Math.cos(rad2 - hAng), ",").concat(y2 - hLen * Math.sin(rad2 - hAng), " ").concat(x2 - hLen * Math.cos(rad2 + hAng), ",").concat(y2 - hLen * Math.sin(rad2 + hAng)), fill: C.cool }), /*#__PURE__*/
-      React.createElement("text", { x: cx2, y: cy2 - 27, textAnchor: "middle", fill: C.dimmest, fontSize: "8", fontFamily: "Courier New", letterSpacing: "1" }, "WIND / RWY"), /*#__PURE__*/
+      React.createElement("text", { x: cx2, y: cy2 - 27, textAnchor: "middle", fill: C.isLight ? C.dimmer : C.dimmest, fontSize: "8", fontFamily: "Courier New", letterSpacing: "1" }, "WIND / RWY"), /*#__PURE__*/
       React.createElement("text", { x: cx2, y: cy2 + 33, textAnchor: "middle", fill: C.cool, fontSize: "9", fontFamily: "Courier New" }, result.windSpd, "KT/", wc.angle === 0 ? "HW" : wc.angle === 180 ? "TW" : "XW-".concat(wc.crossDir))
       );
     }(), /*#__PURE__*/
@@ -8784,10 +8888,10 @@ function C172SpeedsTab(_ref60) {var savedState = _ref60.savedState,onStateChange
   null;
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "24px" } }, "SPEEDS REFERENCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "24px" } }, "SPEEDS REFERENCE"), /*#__PURE__*/
 
     React.createElement("div", { style: { marginBottom: "28px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "14px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "MANEUVERING SPEED (Va)"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "14px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "MANEUVERING SPEED (Va)"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "12px", color: C.dim, letterSpacing: "1px", marginBottom: "12px" } }, "Va = 105 KIAS at 4,570 lb \xB7 scales with \u221A(W/4570)"), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", gap: "10px", alignItems: "flex-end", marginBottom: "12px" } }, /*#__PURE__*/
     React.createElement("div", { style: { flex: 1 } }, /*#__PURE__*/
@@ -8822,7 +8926,7 @@ function C172SpeedsTab(_ref60) {var savedState = _ref60.savedState,onStateChange
     ), /*#__PURE__*/
 
     React.createElement("div", null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "14px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "STALL SPEEDS (Vs) \xB7 FIG 5-3"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "14px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "STALL SPEEDS (Vs) \xB7 FIG 5-3"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", color: C.isLight ? C.dimmer : C.dim, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px", marginBottom: "14px" } }, "2,550 lb \xB7 Idle power \xB7 KIAS"), /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "14px" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "6px" } }, "CG POSITION"), /*#__PURE__*/
@@ -9208,7 +9312,7 @@ function SeminoleLandingViz(_ref64) {var result = _ref64.result,airportRunways =
 
     React.createElement("div", { style: { background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "4px", padding: "14px 14px 10px", marginBottom: "14px" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal" } }, "FLAPS 40 LANDING"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal" } }, "FLAPS 40 LANDING"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.dimmer } }, "POWER OFF - FULL STALL - ", result.propType === "scimitar" ? "FIG 5-35a" : "FIG 5-35")
     ), /*#__PURE__*/
     React.createElement("svg", { viewBox: "0 0 460 165", style: { width: "100%", display: "block" } }, /*#__PURE__*/
@@ -9310,7 +9414,7 @@ function SeminoleLandingViz(_ref64) {var result = _ref64.result,airportRunways =
     ), /*#__PURE__*/
     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" } }, /*#__PURE__*/
     React.createElement("div", { style: { background: C.input, border: "1px solid " + C.green, borderRadius: "3px", padding: "16px", textAlign: "center" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "2px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "GROUND ROLL"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "2px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "GROUND ROLL"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "44px", color: C.text, lineHeight: 1, fontWeight: "bold" } }, result.groundRollFt), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dim, marginTop: "6px", letterSpacing: "3px" } }, "FEET - FIG 5-37")
     ), /*#__PURE__*/
@@ -9448,7 +9552,7 @@ function SeminoleLandingTab(_ref65) {var savedState = _ref65.savedState,onStateC
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "28px", paddingBottom: "20px", borderBottom: C.cardBorder + " solid " + C.border } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "LANDING PERFORMANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "6px" } }, "LANDING PERFORMANCE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "28px", fontWeight: "bold", letterSpacing: "2px", color: C.text } }, "FLAPS 40"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, marginTop: "6px", letterSpacing: "1px" } }, "POWER OFF - FULL STALL - MAX BRAKING - PAVED/LEVEL/DRY - ", propType === "scimitar" ? "FIG 5-35a" : "FIG 5-35")
     ), /*#__PURE__*/
@@ -9693,11 +9797,11 @@ function SeminoleTFDTab(_ref66) {var savedState = _ref66.savedState,onStateChang
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "20px", paddingBottom: "16px", borderBottom: C.cardBorder + " solid " + C.border } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "4px" } }, "TIME, FUEL & DISTANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "4px" } }, "TIME, FUEL & DISTANCE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, letterSpacing: "1px" } }, "FIG 5-23 / 5-33")
     ), /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "20px", paddingBottom: "16px", borderBottom: C.cardBorder + " solid " + C.border } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" } }, "CLIMB \xB7 88 KIAS \xB7 2700 RPM \xB7 FIG 5-23"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "12px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" } }, "CLIMB \xB7 88 KIAS \xB7 2700 RPM \xB7 FIG 5-23"), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "10px" } }, /*#__PURE__*/
     React.createElement(AltOATRow, { altLabel: "DEPARTURE ALT.", altValue: departAlt, onAltChange: setDepartAlt, altHint: "0 - 14,000 ft", altPlaceholder: "e.g. 1250", oatValue: oatDep, onOatChange: setOatDep, unit: tempUnit, onUnitChange: setTempUnit }), /*#__PURE__*/
     React.createElement(AltOATRow, { altLabel: "CRUISE ALT.", altValue: cruiseAlt, onAltChange: setCruiseAlt, altHint: "Above departure", altPlaceholder: "e.g. 5500", oatValue: oatCruise, onOatChange: setOatCruise, unit: tempUnit, onUnitChange: setTempUnit })
@@ -9717,13 +9821,13 @@ function SeminoleTFDTab(_ref66) {var savedState = _ref66.savedState,onStateChang
     result && /*#__PURE__*/
     React.createElement("div", { style: { marginTop: "28px" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal" } }, "RESULTS"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal" } }, "RESULTS"), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", gap: "6px" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "1px", color: result.isaDevDep > 5 ? C.warm : result.isaDevDep < -5 ? C.cool : C.dim, background: C.input, border: C.cardBorder + " solid " + C.border, padding: "3px 8px", borderRadius: "2px" } }, "DEP ", formatISA(result.isaDevDep)), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "1px", color: result.isaDevCruise > 5 ? C.warm : result.isaDevCruise < -5 ? C.cool : C.dim, background: C.input, border: C.cardBorder + " solid " + C.border, padding: "3px 8px", borderRadius: "2px" } }, "CRZ ", formatISA(result.isaDevCruise))
     )
     ), /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "CLIMB \xB7 FIG 5-23"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "8px" } }, "CLIMB \xB7 FIG 5-23"), /*#__PURE__*/
     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "12px" } }, /*#__PURE__*/
     React.createElement(ResultCard, { label: "TIME", value: result.timeMin.toFixed(1), unit: "MIN", color: C.green }), /*#__PURE__*/
     React.createElement(ResultCard, { label: "FUEL", value: result.fuelGal.toFixed(1), unit: "GAL", color: C.green }), /*#__PURE__*/
@@ -9912,7 +10016,7 @@ function SeminoleCruiseTab(_ref67) {var savedState = _ref67.savedState,onStateCh
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "20px", paddingBottom: "16px", borderBottom: C.cardBorder + " solid " + C.border } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "4px" } }, "FUEL & POWER SETTING"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "4px" } }, "FUEL & POWER SETTING"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, letterSpacing: "1px" } }, "BOTH ENGINES \xB7 FIG 5-25")
     ), /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" } }, /*#__PURE__*/
@@ -9955,7 +10059,7 @@ function SeminoleCruiseTab(_ref67) {var savedState = _ref67.savedState,onStateCh
 
 
     React.createElement("div", { style: { background: C.input, border: "".concat(C.cardBorder, " solid ").concat(C.borderDim), borderRadius: "3px", padding: "12px 14px", marginTop: "12px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" } }, "ENDURANCE & RANGE \xB7 45 MIN RESERVE \xB7 ",
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "10px" } }, "ENDURANCE & RANGE \xB7 45 MIN RESERVE \xB7 ",
     result.mixture === "perf" ? "PERF CRUISE" : "ECON CRUISE"
     ), /*#__PURE__*/
     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "6px", marginBottom: "6px" } },
@@ -10431,7 +10535,7 @@ function SeminoleRunwayViz(_ref68) {var result = _ref68.result,airportRunways = 
     }(), /*#__PURE__*/
     React.createElement("div", { style: { background: C.card, border: "".concat(C.cardBorder, " solid ").concat(C.border), borderRadius: "4px", padding: "14px 14px 10px", marginBottom: "14px" } }, /*#__PURE__*/
     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal" } }, "FLAPS 25 deg TAKEOFF"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "15px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal" } }, "FLAPS 25 deg TAKEOFF"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", letterSpacing: "2px", color: C.dimmer } }, "FULL THROTTLE . PAVED/LEVEL/DRY . A/C OFF")
     ), /*#__PURE__*/
     React.createElement("svg", { viewBox: "0 0 460 185", style: { width: "100%", display: "block" } }, /*#__PURE__*/
@@ -10778,7 +10882,7 @@ function SeminoleTakeoffTab(_ref70) {var savedState = _ref70.savedState,onStateC
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "20px", paddingBottom: "16px", borderBottom: C.cardBorder + " solid " + C.border } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "4px" } }, "TAKEOFF PERFORMANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "4px" } }, "TAKEOFF PERFORMANCE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, letterSpacing: "1px" } }, "WING FLAPS 0 \xB7 COWL FLAPS OPEN \xB7 SHORT FIELD \xB7 FIG 5-13 / 5-15")
     ), /*#__PURE__*/
     React.createElement(MetarFetch, { onFill: function onFill(d) {
@@ -10938,7 +11042,7 @@ function SeminoleClimbTab(_ref71) {var savedState = _ref71.savedState,onStateCha
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
     React.createElement("div", { style: { marginBottom: "20px", paddingBottom: "16px", borderBottom: C.cardBorder + " solid " + C.border } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "4px" } }, "CLIMB PERFORMANCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "4px" } }, "CLIMB PERFORMANCE"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "13px", color: C.dimmer, letterSpacing: "1px" } }, "FLAPS 0 - 2700 RPM - FULL THROTTLE - FULL RICH")
     ), /*#__PURE__*/
     React.createElement(MetarFetch, { onFill: function onFill(d) {
@@ -10997,7 +11101,7 @@ function SeminoleSpeedsTab(_ref72) {var savedState = _ref72.savedState,onStateCh
   var bankColor = bank <= 30 ? C.green : bank <= 45 ? C.warm : C.error;
   return (/*#__PURE__*/
     React.createElement(Card, null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "24px" } }, "SPEEDS REFERENCE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", letterSpacing: "4px", color: C.green, fontWeight: C.isLight ? "700" : "normal", marginBottom: "24px" } }, "SPEEDS REFERENCE"), /*#__PURE__*/
 
     React.createElement("div", { style: { marginBottom: "20px" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", letterSpacing: "2px", color: C.isLight ? C.text : C.dim, fontWeight: C.isLight ? "700" : "normal", marginBottom: "6px" } }, "GROSS WEIGHT"), /*#__PURE__*/
@@ -11014,7 +11118,7 @@ function SeminoleSpeedsTab(_ref72) {var savedState = _ref72.savedState,onStateCh
     weight !== "" && !validWeight && /*#__PURE__*/React.createElement("div", { style: { fontSize: "11px", color: C.error, marginTop: "4px", letterSpacing: "1px" } }, "Weight must be 2,500 - 3,800 lbs")
     ), /*#__PURE__*/
 
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "MANEUVERING SPEED (Vo)"),
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "MANEUVERING SPEED (Vo)"),
     vo !== null ? /*#__PURE__*/
     React.createElement("div", { style: { background: C.input, border: "2px solid " + C.cool, borderRadius: "4px", padding: "20px", textAlign: "center", marginBottom: "20px" } }, /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.cool, marginBottom: "6px" } }, "Vo AT ", Math.round(weightVal).toLocaleString(), " LB"), /*#__PURE__*/
@@ -11028,7 +11132,7 @@ function SeminoleSpeedsTab(_ref72) {var savedState = _ref72.savedState,onStateCh
     ), /*#__PURE__*/
 
 
-    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.isLight ? C.text : C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "STALL SPEED (Vs) - FIG 5-5"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: C.isLight ? "600" : "normal", marginBottom: "12px", borderBottom: C.cardBorder + " solid " + C.border, paddingBottom: "8px" } }, "STALL SPEED (Vs) - FIG 5-5"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: "11px", color: C.isLight ? C.dimmer : C.dim, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px", marginBottom: "14px" } }, "Power off - KIAS"), /*#__PURE__*/
 
     React.createElement("div", { style: { marginBottom: "14px" } }, /*#__PURE__*/
@@ -11190,7 +11294,7 @@ function AircraftMenu(_ref75) {var onSelect = _ref75.onSelect,theme = _ref75.the
     name: "PA-28-181",
     sub: "Archer III",
     desc: "VB-2749 · Issued Dec 2017",
-    tags: ["W&B", "Takeoff", "Landing", "Climb", "Time·Fuel·Dist", "Cruise", "Glide", "Speeds", "Air Race"],
+    tags: ["W&B", "Takeoff", "Landing", "Climb", "Time·Fuel·Dist", "Cruise", "Glide", "Speeds"],
     available: true
   },
   {
@@ -11228,7 +11332,7 @@ function AircraftMenu(_ref75) {var onSelect = _ref75.onSelect,theme = _ref75.the
     )
     ), /*#__PURE__*/
     React.createElement("div", { style: { textAlign: "center", marginBottom: mobile ? "32px" : "56px" } }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: mobile ? "11px" : "16px", letterSpacing: "6px", color: C.green, marginBottom: "16px" } }, "POH PERFORMANCE CALCULATOR \xB7 v1.8.0"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: mobile ? "11px" : "16px", letterSpacing: "6px", color: C.green, marginBottom: "16px" } }, "POH PERFORMANCE CALCULATOR \xB7 v1.9.0"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: mobile ? "28px" : "64px", fontWeight: "bold", letterSpacing: mobile ? "2px" : "6px" } }, "AERO"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: mobile ? "28px" : "64px", fontWeight: "bold", letterSpacing: mobile ? "2px" : "6px", color: C.green } }, "CALC"), /*#__PURE__*/
     React.createElement("div", { style: { fontSize: mobile ? "12px" : "16px", color: C.dim, marginTop: "16px", letterSpacing: "4px" } }, "SELECT AIRCRAFT")
@@ -11289,7 +11393,7 @@ function AircraftMenu(_ref75) {var onSelect = _ref75.onSelect,theme = _ref75.the
         ));}
     )
     ), /*#__PURE__*/
-    React.createElement("div", { style: { marginTop: "40px", fontSize: "11px", color: C.isLight ? C.dim : C.dimmest, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "2px" } }, "AEROCALC v1.8.0 \xB7 POH PERFORMANCE CALCULATOR"), /*#__PURE__*/
+    React.createElement("div", { style: { marginTop: "40px", fontSize: "11px", color: C.isLight ? C.dim : C.dimmest, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "2px" } }, "AEROCALC v1.9.0 \xB7 POH PERFORMANCE CALCULATOR"), /*#__PURE__*/
     React.createElement("div", { style: { marginTop: "8px", fontSize: "10px", color: C.isLight ? C.dim : C.dimmest, fontWeight: C.isLight ? "600" : "normal", letterSpacing: "1px" } }, "(Calc is short for calculator)")
     ),
     showAuth && /*#__PURE__*/
