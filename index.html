@@ -4177,24 +4177,25 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
   var _React$useState39 = React.useState(0),_React$useState40 = _slicedToArray(_React$useState39, 2),radarFrameIdx = _React$useState40[0],setRadarFrameIdx = _React$useState40[1];
   var _React$useState41 = React.useState(false),_React$useState42 = _slicedToArray(_React$useState41, 2),radarOn = _React$useState42[0],setRadarOn = _React$useState42[1];
   var _React$useState43 = React.useState(true),_React$useState44 = _slicedToArray(_React$useState43, 2),airspaceOn = _React$useState44[0],setAirspaceOn = _React$useState44[1];
+  var _React$useState45 = React.useState(false),_React$useState46 = _slicedToArray(_React$useState45, 2),aeroLoading = _React$useState46[0],setAeroLoading = _React$useState46[1];
   var airspaceOnRef = React.useRef(airspaceOn);
   var scheduleAeroFetchRef = React.useRef(null);
   var drawAeronauticalRef = React.useRef(null);
   React.useEffect(function () {airspaceOnRef.current = airspaceOn;}, [airspaceOn]);
-  var _React$useState45 = React.useState(false),_React$useState46 = _slicedToArray(_React$useState45, 2),cloudsOn = _React$useState46[0],setCloudsOn = _React$useState46[1];
-  var _React$useState47 = React.useState(false),_React$useState48 = _slicedToArray(_React$useState47, 2),wxOn = _React$useState48[0],setWxOn = _React$useState48[1];
+  var _React$useState47 = React.useState(false),_React$useState48 = _slicedToArray(_React$useState47, 2),cloudsOn = _React$useState48[0],setCloudsOn = _React$useState48[1];
+  var _React$useState49 = React.useState(false),_React$useState50 = _slicedToArray(_React$useState49, 2),wxOn = _React$useState50[0],setWxOn = _React$useState50[1];
   var radarLayerRef = React.useRef(null);
   var cloudsLayerRef = React.useRef(null);
   var wxLayerRef = React.useRef(null);
-  var _React$useState49 = React.useState(true),_React$useState50 = _slicedToArray(_React$useState49, 2),profileOpen = _React$useState50[0],setProfileOpen = _React$useState50[1];
-  var _React$useState51 = React.useState(null),_React$useState52 = _slicedToArray(_React$useState51, 2),profileData = _React$useState52[0],setProfileData = _React$useState52[1];
-  var _React$useState53 = React.useState(false),_React$useState54 = _slicedToArray(_React$useState53, 2),profileLoading = _React$useState54[0],setProfileLoading = _React$useState54[1];
-  var _React$useState55 = React.useState(null),_React$useState56 = _slicedToArray(_React$useState55, 2),airspaceData = _React$useState56[0],setAirspaceData = _React$useState56[1];
-  var _React$useState57 = React.useState(1),_React$useState58 = _slicedToArray(_React$useState57, 2),profileZoom = _React$useState58[0],setProfileZoom = _React$useState58[1];
-  var _React$useState59 = React.useState(0),_React$useState60 = _slicedToArray(_React$useState59, 2),profilePanX = _React$useState60[0],setProfilePanX = _React$useState60[1];
+  var _React$useState51 = React.useState(true),_React$useState52 = _slicedToArray(_React$useState51, 2),profileOpen = _React$useState52[0],setProfileOpen = _React$useState52[1];
+  var _React$useState53 = React.useState(null),_React$useState54 = _slicedToArray(_React$useState53, 2),profileData = _React$useState54[0],setProfileData = _React$useState54[1];
+  var _React$useState55 = React.useState(false),_React$useState56 = _slicedToArray(_React$useState55, 2),profileLoading = _React$useState56[0],setProfileLoading = _React$useState56[1];
+  var _React$useState57 = React.useState(null),_React$useState58 = _slicedToArray(_React$useState57, 2),airspaceData = _React$useState58[0],setAirspaceData = _React$useState58[1];
+  var _React$useState59 = React.useState(1),_React$useState60 = _slicedToArray(_React$useState59, 2),profileZoom = _React$useState60[0],setProfileZoom = _React$useState60[1];
+  var _React$useState61 = React.useState(0),_React$useState62 = _slicedToArray(_React$useState61, 2),profilePanX = _React$useState62[0],setProfilePanX = _React$useState62[1];
   var profileDragRef = React.useRef(null);
   var profileSvgRef = React.useRef(null);
-  var _React$useState61 = React.useState(null),_React$useState62 = _slicedToArray(_React$useState61, 2),hoveredAirspace = _React$useState62[0],setHoveredAirspace = _React$useState62[1];
+  var _React$useState63 = React.useState(null),_React$useState64 = _slicedToArray(_React$useState63, 2),hoveredAirspace = _React$useState64[0],setHoveredAirspace = _React$useState64[1];
   var airspaceHighlightRef = React.useRef(null);
   var mapViewBeforeHighlightRef = React.useRef(null);
   var isHighlightingRef = React.useRef(false);
@@ -4206,7 +4207,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
   var lastGoodAirportsRef = React.useRef(null);
   var aeroFetchTimerRef = React.useRef(null);
   var aeroFetchSeqRef = React.useRef(0);
-  var _React$useState63 = React.useState(false),_React$useState64 = _slicedToArray(_React$useState63, 2),mapReady = _React$useState64[0],setMapReady = _React$useState64[1];
+  var _React$useState65 = React.useState(false),_React$useState66 = _slicedToArray(_React$useState65, 2),mapReady = _React$useState66[0],setMapReady = _React$useState66[1];
 
   // Permanent airspace overlay on map — mounts ONCE per map lifetime. The on/off toggle
   // (below, in a separate effect) never tears this down — it only shows/hides the layer.
@@ -4351,11 +4352,12 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
         var mySeq = ++aeroFetchSeqRef.current;
         var base = "https://metar-proxy.mamillh01.workers.dev/";
         var qs = "&minLat=" + minLat.toFixed(4) + "&maxLat=" + maxLat.toFixed(4) + "&minLon=" + minLon.toFixed(4) + "&maxLon=" + maxLon.toFixed(4) + "&t=" + Math.floor(Date.now() / 120000);
+        setAeroLoading(true);
         Promise.all([
         fetch(base + "?type=airspaces" + qs).then(function (r) {return r.json();}).catch(function () {return null;}),
         fetch(base + "?type=airports" + qs).then(function (r) {return r.json();}).catch(function () {return null;})]
         ).then(function (results) {
-          if (mySeq !== aeroFetchSeqRef.current) return; // a newer fetch superseded this one
+          if (mySeq !== aeroFetchSeqRef.current) {setAeroLoading(false);return;} // a newer fetch superseded this one
           var gotAirspaces = results[0] && results[0].airspaces && results[0].airspaces.length > 0;
           var gotAirports = results[1] && results[1].airports && results[1].airports.length > 0;
           var asResult = gotAirspaces ? results[0].airspaces : lastGoodAirspacesRef.current;
@@ -4366,8 +4368,9 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
             aeroCellCacheRef.current[cellKey] = { airspaces: asResult, airports: apResult, ts: Date.now() };
           }
           drawAeronautical(asResult, apResult);
+          setAeroLoading(false);
         });
-      }, 700);
+      }, 450);
     }
 
     map.on("moveend", scheduleFetch);
@@ -4473,36 +4476,36 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     d.setHours(d.getHours() + 1);
     return d.toISOString().slice(0, 16);
   };
-  var _React$useState65 = React.useState(savedState.depTime || defaultDep()),_React$useState66 = _slicedToArray(_React$useState65, 2),depTime = _React$useState66[0],setDepTime = _React$useState66[1];
-  var _React$useState67 = React.useState(savedState.cruiseAlt || ""),_React$useState68 = _slicedToArray(_React$useState67, 2),cruiseAlt = _React$useState68[0],setCruiseAlt = _React$useState68[1];
-  var _React$useState69 = React.useState(savedState.navlogAircraft || "archer"),_React$useState70 = _slicedToArray(_React$useState69, 2),navlogAircraft = _React$useState70[0],setNavlogAircraftRaw = _React$useState70[1];
+  var _React$useState67 = React.useState(savedState.depTime || defaultDep()),_React$useState68 = _slicedToArray(_React$useState67, 2),depTime = _React$useState68[0],setDepTime = _React$useState68[1];
+  var _React$useState69 = React.useState(savedState.cruiseAlt || ""),_React$useState70 = _slicedToArray(_React$useState69, 2),cruiseAlt = _React$useState70[0],setCruiseAlt = _React$useState70[1];
+  var _React$useState71 = React.useState(savedState.navlogAircraft || "archer"),_React$useState72 = _slicedToArray(_React$useState71, 2),navlogAircraft = _React$useState72[0],setNavlogAircraftRaw = _React$useState72[1];
   var acType = navlogAircraft;
   var CLIMB_KIAS = acType === "c172" ? 85 : 87;
   var DESCENT_KIAS = acType === "c172" ? 90 : 122;
-  var _React$useState71 = React.useState(false),_React$useState72 = _slicedToArray(_React$useState71, 2),acDropdownOpen = _React$useState72[0],setAcDropdownOpen = _React$useState72[1];
+  var _React$useState73 = React.useState(false),_React$useState74 = _slicedToArray(_React$useState73, 2),acDropdownOpen = _React$useState74[0],setAcDropdownOpen = _React$useState74[1];
   var setNavlogAircraft = function setNavlogAircraft(ac) {
     setNavlogAircraftRaw(ac);
     // Reset power when switching aircraft
     if (ac === "c172" && !["2300", "2400", "2500", "2650"].includes(cruisePower)) setCruisePower("2500");
     if (ac === "archer" && !["55", "65", "75"].includes(cruisePower)) setCruisePower("65");
   };
-  var _React$useState73 = React.useState(savedState.cruisePower || "65"),_React$useState74 = _slicedToArray(_React$useState73, 2),cruisePower = _React$useState74[0],setCruisePower = _React$useState74[1];
+  var _React$useState75 = React.useState(savedState.cruisePower || "65"),_React$useState76 = _slicedToArray(_React$useState75, 2),cruisePower = _React$useState76[0],setCruisePower = _React$useState76[1];
   // Reset power setting when aircraft type changes
   React.useEffect(function () {
     if (acType === "c172" && !["2300", "2400", "2500", "2650"].includes(cruisePower)) setCruisePower("2500");
     if (acType === "archer" && !["55", "65", "75"].includes(cruisePower)) setCruisePower("65");
   }, [acType]);
-  var _React$useState75 = React.useState(false),_React$useState76 = _slicedToArray(_React$useState75, 2),showAltAdvisor = _React$useState76[0],setShowAltAdvisor = _React$useState76[1];
-  var _React$useState77 = React.useState(null),_React$useState78 = _slicedToArray(_React$useState77, 2),altAdvisorData = _React$useState78[0],setAltAdvisorData = _React$useState78[1];
-  var _React$useState79 = React.useState(false),_React$useState80 = _slicedToArray(_React$useState79, 2),altAdvisorLoading = _React$useState80[0],setAltAdvisorLoading = _React$useState80[1];
-  var _React$useState81 = React.useState(false),_React$useState82 = _slicedToArray(_React$useState81, 2),showRouteManager = _React$useState82[0],setShowRouteManager = _React$useState82[1];
-  var _React$useState83 = React.useState([]),_React$useState84 = _slicedToArray(_React$useState83, 2),savedRoutes = _React$useState84[0],setSavedRoutes = _React$useState84[1];
-  var _React$useState85 = React.useState(false),_React$useState86 = _slicedToArray(_React$useState85, 2),routesLoading = _React$useState86[0],setRoutesLoading = _React$useState86[1];
-  var _React$useState87 = React.useState(""),_React$useState88 = _slicedToArray(_React$useState87, 2),saveRouteName = _React$useState88[0],setSaveRouteName = _React$useState88[1];
-  var _React$useState89 = React.useState(null),_React$useState90 = _slicedToArray(_React$useState89, 2),saveStatus = _React$useState90[0],setSaveStatus = _React$useState90[1]; // "saving" | "saved" | "error"
-  var _React$useState91 = React.useState(false),_React$useState92 = _slicedToArray(_React$useState91, 2),showNavlogAuth = _React$useState92[0],setShowNavlogAuth = _React$useState92[1];
-  var _React$useState93 = React.useState(null),_React$useState94 = _slicedToArray(_React$useState93, 2),tocTod = _React$useState94[0],setTocTod = _React$useState94[1];
-  var _React$useState95 = React.useState({ tocWx: null, todWx: null, tocVar: null, todVar: null }),_React$useState96 = _slicedToArray(_React$useState95, 2),tocTodWx = _React$useState96[0],setTocTodWx = _React$useState96[1];
+  var _React$useState77 = React.useState(false),_React$useState78 = _slicedToArray(_React$useState77, 2),showAltAdvisor = _React$useState78[0],setShowAltAdvisor = _React$useState78[1];
+  var _React$useState79 = React.useState(null),_React$useState80 = _slicedToArray(_React$useState79, 2),altAdvisorData = _React$useState80[0],setAltAdvisorData = _React$useState80[1];
+  var _React$useState81 = React.useState(false),_React$useState82 = _slicedToArray(_React$useState81, 2),altAdvisorLoading = _React$useState82[0],setAltAdvisorLoading = _React$useState82[1];
+  var _React$useState83 = React.useState(false),_React$useState84 = _slicedToArray(_React$useState83, 2),showRouteManager = _React$useState84[0],setShowRouteManager = _React$useState84[1];
+  var _React$useState85 = React.useState([]),_React$useState86 = _slicedToArray(_React$useState85, 2),savedRoutes = _React$useState86[0],setSavedRoutes = _React$useState86[1];
+  var _React$useState87 = React.useState(false),_React$useState88 = _slicedToArray(_React$useState87, 2),routesLoading = _React$useState88[0],setRoutesLoading = _React$useState88[1];
+  var _React$useState89 = React.useState(""),_React$useState90 = _slicedToArray(_React$useState89, 2),saveRouteName = _React$useState90[0],setSaveRouteName = _React$useState90[1];
+  var _React$useState91 = React.useState(null),_React$useState92 = _slicedToArray(_React$useState91, 2),saveStatus = _React$useState92[0],setSaveStatus = _React$useState92[1]; // "saving" | "saved" | "error"
+  var _React$useState93 = React.useState(false),_React$useState94 = _slicedToArray(_React$useState93, 2),showNavlogAuth = _React$useState94[0],setShowNavlogAuth = _React$useState94[1];
+  var _React$useState95 = React.useState(null),_React$useState96 = _slicedToArray(_React$useState95, 2),tocTod = _React$useState96[0],setTocTod = _React$useState96[1];
+  var _React$useState97 = React.useState({ tocWx: null, todWx: null, tocVar: null, todVar: null }),_React$useState98 = _slicedToArray(_React$useState97, 2),tocTodWx = _React$useState98[0],setTocTodWx = _React$useState98[1];
   React.useEffect(function () {tocTodRef.current = tocTod;}, [tocTod]);
 
   // Walk distance along route segments, return {lat,lon} at given NM from start or end
@@ -6441,7 +6444,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     ), /*#__PURE__*/
     React.createElement("button", { onClick: function onClick() {setAirspaceOn(function (v) {return !v;});},
       style: { padding: "6px 14px", background: airspaceOn ? "#6d28d9" : "none", border: C.cardBorder + " solid " + (airspaceOn ? "#6d28d9" : C.border), borderRadius: "3px", color: airspaceOn ? "#fff" : C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: airspaceOn ? "bold" : "normal" } },
-    airspaceOn ? "◉ AERO ON" : "○ AERO"
+    airspaceOn ? aeroLoading ? "◉ AERO ···" : "◉ AERO ON" : "○ AERO"
     ),
     radarOn && radarFrames.length > 0 && /*#__PURE__*/
     React.createElement(React.Fragment, null, /*#__PURE__*/
@@ -8862,10 +8865,10 @@ var stallDataFwd = {
 function C172SpeedsTab(_ref60) {var savedState = _ref60.savedState,onStateChange = _ref60.onStateChange;
   var C = useC();
   var mono = "'Courier New', monospace";
-  var _React$useState97 = React.useState(savedState.flaps || "up"),_React$useState98 = _slicedToArray(_React$useState97, 2),flaps = _React$useState98[0],setFlaps = _React$useState98[1];
-  var _React$useState99 = React.useState(savedState.bank !== undefined ? savedState.bank : 0),_React$useState100 = _slicedToArray(_React$useState99, 2),bank = _React$useState100[0],setBank = _React$useState100[1];
-  var _React$useState101 = React.useState(savedState.cgPos || "rearward"),_React$useState102 = _slicedToArray(_React$useState101, 2),cgPos = _React$useState102[0],setCgPos = _React$useState102[1];
-  var _React$useState103 = React.useState(savedState.weight || ""),_React$useState104 = _slicedToArray(_React$useState103, 2),weight = _React$useState104[0],setWeight = _React$useState104[1];
+  var _React$useState99 = React.useState(savedState.flaps || "up"),_React$useState100 = _slicedToArray(_React$useState99, 2),flaps = _React$useState100[0],setFlaps = _React$useState100[1];
+  var _React$useState101 = React.useState(savedState.bank !== undefined ? savedState.bank : 0),_React$useState102 = _slicedToArray(_React$useState101, 2),bank = _React$useState102[0],setBank = _React$useState102[1];
+  var _React$useState103 = React.useState(savedState.cgPos || "rearward"),_React$useState104 = _slicedToArray(_React$useState103, 2),cgPos = _React$useState104[0],setCgPos = _React$useState104[1];
+  var _React$useState105 = React.useState(savedState.weight || ""),_React$useState106 = _slicedToArray(_React$useState105, 2),weight = _React$useState106[0],setWeight = _React$useState106[1];
   React.useEffect(function () {
     onStateChange({ flaps: flaps, bank: bank, cgPos: cgPos, weight: weight });
   }, [flaps, bank, cgPos, weight]);
@@ -9258,8 +9261,8 @@ function SeminoleLandingViz(_ref64) {var result = _ref64.result,airportRunways =
   var markerColor50 = C.warm;
   var centerlineColor = C.rwyStripe;
   var animRef = React.useRef(null);
-  var _React$useState105 = React.useState(0),_React$useState106 = _slicedToArray(_React$useState105, 2),t = _React$useState106[0],setT = _React$useState106[1];
-  var _React$useState107 = React.useState(false),_React$useState108 = _slicedToArray(_React$useState107, 2),done = _React$useState108[0],setDone = _React$useState108[1];
+  var _React$useState107 = React.useState(0),_React$useState108 = _slicedToArray(_React$useState107, 2),t = _React$useState108[0],setT = _React$useState108[1];
+  var _React$useState109 = React.useState(false),_React$useState110 = _slicedToArray(_React$useState109, 2),done = _React$useState110[0],setDone = _React$useState110[1];
   React.useEffect(function () {
     setT(0);setDone(false);
     var start = null;
@@ -11202,8 +11205,8 @@ function StandaloneNavlog(_ref73) {var onBack = _ref73.onBack,theme = _ref73.the
   var C = useC();
   var mono = "'Courier New', monospace";
   var mobile = useIsMobile();
-  var _React$useState109 = React.useState({}),_React$useState110 = _slicedToArray(_React$useState109, 2),tabState = _React$useState110[0],setTabState = _React$useState110[1];
-  var _React$useState111 = React.useState(false),_React$useState112 = _slicedToArray(_React$useState111, 2),showAppAuth = _React$useState112[0],setShowAppAuth = _React$useState112[1];
+  var _React$useState111 = React.useState({}),_React$useState112 = _slicedToArray(_React$useState111, 2),tabState = _React$useState112[0],setTabState = _React$useState112[1];
+  var _React$useState113 = React.useState(false),_React$useState114 = _slicedToArray(_React$useState113, 2),showAppAuth = _React$useState114[0],setShowAppAuth = _React$useState114[1];
   return (/*#__PURE__*/
     React.createElement(MobileContext.Provider, { value: mobile }, /*#__PURE__*/
     React.createElement("div", { style: { minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: mobile ? "16px 12px" : "32px 24px" } }, /*#__PURE__*/
