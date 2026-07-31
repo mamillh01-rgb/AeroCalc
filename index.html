@@ -4158,6 +4158,17 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
   var hasFitRef = React.useRef(false);
   var shouldFitRef = React.useRef(false);
   var tocTodRef = React.useRef(null);
+  var routeSummaryRef = React.useRef(null);
+  // Bridge the current route to the Risk Assessment tool (a separate top-level page)
+  // via localStorage, since there's no shared React state between them.
+  React.useEffect(function () {
+    var timer = setTimeout(function () {
+      if (routeSummaryRef.current) {
+        try {localStorage.setItem("aerocalc-last-route", JSON.stringify(routeSummaryRef.current));} catch (e) {}
+      }
+    }, 600);
+    return function () {clearTimeout(timer);};
+  }, [waypoints, depTime, cruiseAlt]);
   var _React$useState9 = React.useState(savedState.routeInput || ""),_React$useState0 = _slicedToArray(_React$useState9, 2),routeInput = _React$useState0[0],setRouteInput = _React$useState0[1];
   var _React$useState1 = React.useState(savedState.waypoints || []),_React$useState10 = _slicedToArray(_React$useState1, 2),waypoints = _React$useState10[0],setWaypoints = _React$useState10[1];
   var _React$useState11 = React.useState(false),_React$useState12 = _slicedToArray(_React$useState11, 2),loading = _React$useState12[0],setLoading = _React$useState12[1];
@@ -4176,231 +4187,25 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
   var _React$useState37 = React.useState([]),_React$useState38 = _slicedToArray(_React$useState37, 2),radarFrames = _React$useState38[0],setRadarFrames = _React$useState38[1];
   var _React$useState39 = React.useState(0),_React$useState40 = _slicedToArray(_React$useState39, 2),radarFrameIdx = _React$useState40[0],setRadarFrameIdx = _React$useState40[1];
   var _React$useState41 = React.useState(false),_React$useState42 = _slicedToArray(_React$useState41, 2),radarOn = _React$useState42[0],setRadarOn = _React$useState42[1];
-  var _React$useState43 = React.useState(true),_React$useState44 = _slicedToArray(_React$useState43, 2),airspaceOn = _React$useState44[0],setAirspaceOn = _React$useState44[1];
-  var _React$useState45 = React.useState(false),_React$useState46 = _slicedToArray(_React$useState45, 2),aeroLoading = _React$useState46[0],setAeroLoading = _React$useState46[1];
-  var airspaceOnRef = React.useRef(airspaceOn);
-  var scheduleAeroFetchRef = React.useRef(null);
-  var drawAeronauticalRef = React.useRef(null);
-  React.useEffect(function () {airspaceOnRef.current = airspaceOn;}, [airspaceOn]);
-  var _React$useState47 = React.useState(false),_React$useState48 = _slicedToArray(_React$useState47, 2),cloudsOn = _React$useState48[0],setCloudsOn = _React$useState48[1];
-  var _React$useState49 = React.useState(false),_React$useState50 = _slicedToArray(_React$useState49, 2),wxOn = _React$useState50[0],setWxOn = _React$useState50[1];
+  var _React$useState43 = React.useState(false),_React$useState44 = _slicedToArray(_React$useState43, 2),cloudsOn = _React$useState44[0],setCloudsOn = _React$useState44[1];
+  var _React$useState45 = React.useState(false),_React$useState46 = _slicedToArray(_React$useState45, 2),wxOn = _React$useState46[0],setWxOn = _React$useState46[1];
   var radarLayerRef = React.useRef(null);
   var cloudsLayerRef = React.useRef(null);
   var wxLayerRef = React.useRef(null);
-  var _React$useState51 = React.useState(true),_React$useState52 = _slicedToArray(_React$useState51, 2),profileOpen = _React$useState52[0],setProfileOpen = _React$useState52[1];
-  var _React$useState53 = React.useState(null),_React$useState54 = _slicedToArray(_React$useState53, 2),profileData = _React$useState54[0],setProfileData = _React$useState54[1];
-  var _React$useState55 = React.useState(false),_React$useState56 = _slicedToArray(_React$useState55, 2),profileLoading = _React$useState56[0],setProfileLoading = _React$useState56[1];
-  var _React$useState57 = React.useState(null),_React$useState58 = _slicedToArray(_React$useState57, 2),airspaceData = _React$useState58[0],setAirspaceData = _React$useState58[1];
-  var _React$useState59 = React.useState(1),_React$useState60 = _slicedToArray(_React$useState59, 2),profileZoom = _React$useState60[0],setProfileZoom = _React$useState60[1];
-  var _React$useState61 = React.useState(0),_React$useState62 = _slicedToArray(_React$useState61, 2),profilePanX = _React$useState62[0],setProfilePanX = _React$useState62[1];
+  var _React$useState47 = React.useState(true),_React$useState48 = _slicedToArray(_React$useState47, 2),profileOpen = _React$useState48[0],setProfileOpen = _React$useState48[1];
+  var _React$useState49 = React.useState(null),_React$useState50 = _slicedToArray(_React$useState49, 2),profileData = _React$useState50[0],setProfileData = _React$useState50[1];
+  var _React$useState51 = React.useState(false),_React$useState52 = _slicedToArray(_React$useState51, 2),profileLoading = _React$useState52[0],setProfileLoading = _React$useState52[1];
+  var _React$useState53 = React.useState(null),_React$useState54 = _slicedToArray(_React$useState53, 2),airspaceData = _React$useState54[0],setAirspaceData = _React$useState54[1];
+  var _React$useState55 = React.useState(true),_React$useState56 = _slicedToArray(_React$useState55, 2),mapAirspaceOn = _React$useState56[0],setMapAirspaceOn = _React$useState56[1];
+  var mapAirspaceLayerRef = React.useRef(null);
+  var _React$useState57 = React.useState(1),_React$useState58 = _slicedToArray(_React$useState57, 2),profileZoom = _React$useState58[0],setProfileZoom = _React$useState58[1];
+  var _React$useState59 = React.useState(0),_React$useState60 = _slicedToArray(_React$useState59, 2),profilePanX = _React$useState60[0],setProfilePanX = _React$useState60[1];
   var profileDragRef = React.useRef(null);
   var profileSvgRef = React.useRef(null);
-  var _React$useState63 = React.useState(null),_React$useState64 = _slicedToArray(_React$useState63, 2),hoveredAirspace = _React$useState64[0],setHoveredAirspace = _React$useState64[1];
+  var _React$useState61 = React.useState(null),_React$useState62 = _slicedToArray(_React$useState61, 2),hoveredAirspace = _React$useState62[0],setHoveredAirspace = _React$useState62[1];
   var airspaceHighlightRef = React.useRef(null);
   var mapViewBeforeHighlightRef = React.useRef(null);
   var isHighlightingRef = React.useRef(false);
-  var airspaceOverlayRef = React.useRef(null);
-  // Persist across effect re-runs (e.g. rapid AERO toggle spam) so we don't
-  // re-fetch/re-hit-rate-limits for an area we already have fresh data for.
-  var aeroCellCacheRef = React.useRef({}); // { "<snappedCellKey>": { airspaces, airports, ts } }
-  var lastGoodAirspacesRef = React.useRef(null);
-  var lastGoodAirportsRef = React.useRef(null);
-  var aeroFetchTimerRef = React.useRef(null);
-  var aeroFetchSeqRef = React.useRef(0);
-  var _React$useState65 = React.useState(false),_React$useState66 = _slicedToArray(_React$useState65, 2),mapReady = _React$useState66[0],setMapReady = _React$useState66[1];
-
-  // Permanent airspace overlay on map — mounts ONCE per map lifetime. The on/off toggle
-  // (below, in a separate effect) never tears this down — it only shows/hides the layer.
-  // This is what makes rapid toggling and panning safe: there is exactly one long-lived
-  // fetchTimer/fetchSeq for the life of the map, not a fresh one per toggle click.
-  React.useEffect(function () {
-    var map = leafletMap.current;
-    if (!map) return;
-
-    var asColors = {
-      'A': '#ef4444', 'B': '#1d4ed8', 'C': '#d946ef', 'D': '#60a5fa',
-      'MOA': '#c2185b', 'RESTRICTED': '#1565c0', 'PROHIBITED': '#dc2626',
-      'DANGER': '#ef4444', 'CTR': '#60a5fa', 'TMA': '#1d4ed8'
-    };
-
-    function drawAeronautical(spaces, airports) {
-      if (airspaceOverlayRef.current) {
-        try {map.removeLayer(airspaceOverlayRef.current);} catch (e) {}
-        airspaceOverlayRef.current = null;
-      }
-      if (!airspaceOnRef.current) return; // toggled off since this fetch started — don't draw
-      var group = L.layerGroup();
-
-      // Draw airspaces
-      if (spaces && spaces.length) {
-        spaces.forEach(function (as) {
-          if (!as.geometry) return;
-          var asClass = String(as.asClass || '').toUpperCase();
-          var asType = String(as.type || '').toUpperCase();
-          var asName = String(as.name || '').toUpperCase();
-          var skip = ['E', 'F', 'G', 'UNCLASSIFIED'];
-          if (skip.indexOf(asClass) >= 0) return;
-          if (asName.indexOf('MOA') >= 0 || asName.match(/\bRACER\b|\bBOMBER\b|\bFIGHTER\b|\bGUN\b/)) asType = 'MOA';
-          var specialTypes = ['MOA', 'RESTRICTED', 'PROHIBITED', 'DANGER', 'WARNING', 'ALERT'];
-          var isSpecial = specialTypes.indexOf(asType) >= 0;
-          var color = isSpecial ? asColors[asType] || '#f97316' : asColors[asClass] || '#94a3b8';
-          var dashArray = asClass === 'D' ? "5,4" : asType === 'MOA' ? "8,5" : null;
-          var weight = asClass === 'B' ? 5 : asClass === 'C' ? 4 : 3;
-          try {
-            var rings;
-            if (as.geometry.type === 'Polygon') {
-              rings = [[as.geometry.coordinates[0].map(function (c) {return [c[1], c[0]];})]];
-            } else if (as.geometry.type === 'MultiPolygon') {
-              rings = as.geometry.coordinates.map(function (poly) {
-                return [poly[0].map(function (c) {return [c[1], c[0]];})];
-              });
-            }
-            if (!rings) return;
-            rings.forEach(function (latlngs) {
-              L.polygon(latlngs, { color: "white", weight: weight + 3, opacity: 0.7, fill: false, interactive: false }).addTo(group);
-              L.polygon(latlngs, { color: color, weight: weight, opacity: 1, fill: false, dashArray: dashArray, interactive: false }).addTo(group);
-            });
-          } catch (e) {}
-        });
-      }
-
-      // Draw airport icons
-      if (airports && airports.length) {
-        // OpenAIP airport type: 0=Airport, 1=Glider, 2=Airfield, 3=Ultralight, 4=Heliport, 5=Civil/Military, 6=Military, 7=Closed, 8=Seaplane
-        var skipTypes = [1, 4, 6, 7, 8, 10, 11, 12, 13]; // skip glider, heliports, ultralight, closed, water, strips
-        airports.forEach(function (ap) {
-          if (!ap.geometry || !ap.geometry.coordinates) return;
-          var apType = ap.type;
-          if (skipTypes.indexOf(apType) >= 0) return;
-          // Skip private airports: PPR flag, private flag, or "private"/PVT in the name
-          if (ap.ppr === true) return; // ppr = private USE; OpenAIP `private` = privately OWNED (C81 etc. are public-use)
-          if (/\bPRIVATE\b|\(PVT\)|\bPVT\b/i.test(String(ap.name || ''))) return;
-          var lat = ap.geometry.coordinates[1];
-          var lon = ap.geometry.coordinates[0];
-          var isTowered = ap.controlled === true || apType === 5; // type 5 = military aerodrome
-          var color = isTowered ? '#1d4ed8' : '#d02a9c'; // sectional convention: blue=towered, magenta=non-towered
-          var icao = ap.icaoCode || ap.iataCode || '';
-          var name = ap.name || icao;
-          try {
-            var sz = 24,c = sz / 2;
-            var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + sz + '" height="' + sz + '" viewBox="0 0 24 24" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.45))">' +
-            '<circle cx="12" cy="12" r="10.2" fill="white"/>' +
-            '<rect x="0" y="8.4" width="24" height="7.2" rx="2.6" fill="white"/>' +
-            '<circle cx="12" cy="12" r="8" fill="white" stroke="' + color + '" stroke-width="2.4"/>' + (
-            apType === 5 ? '<circle cx="12" cy="12" r="5.2" fill="none" stroke="' + color + '" stroke-width="1.3"/>' : '') +
-            '<rect x="1" y="10" width="22" height="4" rx="1.4" fill="' + color + '"/>' +
-            '</svg>';
-            var icon = L.divIcon({ className: '', html: svg, iconSize: [sz, sz], iconAnchor: [c, c] });
-            var marker = L.marker([lat, lon], { icon: icon, interactive: true });
-            marker.bindTooltip(icao + (name !== icao ? '\n' + name : ''), { sticky: true, className: "wx-tooltip", direction: "top" });
-            marker.addTo(group);
-          } catch (e) {}
-        });
-      }
-
-      group.addTo(map);
-      airspaceOverlayRef.current = group;
-    }
-    scheduleAeroFetchRef.current = function () {scheduleFetch();};
-    drawAeronauticalRef.current = drawAeronautical;
-
-    var CELL = 1.0; // must match worker's grid — keeps client cache hits aligned with server cache hits
-    var CELL_TTL_MS = 8 * 60 * 1000; // 8 min — a little under the worker's 15 min edge cache
-    function scheduleFetch() {
-      clearTimeout(aeroFetchTimerRef.current);
-      aeroFetchTimerRef.current = setTimeout(function () {
-        if (!airspaceOnRef.current) return; // off — nothing to fetch right now
-
-        // Below this zoom the viewport can span a huge chunk of the country (e.g. the
-        // map's default whole-US view before any route is plotted). Querying OpenAIP with
-        // a bbox that large is exactly the kind of request that gets rejected/rate-limited.
-        // Just skip — there's nothing useful to show this zoomed out anyway.
-        if (map.getZoom() < 8) {
-          if (airspaceOverlayRef.current) {
-            try {map.removeLayer(airspaceOverlayRef.current);} catch (e) {}
-            airspaceOverlayRef.current = null;
-          }
-          return;
-        }
-
-        var b = map.getBounds();
-        var minLat = b.getSouth(),maxLat = b.getNorth();
-        var minLon = b.getWest(),maxLon = b.getEast();
-
-        // Defense-in-depth: hard-clamp the query span even if zoom-level math ever
-        // allows a wide bbox through, so we can never accidentally send a giant query.
-        var MAX_SPAN = 3.0; // degrees
-        if (maxLat - minLat > MAX_SPAN) {
-          var latC = (minLat + maxLat) / 2;
-          minLat = latC - MAX_SPAN / 2;maxLat = latC + MAX_SPAN / 2;
-        }
-        if (maxLon - minLon > MAX_SPAN) {
-          var lonC = (minLon + maxLon) / 2;
-          minLon = lonC - MAX_SPAN / 2;maxLon = lonC + MAX_SPAN / 2;
-        }
-
-        var sMinLat = Math.floor(minLat / CELL) * CELL,sMaxLat = Math.ceil(maxLat / CELL) * CELL;
-        var sMinLon = Math.floor(minLon / CELL) * CELL,sMaxLon = Math.ceil(maxLon / CELL) * CELL;
-        var cellKey = sMinLat + "," + sMinLon + "," + sMaxLat + "," + sMaxLon;
-
-        var cached = aeroCellCacheRef.current[cellKey];
-        if (cached && Date.now() - cached.ts < CELL_TTL_MS) {
-          drawAeronautical(cached.airspaces, cached.airports);
-          return;
-        }
-
-        var mySeq = ++aeroFetchSeqRef.current;
-        var base = "https://metar-proxy.mamillh01.workers.dev/";
-        var qs = "&minLat=" + minLat.toFixed(4) + "&maxLat=" + maxLat.toFixed(4) + "&minLon=" + minLon.toFixed(4) + "&maxLon=" + maxLon.toFixed(4) + "&t=" + Math.floor(Date.now() / 120000);
-        setAeroLoading(true);
-        Promise.all([
-        fetch(base + "?type=airspaces" + qs).then(function (r) {return r.json();}).catch(function () {return null;}),
-        fetch(base + "?type=airports" + qs).then(function (r) {return r.json();}).catch(function () {return null;})]
-        ).then(function (results) {
-          if (mySeq !== aeroFetchSeqRef.current) {setAeroLoading(false);return;} // a newer fetch superseded this one
-          var gotAirspaces = results[0] && results[0].airspaces && results[0].airspaces.length > 0;
-          var gotAirports = results[1] && results[1].airports && results[1].airports.length > 0;
-          var asResult = gotAirspaces ? results[0].airspaces : lastGoodAirspacesRef.current;
-          var apResult = gotAirports ? results[1].airports : lastGoodAirportsRef.current;
-          if (gotAirspaces) lastGoodAirspacesRef.current = results[0].airspaces;
-          if (gotAirports) lastGoodAirportsRef.current = results[1].airports;
-          if (gotAirspaces || gotAirports) {
-            aeroCellCacheRef.current[cellKey] = { airspaces: asResult, airports: apResult, ts: Date.now() };
-          }
-          drawAeronautical(asResult, apResult);
-          setAeroLoading(false);
-        });
-      }, 450);
-    }
-
-    map.on("moveend", scheduleFetch);
-    map.on("zoomend", scheduleFetch);
-    if (airspaceOnRef.current) scheduleFetch(); // initial draw, only if on
-
-    return function () {
-      map.off("moveend", scheduleFetch);
-      map.off("zoomend", scheduleFetch);
-    };
-  }, [mapReady]);
-
-  // AERO toggle — shows/hides instantly WITHOUT tearing down the fetch machinery above.
-  React.useEffect(function () {
-    var map = leafletMap.current;
-    if (!map || !mapReady) return;
-    if (!airspaceOn) {
-      if (airspaceOverlayRef.current) {
-        try {map.removeLayer(airspaceOverlayRef.current);} catch (e) {}
-        airspaceOverlayRef.current = null;
-      }
-    } else {
-      // Turning on: draw instantly from last-good/cache if we have it, then also
-      // kick a fresh fetch in case the view has moved since we last had data.
-      if (drawAeronauticalRef.current && (lastGoodAirspacesRef.current || lastGoodAirportsRef.current)) {
-        drawAeronauticalRef.current(lastGoodAirspacesRef.current, lastGoodAirportsRef.current);
-      }
-      if (scheduleAeroFetchRef.current) scheduleAeroFetchRef.current();
-    }
-  }, [airspaceOn, mapReady]);
   // Highlight airspace polygon on map when hovered in profile
   React.useEffect(function () {
     var map = leafletMap.current;
@@ -4476,36 +4281,36 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     d.setHours(d.getHours() + 1);
     return d.toISOString().slice(0, 16);
   };
-  var _React$useState67 = React.useState(savedState.depTime || defaultDep()),_React$useState68 = _slicedToArray(_React$useState67, 2),depTime = _React$useState68[0],setDepTime = _React$useState68[1];
-  var _React$useState69 = React.useState(savedState.cruiseAlt || ""),_React$useState70 = _slicedToArray(_React$useState69, 2),cruiseAlt = _React$useState70[0],setCruiseAlt = _React$useState70[1];
-  var _React$useState71 = React.useState(savedState.navlogAircraft || "archer"),_React$useState72 = _slicedToArray(_React$useState71, 2),navlogAircraft = _React$useState72[0],setNavlogAircraftRaw = _React$useState72[1];
+  var _React$useState63 = React.useState(savedState.depTime || defaultDep()),_React$useState64 = _slicedToArray(_React$useState63, 2),depTime = _React$useState64[0],setDepTime = _React$useState64[1];
+  var _React$useState65 = React.useState(savedState.cruiseAlt || ""),_React$useState66 = _slicedToArray(_React$useState65, 2),cruiseAlt = _React$useState66[0],setCruiseAlt = _React$useState66[1];
+  var _React$useState67 = React.useState(savedState.navlogAircraft || "archer"),_React$useState68 = _slicedToArray(_React$useState67, 2),navlogAircraft = _React$useState68[0],setNavlogAircraftRaw = _React$useState68[1];
   var acType = navlogAircraft;
   var CLIMB_KIAS = acType === "c172" ? 85 : 87;
   var DESCENT_KIAS = acType === "c172" ? 90 : 122;
-  var _React$useState73 = React.useState(false),_React$useState74 = _slicedToArray(_React$useState73, 2),acDropdownOpen = _React$useState74[0],setAcDropdownOpen = _React$useState74[1];
+  var _React$useState69 = React.useState(false),_React$useState70 = _slicedToArray(_React$useState69, 2),acDropdownOpen = _React$useState70[0],setAcDropdownOpen = _React$useState70[1];
   var setNavlogAircraft = function setNavlogAircraft(ac) {
     setNavlogAircraftRaw(ac);
     // Reset power when switching aircraft
     if (ac === "c172" && !["2300", "2400", "2500", "2650"].includes(cruisePower)) setCruisePower("2500");
     if (ac === "archer" && !["55", "65", "75"].includes(cruisePower)) setCruisePower("65");
   };
-  var _React$useState75 = React.useState(savedState.cruisePower || "65"),_React$useState76 = _slicedToArray(_React$useState75, 2),cruisePower = _React$useState76[0],setCruisePower = _React$useState76[1];
+  var _React$useState71 = React.useState(savedState.cruisePower || "65"),_React$useState72 = _slicedToArray(_React$useState71, 2),cruisePower = _React$useState72[0],setCruisePower = _React$useState72[1];
   // Reset power setting when aircraft type changes
   React.useEffect(function () {
     if (acType === "c172" && !["2300", "2400", "2500", "2650"].includes(cruisePower)) setCruisePower("2500");
     if (acType === "archer" && !["55", "65", "75"].includes(cruisePower)) setCruisePower("65");
   }, [acType]);
-  var _React$useState77 = React.useState(false),_React$useState78 = _slicedToArray(_React$useState77, 2),showAltAdvisor = _React$useState78[0],setShowAltAdvisor = _React$useState78[1];
-  var _React$useState79 = React.useState(null),_React$useState80 = _slicedToArray(_React$useState79, 2),altAdvisorData = _React$useState80[0],setAltAdvisorData = _React$useState80[1];
-  var _React$useState81 = React.useState(false),_React$useState82 = _slicedToArray(_React$useState81, 2),altAdvisorLoading = _React$useState82[0],setAltAdvisorLoading = _React$useState82[1];
-  var _React$useState83 = React.useState(false),_React$useState84 = _slicedToArray(_React$useState83, 2),showRouteManager = _React$useState84[0],setShowRouteManager = _React$useState84[1];
-  var _React$useState85 = React.useState([]),_React$useState86 = _slicedToArray(_React$useState85, 2),savedRoutes = _React$useState86[0],setSavedRoutes = _React$useState86[1];
-  var _React$useState87 = React.useState(false),_React$useState88 = _slicedToArray(_React$useState87, 2),routesLoading = _React$useState88[0],setRoutesLoading = _React$useState88[1];
-  var _React$useState89 = React.useState(""),_React$useState90 = _slicedToArray(_React$useState89, 2),saveRouteName = _React$useState90[0],setSaveRouteName = _React$useState90[1];
-  var _React$useState91 = React.useState(null),_React$useState92 = _slicedToArray(_React$useState91, 2),saveStatus = _React$useState92[0],setSaveStatus = _React$useState92[1]; // "saving" | "saved" | "error"
-  var _React$useState93 = React.useState(false),_React$useState94 = _slicedToArray(_React$useState93, 2),showNavlogAuth = _React$useState94[0],setShowNavlogAuth = _React$useState94[1];
-  var _React$useState95 = React.useState(null),_React$useState96 = _slicedToArray(_React$useState95, 2),tocTod = _React$useState96[0],setTocTod = _React$useState96[1];
-  var _React$useState97 = React.useState({ tocWx: null, todWx: null, tocVar: null, todVar: null }),_React$useState98 = _slicedToArray(_React$useState97, 2),tocTodWx = _React$useState98[0],setTocTodWx = _React$useState98[1];
+  var _React$useState73 = React.useState(false),_React$useState74 = _slicedToArray(_React$useState73, 2),showAltAdvisor = _React$useState74[0],setShowAltAdvisor = _React$useState74[1];
+  var _React$useState75 = React.useState(null),_React$useState76 = _slicedToArray(_React$useState75, 2),altAdvisorData = _React$useState76[0],setAltAdvisorData = _React$useState76[1];
+  var _React$useState77 = React.useState(false),_React$useState78 = _slicedToArray(_React$useState77, 2),altAdvisorLoading = _React$useState78[0],setAltAdvisorLoading = _React$useState78[1];
+  var _React$useState79 = React.useState(false),_React$useState80 = _slicedToArray(_React$useState79, 2),showRouteManager = _React$useState80[0],setShowRouteManager = _React$useState80[1];
+  var _React$useState81 = React.useState([]),_React$useState82 = _slicedToArray(_React$useState81, 2),savedRoutes = _React$useState82[0],setSavedRoutes = _React$useState82[1];
+  var _React$useState83 = React.useState(false),_React$useState84 = _slicedToArray(_React$useState83, 2),routesLoading = _React$useState84[0],setRoutesLoading = _React$useState84[1];
+  var _React$useState85 = React.useState(""),_React$useState86 = _slicedToArray(_React$useState85, 2),saveRouteName = _React$useState86[0],setSaveRouteName = _React$useState86[1];
+  var _React$useState87 = React.useState(null),_React$useState88 = _slicedToArray(_React$useState87, 2),saveStatus = _React$useState88[0],setSaveStatus = _React$useState88[1]; // "saving" | "saved" | "error"
+  var _React$useState89 = React.useState(false),_React$useState90 = _slicedToArray(_React$useState89, 2),showNavlogAuth = _React$useState90[0],setShowNavlogAuth = _React$useState90[1];
+  var _React$useState91 = React.useState(null),_React$useState92 = _slicedToArray(_React$useState91, 2),tocTod = _React$useState92[0],setTocTod = _React$useState92[1];
+  var _React$useState93 = React.useState({ tocWx: null, todWx: null, tocVar: null, todVar: null }),_React$useState94 = _slicedToArray(_React$useState93, 2),tocTodWx = _React$useState94[0],setTocTodWx = _React$useState94[1];
   React.useEffect(function () {tocTodRef.current = tocTod;}, [tocTod]);
 
   // Walk distance along route segments, return {lat,lon} at given NM from start or end
@@ -4844,7 +4649,6 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     if (!mapRef.current || leafletMap.current) return;
     var map = L.map(mapRef.current, { center: [39.5, -98.35], zoom: 7, minZoom: 8, maxZoom: 11, zoomControl: true });
     leafletMap.current = map;
-    setMapReady(true);
     var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" });
     var sectional = L.tileLayer(
       "https://tiles.arcgis.com/tiles/ssFJjBXIUyZDrSYZ/arcgis/rest/services/VFR_Sectional/MapServer/tile/{z}/{y}/{x}",
@@ -4912,6 +4716,134 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     radarLayerRef.current = L.tileLayer(url, { opacity: 0.6, transparent: true, maxZoom: 19, maxNativeZoom: 7, attribution: "RainViewer" });
     radarLayerRef.current.addTo(map);
   }, [radarOn, radarFrameIdx, radarFrames]);
+
+  // Draw airspace boundaries on the map, following whatever the viewport
+  // currently shows. Fetches on pan/zoom — the approach that caused persistent
+  // OpenAIP rate-limiting earlier today. Every defense that actually helped is
+  // included: debounce, a zoom floor (skip the huge whole-country default view),
+  // a hard bbox clamp, a sequence guard so a slow stale fetch can't overwrite a
+  // newer one, and falling back to the last-good data instead of blanking out
+  // on an empty/failed response. The one thing NOT re-added is the coarse
+  // client-side cell cache from earlier — that one had a real bug (grid too
+  // coarse, silently replayed stale data) and the worker's own lightweight
+  // cache covers the same need without it.
+  var mapAsFetchTimerRef = React.useRef(null);
+  var mapAsFetchSeqRef = React.useRef(0);
+  var mapAsLastGoodRef = React.useRef(null);
+  var mapAirspaceOnRef = React.useRef(mapAirspaceOn);
+  React.useEffect(function () {mapAirspaceOnRef.current = mapAirspaceOn;}, [mapAirspaceOn]);
+
+  function drawMapAirspace(map, spaces) {
+    if (mapAirspaceLayerRef.current) {
+      try {map.removeLayer(mapAirspaceLayerRef.current);} catch (e) {}
+      mapAirspaceLayerRef.current = null;
+    }
+    if (!mapAirspaceOnRef.current || !spaces || !spaces.length) return;
+    var asColors = {
+      'A': '#ef4444', 'B': '#1d4ed8', 'C': '#d946ef', 'D': '#60a5fa',
+      'MOA': '#c2185b', 'RESTRICTED': '#1565c0', 'PROHIBITED': '#dc2626',
+      'DANGER': '#ef4444', 'CTR': '#60a5fa', 'TMA': '#1d4ed8'
+    };
+    var group = L.layerGroup();
+    spaces.forEach(function (as) {
+      if (!as.geometry) return;
+      var asClass = String(as.asClass || '').toUpperCase();
+      var asType = String(as.type || '').toUpperCase();
+      var asName = String(as.name || '').toUpperCase();
+      var skip = ['E', 'F', 'G', 'UNCLASSIFIED'];
+      if (skip.indexOf(asClass) >= 0) return;
+      if (asName.indexOf('MOA') >= 0 || asName.match(/\bRACER\b|\bBOMBER\b|\bFIGHTER\b|\bGUN\b/)) asType = 'MOA';
+      var specialTypes = ['MOA', 'RESTRICTED', 'PROHIBITED', 'DANGER', 'WARNING', 'ALERT'];
+      var isSpecial = specialTypes.indexOf(asType) >= 0;
+      var color = isSpecial ? asColors[asType] || '#f97316' : asColors[asClass] || '#94a3b8';
+      var dashArray = asClass === 'D' ? "5,4" : asType === 'MOA' ? "8,5" : null;
+      var weight = asClass === 'B' ? 4 : asClass === 'C' ? 3.5 : 2.5;
+      try {
+        var rings;
+        if (as.geometry.type === 'Polygon') {
+          rings = [[as.geometry.coordinates[0].map(function (c) {return [c[1], c[0]];})]];
+        } else if (as.geometry.type === 'MultiPolygon') {
+          rings = as.geometry.coordinates.map(function (poly) {
+            return [poly[0].map(function (c) {return [c[1], c[0]];})];
+          });
+        }
+        if (!rings) return;
+        var floorStr = as.lowerFt <= 0 ? 'SFC' : as.lowerFt >= 18000 ? 'FL' + Math.round(as.lowerFt / 100) : as.lowerFt.toLocaleString() + ' ft';
+        var ceilStr = as.upperFt >= 99999 ? 'UNLTD' : as.upperFt >= 18000 ? 'FL' + Math.round(as.upperFt / 100) : as.upperFt.toLocaleString() + ' ft';
+        rings.forEach(function (latlngs) {
+          L.polygon(latlngs, { color: "white", weight: weight + 2.5, opacity: 0.6, fill: false, interactive: false }).addTo(group);
+          var poly = L.polygon(latlngs, { color: color, weight: weight, opacity: 1, fillColor: color, fillOpacity: 0.08, dashArray: dashArray, interactive: true });
+          poly.bindTooltip((as.name || asType) + "\n" + asClass + " · " + floorStr + " – " + ceilStr, { sticky: true, className: "wx-tooltip", direction: "top" });
+          poly.addTo(group);
+        });
+      } catch (e) {}
+    });
+    group.addTo(map);
+    mapAirspaceLayerRef.current = group;
+  }
+
+  // Mounts once — never torn down by the toggle (see the separate toggle
+  // effect below), so rapid on/off clicking can't create overlapping fetch
+  // cycles the way it did the first time we built this.
+  React.useEffect(function () {
+    var map = leafletMap.current;
+    if (!map) return;
+
+    function scheduleMapAsFetch() {
+      clearTimeout(mapAsFetchTimerRef.current);
+      mapAsFetchTimerRef.current = setTimeout(function () {
+        if (!mapAirspaceOnRef.current) return;
+        if (map.getZoom() < 8) {drawMapAirspace(map, null);return;}
+
+        var b = map.getBounds();
+        var minLat = b.getSouth(),maxLat = b.getNorth();
+        var minLon = b.getWest(),maxLon = b.getEast();
+        var MAX_SPAN = 3.0;
+        if (maxLat - minLat > MAX_SPAN) {
+          var latC = (minLat + maxLat) / 2;
+          minLat = latC - MAX_SPAN / 2;maxLat = latC + MAX_SPAN / 2;
+        }
+        if (maxLon - minLon > MAX_SPAN) {
+          var lonC = (minLon + maxLon) / 2;
+          minLon = lonC - MAX_SPAN / 2;maxLon = lonC + MAX_SPAN / 2;
+        }
+
+        var mySeq = ++mapAsFetchSeqRef.current;
+        var base = "https://metar-proxy.mamillh01.workers.dev/";
+        var qs = "?type=airspaces&minLat=" + minLat.toFixed(4) + "&maxLat=" + maxLat.toFixed(4) + "&minLon=" + minLon.toFixed(4) + "&maxLon=" + maxLon.toFixed(4) + "&t=" + Math.floor(Date.now() / 120000);
+        fetch(base + qs).then(function (r) {return r.json();}).catch(function () {return null;}).then(function (result) {
+          if (mySeq !== mapAsFetchSeqRef.current) return; // superseded by a newer pan/zoom
+          var got = result && result.airspaces && result.airspaces.length > 0;
+          var spaces = got ? result.airspaces : mapAsLastGoodRef.current;
+          if (got) mapAsLastGoodRef.current = result.airspaces;
+          drawMapAirspace(map, spaces);
+        });
+      }, 600);
+    }
+
+    map.on("moveend", scheduleMapAsFetch);
+    map.on("zoomend", scheduleMapAsFetch);
+    if (mapAirspaceOnRef.current) scheduleMapAsFetch();
+
+    return function () {
+      map.off("moveend", scheduleMapAsFetch);
+      map.off("zoomend", scheduleMapAsFetch);
+    };
+  }, []);
+
+  // Toggle — shows/hides instantly without tearing down the fetch machinery above.
+  React.useEffect(function () {
+    var map = leafletMap.current;
+    if (!map) return;
+    if (!mapAirspaceOn) {
+      if (mapAirspaceLayerRef.current) {
+        try {map.removeLayer(mapAirspaceLayerRef.current);} catch (e) {}
+        mapAirspaceLayerRef.current = null;
+      }
+    } else if (mapAsLastGoodRef.current) {
+      drawMapAirspace(map, mapAsLastGoodRef.current);
+    }
+  }, [mapAirspaceOn]);
 
   // Add/remove GOES satellite cloud layer
   React.useEffect(function () {
@@ -5009,7 +4941,15 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     });
   }, [wxOn]);
 
-  // Fetch elevation profile when waypoints change
+  // Stable signature of the route's REAL waypoints — deliberately excludes the
+  // internal auto-cruise-midpoint marker, which shifts position slightly every
+  // time wind/TOC-TOD data settles. Without this, the elevation/airspace fetch
+  // below would re-fire on every such shift (clearing + refetching airspace
+  // moments after it just loaded — the "appears then disappears" symptom).
+  var baseWaypointsKey = waypoints.filter(function (w) {return !w._autoId;}).
+  map(function (w) {return w.lat.toFixed(4) + "," + w.lon.toFixed(4);}).join("|");
+
+  // Fetch elevation profile when the REAL route changes (not the auto-midpoint marker)
   React.useEffect(function () {
     setProfileData(null);
     setAirspaceData(null);
@@ -5047,11 +4987,22 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     // Fetch elevation and airspaces in parallel
     var lats = waypoints.map(function (w) {return w.lat;});
     var lons = waypoints.map(function (w) {return w.lon;});
-    var pad = 0.3;
+    var pad = 1.5; // wider buffer around the route so nearby airspace shows up too,
+    // not just airspace the route line directly crosses
     var minLat = Math.min.apply(null, lats) - pad;
     var maxLat = Math.max.apply(null, lats) + pad;
     var minLon = Math.min.apply(null, lons) - pad;
     var maxLon = Math.max.apply(null, lons) + pad;
+    // Safety cap: don't let a very long route + padding balloon into a huge query
+    var MAX_AIRSPACE_SPAN = 6.0;
+    if (maxLat - minLat > MAX_AIRSPACE_SPAN) {
+      var latC = (minLat + maxLat) / 2;
+      minLat = latC - MAX_AIRSPACE_SPAN / 2;maxLat = latC + MAX_AIRSPACE_SPAN / 2;
+    }
+    if (maxLon - minLon > MAX_AIRSPACE_SPAN) {
+      var lonC = (minLon + maxLon) / 2;
+      minLon = lonC - MAX_AIRSPACE_SPAN / 2;maxLon = lonC + MAX_AIRSPACE_SPAN / 2;
+    }
 
     Promise.all([
     fetch("https://metar-proxy.mamillh01.workers.dev/?type=elevation&points=" + encodeURIComponent(body)).
@@ -5085,18 +5036,20 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     ).then(function (results) {
       setProfileLoading(false);
       var elevData = results[0],asData = results[1];
-      if (elevData && elevData.elevations && elevData.elevations.length > 0) {
-        setProfileData({
-          elevations: elevData.elevations,
-          distances: cumDists.slice(0, elevData.elevations.length),
-          totalDist: totalDist,
-          waypoints: waypoints,
-          wpDistances: wpDistances
-        });
-      }
+      // Always set profileData if we at least have distance/waypoints — terrain fill is the
+      // ONLY thing that actually needs elevation samples. Airspace, flight path, and TOC/TOD
+      // all render from distance alone, and shouldn't be silently killed by a flaky elevation
+      // API (opentopodata rate-limits/502s fairly often) that has nothing to do with them.
+      setProfileData({
+        elevations: elevData && elevData.elevations && elevData.elevations.length > 0 ? elevData.elevations : [],
+        distances: elevData && elevData.elevations && elevData.elevations.length > 0 ? cumDists.slice(0, elevData.elevations.length) : cumDists,
+        totalDist: totalDist,
+        waypoints: waypoints,
+        wpDistances: wpDistances
+      });
       if (asData && asData.airspaces) setAirspaceData(asData.airspaces);
     }).catch(function () {setProfileLoading(false);});
-  }, [waypoints]);
+  }, [baseWaypointsKey]);
 
   React.useEffect(function () {setWaypointsRef.current = setWaypoints;}, [setWaypoints]);
   var wpNamesRef = React.useRef(wpNames);
@@ -6388,11 +6341,24 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
       var lastETE = legCumETE[legCumETE.length - 1];
       var lastFuel = legCumFuel[legCumFuel.length - 1];
       var etaStr = "—";
+      var etaIso = null;
       if (depTime && lastETE != null) {
         var eta = new Date(new Date(depTime).getTime() + lastETE * 60000);
         etaStr = eta.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false }) + "Z";
+        etaIso = eta.toISOString();
       }
       var dep = waypoints[0],dest = waypoints[waypoints.length - 1];
+      // Stash for the Risk Assessment tool's "IMPORT FROM ROUTE" feature (read via localStorage,
+      // since Risk is a separate top-level page — see routeSummaryRef sync effect above).
+      if (dep && dest && dep.id && dest.id && depTime) {
+        routeSummaryRef.current = {
+          depIcao: dep.id, destIcao: dest.id,
+          depTimeIso: new Date(depTime).toISOString(),
+          etaIso: etaIso,
+          cruiseAlt: cruiseAlt, totalDist: totalDist,
+          label: dep.id + " → " + dest.id
+        };
+      }
       var items = [
       { label: "DIST", value: totalDist.toFixed(1) + " NM", color: C.text },
       { label: "ETE", value: lastETE != null ? fmtETE(lastETE) : "—", color: C.text },
@@ -6442,9 +6408,9 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
       style: { padding: "6px 14px", background: wxOn ? "#b45309" : "none", border: C.cardBorder + " solid " + (wxOn ? "#b45309" : C.border), borderRadius: "3px", color: wxOn ? "#fff" : C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: wxOn ? "bold" : "normal" } },
     wxOn ? "◉ AIRMET/SIGMET ON" : "○ AIRMET/SIGMET"
     ), /*#__PURE__*/
-    React.createElement("button", { onClick: function onClick() {setAirspaceOn(function (v) {return !v;});},
-      style: { padding: "6px 14px", background: airspaceOn ? "#6d28d9" : "none", border: C.cardBorder + " solid " + (airspaceOn ? "#6d28d9" : C.border), borderRadius: "3px", color: airspaceOn ? "#fff" : C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: airspaceOn ? "bold" : "normal" } },
-    airspaceOn ? aeroLoading ? "◉ AERO ···" : "◉ AERO ON" : "○ AERO"
+    React.createElement("button", { onClick: function onClick() {setMapAirspaceOn(function (v) {return !v;});},
+      style: { padding: "6px 14px", background: mapAirspaceOn ? "#6d28d9" : "none", border: C.cardBorder + " solid " + (mapAirspaceOn ? "#6d28d9" : C.border), borderRadius: "3px", color: mapAirspaceOn ? "#fff" : C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: mapAirspaceOn ? "bold" : "normal" } },
+    mapAirspaceOn ? "◉ AIRSPACE ON" : "○ AIRSPACE"
     ),
     radarOn && radarFrames.length > 0 && /*#__PURE__*/
     React.createElement(React.Fragment, null, /*#__PURE__*/
@@ -6505,13 +6471,13 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     React.createElement("div", { style: { padding: "16px", background: C.isLight ? "#f8fafc" : "#090d18" } },
     !profileData && !profileLoading && /*#__PURE__*/React.createElement("div", { style: { fontFamily: mono, fontSize: "11px", color: C.dimmest, textAlign: "center", padding: "20px" } }, "Plot a route to see terrain profile"),
     profileLoading && /*#__PURE__*/React.createElement("div", { style: { fontFamily: mono, fontSize: "11px", color: C.dimmest, textAlign: "center", padding: "20px" } }, "Fetching elevation data..."),
-    profileData && profileData.totalDist > 0 && profileData.elevations && profileData.elevations.length > 0 && !profileLoading && function () {
+    profileData && profileData.totalDist > 0 && !profileLoading && function () {
       var elevs = profileData.elevations;
       var dists = profileData.distances;
       var totalNM = profileData.totalDist;
       var wpDists = profileData.wpDistances;
       var cruiseFt = parseFloat(cruiseAlt) || 0;
-      var maxElev = Math.max.apply(null, elevs);
+      var maxElev = elevs.length > 0 ? Math.max.apply(null, elevs) : 0;
       var CLEARANCE = 1000;
       var yMax = Math.max(cruiseFt * 1.15, maxElev + 500, 2000);
       var yMin = 0;
@@ -6644,11 +6610,16 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
       }
       // ────────────────────────────────────────────────────────
 
-      // Build terrain polygon path
-      var terrainPts = elevs.map(function (e, i) {return xScaleZ(dists[i]) + "," + yScale(e);});
-      var terrainPath = "M" + xScaleZ(dists[0]) + "," + yScale(0) +
-      " L" + terrainPts.join(" L") +
-      " L" + xScaleZ(dists[dists.length - 1]) + "," + yScale(0) + " Z";
+      // Build terrain polygon path — only when we actually have elevation samples.
+      // (A failed/rate-limited elevation fetch no longer blocks the rest of the
+      // profile — see profileData fallback above — so this can legitimately be empty.)
+      var terrainPath = null;
+      if (elevs.length > 0) {
+        var terrainPts = elevs.map(function (e, i) {return xScaleZ(dists[i]) + "," + yScale(e);});
+        terrainPath = "M" + xScaleZ(dists[0]) + "," + yScale(0) +
+        " L" + terrainPts.join(" L") +
+        " L" + xScaleZ(dists[dists.length - 1]) + "," + yScale(0) + " Z";
+      }
 
       // Y-axis tick values
       var yTicks = [];
@@ -6815,8 +6786,8 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
         var x1 = xScaleZ(dists[seg.from]),x2 = xScaleZ(dists[seg.to]);
         return React.createElement("rect", { key: si, x: x1, y: PAD_T, width: Math.max(x2 - x1, 2), height: plotH, fill: "#ef4444", opacity: 0.12 });
       }),
-      // Terrain fill
-      React.createElement("path", { d: terrainPath, fill: C.isLight ? "#92400e" : "#78350f", opacity: 0.7 }),
+      // Terrain fill (skipped gracefully when elevation data is unavailable)
+      terrainPath && React.createElement("path", { d: terrainPath, fill: C.isLight ? "#92400e" : "#78350f", opacity: 0.7 }),
       // Terrain outline
       React.createElement("polyline", {
         points: elevs.map(function (e, i) {return xScaleZ(dists[i]) + "," + yScale(e);}).join(" "),
@@ -8865,10 +8836,10 @@ var stallDataFwd = {
 function C172SpeedsTab(_ref60) {var savedState = _ref60.savedState,onStateChange = _ref60.onStateChange;
   var C = useC();
   var mono = "'Courier New', monospace";
-  var _React$useState99 = React.useState(savedState.flaps || "up"),_React$useState100 = _slicedToArray(_React$useState99, 2),flaps = _React$useState100[0],setFlaps = _React$useState100[1];
-  var _React$useState101 = React.useState(savedState.bank !== undefined ? savedState.bank : 0),_React$useState102 = _slicedToArray(_React$useState101, 2),bank = _React$useState102[0],setBank = _React$useState102[1];
-  var _React$useState103 = React.useState(savedState.cgPos || "rearward"),_React$useState104 = _slicedToArray(_React$useState103, 2),cgPos = _React$useState104[0],setCgPos = _React$useState104[1];
-  var _React$useState105 = React.useState(savedState.weight || ""),_React$useState106 = _slicedToArray(_React$useState105, 2),weight = _React$useState106[0],setWeight = _React$useState106[1];
+  var _React$useState95 = React.useState(savedState.flaps || "up"),_React$useState96 = _slicedToArray(_React$useState95, 2),flaps = _React$useState96[0],setFlaps = _React$useState96[1];
+  var _React$useState97 = React.useState(savedState.bank !== undefined ? savedState.bank : 0),_React$useState98 = _slicedToArray(_React$useState97, 2),bank = _React$useState98[0],setBank = _React$useState98[1];
+  var _React$useState99 = React.useState(savedState.cgPos || "rearward"),_React$useState100 = _slicedToArray(_React$useState99, 2),cgPos = _React$useState100[0],setCgPos = _React$useState100[1];
+  var _React$useState101 = React.useState(savedState.weight || ""),_React$useState102 = _slicedToArray(_React$useState101, 2),weight = _React$useState102[0],setWeight = _React$useState102[1];
   React.useEffect(function () {
     onStateChange({ flaps: flaps, bank: bank, cgPos: cgPos, weight: weight });
   }, [flaps, bank, cgPos, weight]);
@@ -9261,8 +9232,8 @@ function SeminoleLandingViz(_ref64) {var result = _ref64.result,airportRunways =
   var markerColor50 = C.warm;
   var centerlineColor = C.rwyStripe;
   var animRef = React.useRef(null);
-  var _React$useState107 = React.useState(0),_React$useState108 = _slicedToArray(_React$useState107, 2),t = _React$useState108[0],setT = _React$useState108[1];
-  var _React$useState109 = React.useState(false),_React$useState110 = _slicedToArray(_React$useState109, 2),done = _React$useState110[0],setDone = _React$useState110[1];
+  var _React$useState103 = React.useState(0),_React$useState104 = _slicedToArray(_React$useState103, 2),t = _React$useState104[0],setT = _React$useState104[1];
+  var _React$useState105 = React.useState(false),_React$useState106 = _slicedToArray(_React$useState105, 2),done = _React$useState106[0],setDone = _React$useState106[1];
   React.useEffect(function () {
     setT(0);setDone(false);
     var start = null;
@@ -11205,8 +11176,8 @@ function StandaloneNavlog(_ref73) {var onBack = _ref73.onBack,theme = _ref73.the
   var C = useC();
   var mono = "'Courier New', monospace";
   var mobile = useIsMobile();
-  var _React$useState111 = React.useState({}),_React$useState112 = _slicedToArray(_React$useState111, 2),tabState = _React$useState112[0],setTabState = _React$useState112[1];
-  var _React$useState113 = React.useState(false),_React$useState114 = _slicedToArray(_React$useState113, 2),showAppAuth = _React$useState114[0],setShowAppAuth = _React$useState114[1];
+  var _React$useState107 = React.useState({}),_React$useState108 = _slicedToArray(_React$useState107, 2),tabState = _React$useState108[0],setTabState = _React$useState108[1];
+  var _React$useState109 = React.useState(false),_React$useState110 = _slicedToArray(_React$useState109, 2),showAppAuth = _React$useState110[0],setShowAppAuth = _React$useState110[1];
   return (/*#__PURE__*/
     React.createElement(MobileContext.Provider, { value: mobile }, /*#__PURE__*/
     React.createElement("div", { style: { minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: mobile ? "16px 12px" : "32px 24px" } }, /*#__PURE__*/
@@ -11234,7 +11205,503 @@ function StandaloneNavlog(_ref73) {var onBack = _ref73.onBack,theme = _ref73.the
 
 }
 
-function SeminoleApp(_ref74) {var onBack = _ref74.onBack,theme = _ref74.theme,toggleTheme = _ref74.toggleTheme;
+// ── RISK ASSESSMENT TOOL ─────────────────────────────────────────────
+// Personal FRAT-style flight risk assessment for GA cross-country flying.
+// Score bands are computed as a PERCENTAGE of the maximum possible score for
+// the current IFR/VFR selection (since IFR pulls in extra factors and has a
+// higher max), not a fixed raw-point threshold.
+var RISK_FACTORS = {
+  pilot: [
+  { key: "recency", label: "RECENCY (LAST 90 DAYS)", options: [
+    { label: "Current, active", pts: 0 }, { label: "Marginal", pts: 3 },
+    { label: "Rusty (>60 days)", pts: 6 }, { label: "Very rusty (>90 days)", pts: 10 }] },
+  { key: "typeTime", label: "TIME IN TYPE", options: [
+    { label: "100+ hrs", pts: 0 }, { label: "25–100 hrs", pts: 3 },
+    { label: "10–25 hrs", pts: 6 }, { label: "<10 hrs", pts: 10 }] },
+  { key: "sleep", label: "SLEEP LAST NIGHT", options: [
+    { label: "8+ hrs", pts: 0 }, { label: "6–8 hrs", pts: 3 },
+    { label: "5–6 hrs", pts: 6 }, { label: "<5 hrs", pts: 10 }] },
+  { key: "fatigue", label: "DUTY / FATIGUE", options: [
+    { label: "Fresh", pts: 0 }, { label: "Mid-day", pts: 3 },
+    { label: "Long day", pts: 6 }, { label: "Very fatigued", pts: 10 }] },
+  { key: "imsafe", label: "IMSAFE / STRESS", options: [
+    { label: "None", pts: 0 }, { label: "Minor", pts: 3 },
+    { label: "Moderate", pts: 6 }, { label: "Significant", pts: 10 }] },
+  { key: "ifrCurrency", label: "INSTRUMENT CURRENCY", ifrOnly: true, options: [
+    { label: "Current + recent actual", pts: 0 }, { label: "Current, no actual recently", pts: 3 },
+    { label: "Not current, safety pilot avail", pts: 6 }, { label: "Not current", pts: 10 }] }],
+
+  aircraft: [
+  { key: "maint", label: "MAINTENANCE STATUS", options: [
+    { label: "All current, no squawks", pts: 0 }, { label: "Minor squawk (placarded)", pts: 3 },
+    { label: "Deferred item", pts: 6 }, { label: "Overdue item", pts: 10 }] },
+  { key: "fuel", label: "FUEL RESERVE PLANNED", options: [
+    { label: "2+ hrs reserve", pts: 0 }, { label: "1–2 hrs", pts: 3 },
+    { label: "45min–1hr (legal min)", pts: 7 }, { label: "<45 min", pts: 12 }] },
+  { key: "perf", label: "TAKEOFF/LANDING PERFORMANCE (DENSITY ALT, RUNWAY)", options: [
+    { label: "Large margin, low DA", pts: 0 }, { label: "Adequate margin", pts: 3 },
+    { label: "Tight — high DA or short/soft field", pts: 6 }, { label: "Marginal / exceeds POH numbers", pts: 10 }] },
+  { key: "equip", label: "EQUIPMENT FOR FLIGHT", options: [
+    { label: "Full / redundant", pts: 0 }, { label: "Adequate", pts: 3 },
+    { label: "Minimum equip list", pts: 6 }, { label: "Missing desired equip", pts: 10 }] }],
+
+  environment: [
+  { key: "ceiling", label: "CEILING (ROUTE MIN)", compareKey: "minCeilingFt", options: [
+    { label: ">3000 AGL", pts: 0, worst: 9999 }, { label: "1500–3000", pts: 3, worst: 1500 },
+    { label: "1000–1500", pts: 6, worst: 1000 }, { label: "<1000 / IFR-only", pts: 10, worst: 0 }] },
+  { key: "vis", label: "VISIBILITY", compareKey: "minVisSm", options: [
+    { label: ">6 sm", pts: 0, worst: 9999 }, { label: "3–6 sm", pts: 3, worst: 3 },
+    { label: "1–3 sm", pts: 6, worst: 1 }, { label: "<1 sm", pts: 10, worst: 0 }] },
+  { key: "wind", label: "WIND / XWIND vs PERSONAL MIN", compareKey: "maxCrosswindKt", isWindFactor: true, options: [
+    { label: "<50% of max demo", pts: 0 }, { label: "50–75%", pts: 3 },
+    { label: "75–100%", pts: 6 }, { label: "At/above max demo", pts: 10 }] },
+  { key: "convective", label: "CONVECTIVE / THUNDERSTORM POTENTIAL", options: [
+    { label: "None forecast near route", pts: 0 }, { label: "Isolated, easily avoidable", pts: 3 },
+    { label: "Scattered along route", pts: 6 }, { label: "Embedded / organized line", pts: 12 }] },
+  { key: "terrain", label: "TERRAIN (SINGLE-ENGINE FORCED LANDING OPTIONS)", options: [
+    { label: "Flat, many options", pts: 0 }, { label: "Rolling, some options", pts: 3 },
+    { label: "Mountains/forest/water, few options", pts: 6 }, { label: "Mountains + unfamiliar, no options", pts: 10 }] },
+  { key: "airspace", label: "AIRSPACE COMPLEXITY", options: [
+    { label: "None / Class G,E", pts: 0 }, { label: "Class D", pts: 3 },
+    { label: "Class C", pts: 6 }, { label: "Class B / multiple", pts: 10 }] },
+  { key: "icing", label: "ICING (AIRCRAFT NOT FIKI / NO KNOWN-ICE APPROVAL)", ifrOnly: true, options: [
+    { label: "No risk — temps above freezing route-wide", pts: 0 }, { label: "Freezing level near cruise alt, monitor", pts: 5 },
+    { label: "Freezing level within 2000ft of route, PIREPs possible", pts: 10 }, { label: "Icing forecast/reported on route — NOT APPROVED", pts: 16 }] },
+  { key: "approach", label: "APPROACH REQUIRED", ifrOnly: true, options: [
+    { label: "Visual / none", pts: 0 }, { label: "Precision, good WX", pts: 3 },
+    { label: "Non-precision", pts: 6 }, { label: "Circling / low minimums", pts: 10 }] },
+  { key: "cloudClearance", label: "CLOUD CLEARANCE MARGIN", vfrOnly: true, options: [
+    { label: "Large margin", pts: 0 }, { label: "Adequate", pts: 3 },
+    { label: "Tight (near 91.155 min)", pts: 6 }, { label: "Marginal VFR", pts: 10 }] },
+  { key: "night", label: "NIGHT", options: [
+    { label: "Day only", pts: 0 }, { label: "Civil twilight", pts: 3 },
+    { label: "Night, lit/familiar route", pts: 6 }, { label: "Night, unlit/unfamiliar", pts: 10 }] }],
+
+  external: [
+  { key: "schedule", label: "SCHEDULE PRESSURE", options: [
+    { label: "None, flexible", pts: 0 }, { label: "Mild", pts: 3 },
+    { label: "Firm commitment", pts: 6 }, { label: "Hard deadline", pts: 10 }] },
+  { key: "pax", label: "PASSENGERS", options: [
+    { label: "None / pilot only", pts: 0 }, { label: "Experienced pax", pts: 3 },
+    { label: "Nervous / first-time pax", pts: 6 }, { label: "VIP / pressure to complete", pts: 10 }] },
+  { key: "alternate", label: "ALTERNATE PLAN IF SCRUBBED", options: [
+    { label: "Easy, no cost", pts: 0 }, { label: "Some inconvenience", pts: 3 },
+    { label: "Significant hassle", pts: 6 }, { label: "No good alternative", pts: 10 }] },
+  { key: "getthereitis", label: "GET-THERE-ITIS SELF-CHECK", options: [
+    { label: "Honestly neutral", pts: 0 }, { label: "Slight pull to go", pts: 3 },
+    { label: "Noticeable pull", pts: 6 }, { label: "Strong pull to go", pts: 10 }] }]
+
+};
+var RISK_CATEGORY_LABELS = { pilot: "PILOT", aircraft: "AIRCRAFT", environment: "ENVIRONMENT", external: "EXTERNAL PRESSURES" };
+
+function RiskFactorRow(_ref74) {var factor = _ref74.factor,value = _ref74.value,onChange = _ref74.onChange,mobile = _ref74.mobile,minimums = _ref74.minimums,flightType = _ref74.flightType;
+  var C = useC();
+  var mono = "'Courier New', monospace";
+
+  // Resolve which personal-minimum field applies to this factor + current flight type.
+  var compareKey = null;
+  if (factor.compareKey) {
+    if (factor.compareKey === "minCeilingFt") compareKey = flightType === "IFR" ? "minApproachCeilingFt" : "minCeilingFt";else
+    if (factor.compareKey === "minVisSm") compareKey = flightType === "IFR" ? "minApproachVisSm" : "minVisSm";else
+    compareKey = factor.compareKey;
+  }
+  var minVal = compareKey && minimums[compareKey] !== "" ? parseFloat(minimums[compareKey]) : null;
+  var selectedOpt = factor.options.find(function (o) {return o.pts === value;});
+  var violated = minVal !== null && selectedOpt && selectedOpt.worst !== undefined && selectedOpt.worst <= minVal;
+  var refText = null;
+  if (minVal !== null) {
+    if (factor.isWindFactor) refText = "your max: " + minVal + " kt";else
+    if (compareKey && compareKey.indexOf("Ceiling") >= 0) refText = "your min: " + minVal + " ft AGL";else
+    if (compareKey && compareKey.indexOf("Vis") >= 0) refText = "your min: " + minVal + " sm";
+  }
+
+  return (/*#__PURE__*/
+    React.createElement("div", { style: { marginBottom: "18px" } }, /*#__PURE__*/
+    React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "8px", flexWrap: "wrap" } }, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: mobile ? "12px" : "13px", letterSpacing: "1.5px", color: C.dim, fontWeight: "600", lineHeight: 1.4 } }, factor.label),
+    refText && /*#__PURE__*/React.createElement("div", { style: { fontSize: "10px", color: violated ? "#dc2626" : C.dimmer, fontWeight: violated ? "bold" : "normal" } }, "(", refText, violated ? " — EXCEEDED" : "", ")")
+    ), /*#__PURE__*/
+    React.createElement("div", { style: { display: "grid", gridTemplateColumns: mobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: "8px" } },
+    factor.options.map(function (opt, i) {
+      var selected = value === opt.pts;
+      var thisViolates = minVal !== null && opt.worst !== undefined && opt.worst <= minVal;
+      return (/*#__PURE__*/
+        React.createElement("button", { key: i, onClick: function onClick() {onChange(opt.pts);},
+          style: {
+            padding: mobile ? "11px 8px" : "12px 8px",
+            background: selected ? thisViolates ? "#dc2626" : C.green : C.isLight ? "#fff" : C.bg,
+            border: (selected ? thisViolates ? "#dc2626" : C.green : thisViolates ? "#dc2626" : C.border) + " solid " + C.cardBorder,
+            borderRadius: "4px", color: selected ? "#fff" : thisViolates ? "#dc2626" : C.dim,
+            fontFamily: mono, fontSize: mobile ? "12px" : "13px", letterSpacing: "0.3px",
+            cursor: "pointer", lineHeight: 1.4, fontWeight: selected ? "bold" : "500"
+          } },
+        opt.label
+        ));
+
+    })
+    )
+    ));
+
+}
+
+function RiskAssessmentApp(_ref75) {var onBack = _ref75.onBack,theme = _ref75.theme,toggleTheme = _ref75.toggleTheme,user = _ref75.user;
+  var C = useC();
+  var mono = "'Courier New', monospace";
+  var mobile = useIsMobile();
+  var _React$useState111 = React.useState("VFR"),_React$useState112 = _slicedToArray(_React$useState111, 2),flightType = _React$useState112[0],setFlightType = _React$useState112[1];
+  var _React$useState113 = React.useState({}),_React$useState114 = _slicedToArray(_React$useState113, 2),answers = _React$useState114[0],setAnswers = _React$useState114[1];
+  var _React$useState115 = React.useState(false),_React$useState116 = _slicedToArray(_React$useState115, 2),showMinimums = _React$useState116[0],setShowMinimums = _React$useState116[1];
+  var _React$useState117 = React.useState({
+      maxCrosswindKt: "", minFuelReserveMin: "", maxDutyDayHrs: "",
+      minCeilingFt: "", minVisSm: "",
+      minApproachCeilingFt: "", minApproachVisSm: "", ifrCurrencyBufferDays: ""
+    }),_React$useState118 = _slicedToArray(_React$useState117, 2),minimums = _React$useState118[0],setMinimums = _React$useState118[1];
+  var _React$useState119 = React.useState(null),_React$useState120 = _slicedToArray(_React$useState119, 2),minimumsSaved = _React$useState120[0],setMinimumsSaved = _React$useState120[1]; // null | "saving" | "saved" | "error"
+  var _React$useState121 = React.useState(false),_React$useState122 = _slicedToArray(_React$useState121, 2),showAppAuth = _React$useState122[0],setShowAppAuth = _React$useState122[1];
+  var _React$useState123 = React.useState(null),_React$useState124 = _slicedToArray(_React$useState123, 2),lastRoute = _React$useState124[0],setLastRoute = _React$useState124[1];
+  var _React$useState125 = React.useState(null),_React$useState126 = _slicedToArray(_React$useState125, 2),importStatus = _React$useState126[0],setImportStatus = _React$useState126[1]; // null | "loading" | "done" | "error"
+  var _React$useState127 = React.useState(null),_React$useState128 = _slicedToArray(_React$useState127, 2),importSummary = _React$useState128[0],setImportSummary = _React$useState128[1];
+
+  // Read the last-plotted route from the XC Planner (bridged via localStorage
+  // since Risk and Navlog are separate top-level pages with no shared state).
+  React.useEffect(function () {
+    try {
+      var raw = localStorage.getItem("aerocalc-last-route");
+      if (raw) setLastRoute(JSON.parse(raw));
+    } catch (e) {}
+  }, []);
+
+  function ceilingFromClouds(clouds, raw) {
+    var ceiling = null;
+    if (clouds && Array.isArray(clouds)) {
+      clouds.forEach(function (c) {
+        if ((c.cover === "BKN" || c.cover === "OVC") && c.base != null) {
+          if (ceiling === null || c.base < ceiling) ceiling = c.base;
+        }
+      });
+    }
+    if (ceiling === null && raw) {
+      var m = raw.match(/(?:BKN|OVC)(\d{3})/g);
+      if (m) m.forEach(function (s) {var b = parseInt(s.slice(3)) * 100;if (ceiling === null || b < ceiling) ceiling = b;});
+    }
+    return ceiling; // null = no ceiling reported (clear/few/sct only) = best case
+  }
+  function bucketForCeiling(ft) {
+    // ft === null means no ceiling layer reported at all — best case
+    if (ft === null || ft > 3000) return 0;
+    if (ft >= 1500) return 3;
+    if (ft >= 1000) return 6;
+    return 10;
+  }
+  function bucketForVis(sm) {
+    if (sm === null || sm === undefined || sm > 6) return 0;
+    if (sm >= 3) return 3;
+    if (sm >= 1) return 6;
+    return 10;
+  }
+  function parseVisib(v) {
+    if (v === null || v === undefined) return null;
+    var n = parseFloat(String(v).replace("+", ""));
+    return isNaN(n) ? null : n;
+  }
+  function findTafPeriod(taf, targetMs) {
+    if (!taf || !taf.fcsts || !taf.fcsts.length) return null;
+    // Prefer a base period (no fcstChange, or FROM) whose window covers the target time
+    var candidates = taf.fcsts.filter(function (f) {return !f.fcstChange || f.fcstChange === "FM";});
+    var pool = candidates.length ? candidates : taf.fcsts;
+    var covering = pool.filter(function (f) {return f.timeFrom && f.timeTo && targetMs >= f.timeFrom && targetMs < f.timeTo;});
+    if (covering.length) return covering[covering.length - 1];
+    // Target is outside the TAF's valid window — use nearest period
+    var sorted = pool.slice().sort(function (a, b) {return Math.abs(a.timeFrom - targetMs) - Math.abs(b.timeFrom - targetMs);});
+    return sorted[0] || null;
+  }
+
+  function importWeather() {
+    if (!lastRoute) return;
+    setImportStatus("loading");
+    var base = "https://metar-proxy.mamillh01.workers.dev/";
+    Promise.all([
+    fetch(base + "?type=wxbrief&id=" + lastRoute.depIcao).then(function (r) {return r.json();}).catch(function () {return null;}),
+    fetch(base + "?type=wxbrief&id=" + lastRoute.destIcao).then(function (r) {return r.json();}).catch(function () {return null;})]
+    ).then(function (results) {
+      var depWx = results[0],destWx = results[1];
+      var depTargetMs = new Date(lastRoute.depTimeIso).getTime();
+      var destTargetMs = lastRoute.etaIso ? new Date(lastRoute.etaIso).getTime() : depTargetMs;
+
+      function resolveOne(wx, targetMs) {
+        if (!wx) return null;
+        var period = wx.taf ? findTafPeriod(wx.taf, targetMs) : null;
+        if (period) {
+          return {
+            source: "TAF", ceilingFt: ceilingFromClouds(period.clouds, null),
+            visSm: parseVisib(period.visib)
+          };
+        }
+        if (wx.metar) {
+          return {
+            source: "METAR (no TAF)", ceilingFt: ceilingFromClouds(wx.metar.clouds, wx.metar.rawOb),
+            visSm: parseVisib(wx.metar.visib)
+          };
+        }
+        return null;
+      }
+
+      var depResolved = resolveOne(depWx, depTargetMs);
+      var destResolved = resolveOne(destWx, destTargetMs);
+
+      if (!depResolved && !destResolved) {
+        setImportStatus("error");
+        return;
+      }
+
+      // "Route min" ceiling/vis = the worse (lower) of departure and destination
+      var ceilings = [depResolved, destResolved].filter(Boolean).map(function (r) {return r.ceilingFt === null ? 9999 : r.ceilingFt;});
+      var viss = [depResolved, destResolved].filter(Boolean).map(function (r) {return r.visSm === null ? 99 : r.visSm;});
+      var worstCeiling = Math.min.apply(null, ceilings);
+      var worstVis = Math.min.apply(null, viss);
+
+      setAnswers(function (prev) {
+        var n = Object.assign({}, prev);
+        n.ceiling = bucketForCeiling(worstCeiling === 9999 ? null : worstCeiling);
+        n.vis = bucketForVis(worstVis === 99 ? null : worstVis);
+        return n;
+      });
+
+      setImportSummary({
+        dep: depResolved ? Object.assign({ icao: lastRoute.depIcao }, depResolved) : null,
+        dest: destResolved ? Object.assign({ icao: lastRoute.destIcao }, destResolved) : null
+      });
+      setImportStatus("done");
+    });
+  }
+
+  // Load personal minimums from account on mount / login
+  React.useEffect(function () {
+    if (!user) return;
+    sbClient.from("user_preferences").select("risk_minimums").eq("user_id", user.id).single().then(function (res) {
+      if (res.data && res.data.risk_minimums) {
+        setMinimums(function (prev) {return Object.assign({}, prev, res.data.risk_minimums);});
+      }
+    });
+  }, [user]);
+
+  function saveMinimums() {
+    if (!user) {setShowAppAuth(true);return;}
+    setMinimumsSaved("saving");
+    sbClient.from("user_preferences").upsert({ user_id: user.id, risk_minimums: minimums, updated_at: new Date().toISOString() }).
+    then(function (res) {
+      setMinimumsSaved(res.error ? "error" : "saved");
+      setTimeout(function () {setMinimumsSaved(null);}, 2500);
+    });
+  }
+
+  function setAnswer(key, pts) {
+    setAnswers(function (prev) {var n = Object.assign({}, prev);n[key] = pts;return n;});
+  }
+
+  // Compute total + max possible for the CURRENT flight type (IFR pulls in extra factors)
+  var total = 0,maxPossible = 0;
+  var allFactors = [];
+  var violatedFactors = [];
+  Object.keys(RISK_FACTORS).forEach(function (cat) {
+    RISK_FACTORS[cat].forEach(function (f) {
+      if (f.ifrOnly && flightType !== "IFR") return;
+      if (f.vfrOnly && flightType !== "VFR") return;
+      allFactors.push(f);
+      maxPossible += Math.max.apply(null, f.options.map(function (o) {return o.pts;}));
+      var ansPts = answers[f.key] || 0;
+      total += ansPts;
+      if (f.compareKey) {
+        var ck = f.compareKey === "minCeilingFt" ? flightType === "IFR" ? "minApproachCeilingFt" : "minCeilingFt" :
+        f.compareKey === "minVisSm" ? flightType === "IFR" ? "minApproachVisSm" : "minVisSm" :
+        f.compareKey;
+        var mv = minimums[ck] !== "" ? parseFloat(minimums[ck]) : null;
+        var selOpt = f.options.find(function (o) {return o.pts === ansPts;});
+        if (mv !== null && selOpt && selOpt.worst !== undefined && selOpt.worst <= mv) violatedFactors.push(f.label);
+      }
+    });
+  });
+  var pct = maxPossible > 0 ? total / maxPossible * 100 : 0;
+  var band = pct < 25 ? "LOW" : pct < 50 ? "CAUTION" : "HIGH";
+  var bandColor = band === "LOW" ? C.green : band === "CAUTION" ? C.warm : "#dc2626";
+
+  function resetAll() {setAnswers({});}
+
+  return (/*#__PURE__*/
+    React.createElement(MobileContext.Provider, { value: mobile }, /*#__PURE__*/
+    React.createElement("div", { style: { minHeight: "100vh", background: C.bg, fontFamily: mono, color: C.text, display: "flex", flexDirection: "column", alignItems: "center", padding: mobile ? "16px 12px" : "32px 24px" } }, /*#__PURE__*/
+    React.createElement("div", { style: { width: "100%", maxWidth: "760px", marginBottom: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" } }, /*#__PURE__*/
+    React.createElement("button", { onClick: onBack, style: { background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" } }, "\u2190 HOME"), /*#__PURE__*/
+    React.createElement("button", { onClick: toggleTheme, style: { background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "3px", padding: "6px 12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer" } }, theme === "dark" ? "☀ LIGHT" : "☾ DARK")
+    ), /*#__PURE__*/
+    React.createElement("div", { style: { textAlign: "center", marginBottom: mobile ? "16px" : "24px" } }, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: mobile ? "11px" : "16px", letterSpacing: "6px", color: C.green, marginBottom: "6px" } }, "AEROCALC \xB7 PERSONAL FRAT"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: mobile ? "22px" : "36px", fontWeight: "bold", letterSpacing: mobile ? "1px" : "3px" } }, "RISK ASSESSMENT"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "10px", color: C.dimmer, letterSpacing: "1.5px", marginTop: "8px" } }, "TAILORED FOR NON-FIKI GA SINGLES \xB7 ARCHER \xB7 C172 \xB7 SIMILAR")
+    ), /*#__PURE__*/
+
+    React.createElement("div", { style: { width: "100%", maxWidth: "760px" } },
+
+
+    lastRoute && /*#__PURE__*/
+    React.createElement("div", { style: { background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "4px", padding: "14px 16px", marginBottom: "16px" } }, /*#__PURE__*/
+    React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" } }, /*#__PURE__*/
+    React.createElement("div", null, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "10px", letterSpacing: "2px", color: C.dim, marginBottom: "3px" } }, "LAST ROUTE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "14px", fontWeight: "bold", letterSpacing: "1px" } }, lastRoute.label), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "10px", color: C.dimmer, marginTop: "2px" } }, "ETD ",
+    new Date(lastRoute.depTimeIso).toUTCString().slice(17, 22), "Z",
+    lastRoute.etaIso && " · ETA " + new Date(lastRoute.etaIso).toUTCString().slice(17, 22) + "Z"
+    )
+    ), /*#__PURE__*/
+    React.createElement("button", { onClick: importWeather, disabled: importStatus === "loading",
+      style: { background: C.cool, border: "none", borderRadius: "3px", padding: "9px 16px", color: "#fff", fontFamily: mono, fontSize: "11px", letterSpacing: "1.5px", cursor: "pointer", fontWeight: "bold", whiteSpace: "nowrap" } },
+    importStatus === "loading" ? "FETCHING TAF…" : "IMPORT CEILING/VIS"
+    )
+    ),
+    importStatus === "error" && /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "11px", color: "#dc2626", marginTop: "10px" } }, "Could not fetch weather for either airport \u2014 fill ceiling/visibility manually."),
+
+    importStatus === "done" && importSummary && /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "10px", color: C.dimmer, marginTop: "10px", lineHeight: 1.6, borderTop: C.cardBorder + " solid " + C.borderDim, paddingTop: "10px" } },
+    importSummary.dep && /*#__PURE__*/
+    React.createElement("div", null, importSummary.dep.icao, " (", importSummary.dep.source, "): ceiling ", importSummary.dep.ceilingFt === null ? "none reported" : importSummary.dep.ceilingFt + " ft", " \xB7 vis ", importSummary.dep.visSm === null ? "—" : importSummary.dep.visSm + " sm"),
+
+    importSummary.dest && /*#__PURE__*/
+    React.createElement("div", null, importSummary.dest.icao, " (", importSummary.dest.source, "): ceiling ", importSummary.dest.ceilingFt === null ? "none reported" : importSummary.dest.ceilingFt + " ft", " \xB7 vis ", importSummary.dest.visSm === null ? "—" : importSummary.dest.visSm + " sm"), /*#__PURE__*/
+
+    React.createElement("div", { style: { marginTop: "4px", color: C.dim } }, "CEILING and VISIBILITY set below to the worse of the two. Everything else still needs your input.")
+    )
+
+    ), /*#__PURE__*/
+
+
+
+    React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", marginBottom: "16px", border: C.cardBorder + " solid " + C.border, borderRadius: "4px", overflow: "hidden" } },
+    ["VFR", "IFR"].map(function (t) {
+      return (/*#__PURE__*/
+        React.createElement("button", { key: t, onClick: function onClick() {setFlightType(t);}, style: {
+            padding: "12px", background: flightType === t ? C.green : C.card, border: "none",
+            color: flightType === t ? C.btnText : C.dim, fontFamily: mono, fontSize: "14px",
+            fontWeight: "bold", letterSpacing: "3px", cursor: "pointer"
+          } }, t));
+
+    })
+    ), /*#__PURE__*/
+
+
+    React.createElement("div", { style: { background: C.isLight ? "#fff" : C.card, border: "2px solid ".concat(bandColor), borderRadius: "4px", padding: "20px", textAlign: "center", marginBottom: "16px" } }, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "11px", letterSpacing: "3px", color: C.dim, marginBottom: "6px" } }, "TOTAL RISK SCORE"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "48px", fontWeight: "bold", color: bandColor, fontFamily: mono, lineHeight: 1 } }, total), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "11px", color: C.dimmer, marginTop: "4px" } }, "of ", maxPossible, " possible"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "18px", fontWeight: "bold", color: bandColor, letterSpacing: "4px", marginTop: "10px" } }, band)
+    ),
+
+
+
+    answers.icing === 16 && /*#__PURE__*/
+    React.createElement("div", { style: { background: "#7f1d1d", border: "2px solid #dc2626", borderRadius: "4px", padding: "14px 16px", marginBottom: "16px", textAlign: "center" } }, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "13px", fontWeight: "bold", color: "#fecaca", letterSpacing: "2px" } }, "\u26A0 NOT APPROVED FOR FLIGHT INTO KNOWN ICING"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "11px", color: "#fca5a5", marginTop: "4px" } }, "This aircraft is not FIKI-certified. Icing forecast/reported on route is a hard no-go regardless of total score.")
+    ),
+
+
+
+    violatedFactors.length > 0 && /*#__PURE__*/
+    React.createElement("div", { style: { background: C.isLight ? "#fdf0ec" : "#3a1f1f", border: "1.5px solid #dc2626", borderRadius: "4px", padding: "12px 16px", marginBottom: "16px" } }, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "11px", fontWeight: "bold", color: "#dc2626", letterSpacing: "1.5px", marginBottom: "4px" } }, "\u26A0 EXCEEDS YOUR PERSONAL MINIMUMS"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "11px", color: C.dim, lineHeight: 1.6 } }, violatedFactors.join(" · "))
+    ), /*#__PURE__*/
+
+
+
+    React.createElement("div", { style: { background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "4px", marginBottom: "16px", overflow: "hidden" } }, /*#__PURE__*/
+    React.createElement("button", { onClick: function onClick() {setShowMinimums(!showMinimums);}, style: { width: "100%", padding: "12px 16px", background: "none", border: "none", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", color: C.text, fontFamily: mono } }, /*#__PURE__*/
+    React.createElement("span", { style: { fontSize: "11px", letterSpacing: "2px", color: C.dim } }, "PERSONAL MINIMUMS ", user ? "(SAVED TO ACCOUNT)" : "(SIGN IN TO SAVE)"), /*#__PURE__*/
+    React.createElement("span", { style: { color: C.dim } }, showMinimums ? "▲" : "▼")
+    ),
+    showMinimums && /*#__PURE__*/
+    React.createElement("div", { style: { padding: "0 16px 16px" } }, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "10px", color: C.dimmer, marginBottom: "14px", lineHeight: 1.5 } }, "Set these once \u2014 the CEILING and VISIBILITY selections below will flag automatically if they're at or below your stated minimum."
+
+    ),
+
+    [
+    { title: "GENERAL", fields: [
+      ["maxCrosswindKt", "MAX XWIND (KT)"],
+      ["minFuelReserveMin", "MIN FUEL RESERVE (MIN)"],
+      ["maxDutyDayHrs", "MAX DUTY DAY (HRS)"]]
+    },
+    { title: "VFR", fields: [
+      ["minCeilingFt", "MIN CEILING (FT AGL)"],
+      ["minVisSm", "MIN VISIBILITY (SM)"]]
+    },
+    { title: "IFR", fields: [
+      ["minApproachCeilingFt", "MIN APPROACH CEIL (FT)"],
+      ["minApproachVisSm", "MIN APPROACH VIS (SM)"],
+      ["ifrCurrencyBufferDays", "PERSONAL CURRENCY (DAYS)"]]
+    }].
+    map(function (group) {
+      return (/*#__PURE__*/
+        React.createElement("div", { key: group.title, style: { marginBottom: "14px" } }, /*#__PURE__*/
+        React.createElement("div", { style: { fontSize: "10px", letterSpacing: "2px", color: C.green, fontWeight: "bold", marginBottom: "8px" } }, group.title), /*#__PURE__*/
+        React.createElement("div", { style: { display: "grid", gridTemplateColumns: mobile ? "1fr 1fr" : "repeat(3, 1fr)", gap: "10px" } },
+        group.fields.map(function (pair) {
+          var k = pair[0],lbl = pair[1];
+          return (/*#__PURE__*/
+            React.createElement("div", { key: k }, /*#__PURE__*/
+            React.createElement("div", { style: { fontSize: "9px", letterSpacing: "1px", color: C.dimmer, marginBottom: "4px" } }, lbl), /*#__PURE__*/
+            React.createElement("input", { type: "number", value: minimums[k],
+              onChange: function onChange(e) {setMinimums(Object.assign({}, minimums, _defineProperty({}, k, e.target.value)));},
+              style: { width: "100%", background: C.isLight ? "#fff" : C.bg, border: C.cardBorder + " solid " + C.border, borderRadius: "3px", padding: "7px 8px", color: C.text, fontFamily: mono, fontSize: "13px" } })
+            ));
+
+        })
+        )
+        ));
+
+    }), /*#__PURE__*/
+
+    React.createElement("button", { onClick: saveMinimums, style: { background: C.green, border: "none", borderRadius: "3px", padding: "8px 16px", color: C.btnText, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontWeight: "bold", marginTop: "4px" } },
+    minimumsSaved === "saving" ? "SAVING…" : minimumsSaved === "saved" ? "SAVED ✓" : minimumsSaved === "error" ? "ERROR — RETRY" : user ? "SAVE TO ACCOUNT" : "SIGN IN TO SAVE"
+    )
+    )
+
+    ),
+
+
+    Object.keys(RISK_FACTORS).map(function (cat) {
+      var factors = RISK_FACTORS[cat].filter(function (f) {
+        if (f.ifrOnly && flightType !== "IFR") return false;
+        if (f.vfrOnly && flightType !== "VFR") return false;
+        return true;
+      });
+      return (/*#__PURE__*/
+        React.createElement("div", { key: cat, style: { background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "4px", padding: "16px", marginBottom: "12px" } }, /*#__PURE__*/
+        React.createElement("div", { style: { fontSize: "13px", letterSpacing: "3px", color: C.green, fontWeight: "bold", marginBottom: "14px" } }, RISK_CATEGORY_LABELS[cat]),
+        factors.map(function (f) {
+          return /*#__PURE__*/React.createElement(RiskFactorRow, { key: f.key, factor: f, value: answers[f.key] !== undefined ? answers[f.key] : 0, onChange: function onChange(pts) {setAnswer(f.key, pts);}, mobile: mobile, minimums: minimums, flightType: flightType });
+        })
+        ));
+
+    }), /*#__PURE__*/
+
+    React.createElement("button", { onClick: resetAll, style: { width: "100%", background: "none", border: C.cardBorder + " solid " + C.borderDim, borderRadius: "4px", padding: "12px", color: C.dim, fontFamily: mono, fontSize: "11px", letterSpacing: "2px", cursor: "pointer", marginBottom: "24px" } }, "RESET ALL")
+    )
+    ),
+    showAppAuth && /*#__PURE__*/
+    React.createElement("div", { style: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.7)", zIndex: 10000, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" },
+      onClick: function onClick() {setShowAppAuth(false);} }, /*#__PURE__*/
+    React.createElement("div", { onClick: function onClick(e) {e.stopPropagation();}, style: { width: "100%", maxWidth: "380px" } }, /*#__PURE__*/
+    React.createElement(AuthScreen, { theme: theme, toggleTheme: toggleTheme, onAuth: function onAuth() {setShowAppAuth(false);}, inline: true })
+    )
+    )
+
+    ));
+
+}
+
+function SeminoleApp(_ref76) {var onBack = _ref76.onBack,theme = _ref76.theme,toggleTheme = _ref76.toggleTheme;
   var C = useC();
   var mobile = useIsMobile();
   var _useState417 = useState("takeoff"),_useState418 = _slicedToArray(_useState417, 2),activeTab = _useState418[0],setActiveTab = _useState418[1];
@@ -11287,7 +11754,7 @@ function SeminoleApp(_ref74) {var onBack = _ref74.onBack,theme = _ref74.theme,to
     ));
 
 }
-function AircraftMenu(_ref75) {var onSelect = _ref75.onSelect,theme = _ref75.theme,toggleTheme = _ref75.toggleTheme,user = _ref75.user,onSignOut = _ref75.onSignOut,onSignIn = _ref75.onSignIn;
+function AircraftMenu(_ref77) {var onSelect = _ref77.onSelect,theme = _ref77.theme,toggleTheme = _ref77.toggleTheme,user = _ref77.user,onSignOut = _ref77.onSignOut,onSignIn = _ref77.onSignIn;
   var C = useC();
   var mobile = useIsMobile();
   var _useState421 = useState(false),_useState422 = _slicedToArray(_useState421, 2),showAuth = _useState422[0],setShowAuth = _useState422[1];
@@ -11341,19 +11808,32 @@ function AircraftMenu(_ref75) {var onSelect = _ref75.onSelect,theme = _ref75.the
     React.createElement("div", { style: { fontSize: mobile ? "12px" : "16px", color: C.dim, marginTop: "16px", letterSpacing: "4px" } }, "SELECT AIRCRAFT")
     ), /*#__PURE__*/
 
-    React.createElement("div", { style: { width: "100%", maxWidth: "1100px", marginBottom: mobile ? "16px" : "24px" } }, /*#__PURE__*/
+    React.createElement("div", { style: { width: "100%", maxWidth: "1100px", marginBottom: mobile ? "16px" : "24px", display: "flex", flexDirection: mobile ? "column" : "row", gap: mobile ? "12px" : "16px" } }, /*#__PURE__*/
     React.createElement("button", { onClick: function onClick() {return onSelect("navlog");},
-      style: { width: "100%", background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "8px",
+      style: { flex: 1, background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "8px",
         padding: mobile ? "20px 24px" : "24px 32px", textAlign: "center", cursor: "pointer", fontFamily: mono, transition: "border-color 0.15s",
-        display: "flex", alignItems: "center", justifyContent: "center", gap: "32px" },
+        display: "flex", alignItems: "center", justifyContent: "center", gap: "24px" },
       onMouseEnter: function onMouseEnter(e) {e.currentTarget.style.borderColor = C.green;},
       onMouseLeave: function onMouseLeave(e) {e.currentTarget.style.borderColor = C.border;} }, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: mobile ? "22px" : "28px" } }, "\u2708"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: mobile ? "22px" : "26px" } }, "\u2708"), /*#__PURE__*/
     React.createElement("div", null, /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: mobile ? "16px" : "20px", fontWeight: "bold", letterSpacing: "3px", color: C.text } }, "XC ROUTE PLANNER"), /*#__PURE__*/
-    React.createElement("div", { style: { fontSize: "11px", color: C.dim, letterSpacing: "2px", marginTop: "3px" } }, "NAVLOG \xB7 MAP \xB7 WEATHER \xB7 WINDS ALOFT \xB7 FUEL")
+    React.createElement("div", { style: { fontSize: mobile ? "15px" : "18px", fontWeight: "bold", letterSpacing: "2px", color: C.text } }, "XC ROUTE PLANNER"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "10px", color: C.dim, letterSpacing: "1.5px", marginTop: "3px" } }, "NAVLOG \xB7 MAP \xB7 WEATHER \xB7 WINDS ALOFT \xB7 FUEL")
     ), /*#__PURE__*/
-    React.createElement("span", { style: { fontSize: "18px", color: C.green } }, "\u2192")
+    React.createElement("span", { style: { fontSize: "16px", color: C.green } }, "\u2192")
+    ), /*#__PURE__*/
+    React.createElement("button", { onClick: function onClick() {return onSelect("risk");},
+      style: { flex: 1, background: C.card, border: C.cardBorder + " solid " + C.border, borderRadius: "8px",
+        padding: mobile ? "20px 24px" : "24px 32px", textAlign: "center", cursor: "pointer", fontFamily: mono, transition: "border-color 0.15s",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: "24px" },
+      onMouseEnter: function onMouseEnter(e) {e.currentTarget.style.borderColor = C.warm;},
+      onMouseLeave: function onMouseLeave(e) {e.currentTarget.style.borderColor = C.border;} }, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: mobile ? "22px" : "26px" } }, "\u26A0"), /*#__PURE__*/
+    React.createElement("div", null, /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: mobile ? "15px" : "18px", fontWeight: "bold", letterSpacing: "2px", color: C.text } }, "RISK ASSESSMENT"), /*#__PURE__*/
+    React.createElement("div", { style: { fontSize: "10px", color: C.dim, letterSpacing: "1.5px", marginTop: "3px" } }, "PERSONAL FRAT \xB7 IFR/VFR \xB7 GO/NO-GO")
+    ), /*#__PURE__*/
+    React.createElement("span", { style: { fontSize: "16px", color: C.warm } }, "\u2192")
     )
     ), /*#__PURE__*/
 
@@ -11410,7 +11890,7 @@ function AircraftMenu(_ref75) {var onSelect = _ref75.onSelect,theme = _ref75.the
     ));
 
 }
-function AuthScreen(_ref76) {var theme = _ref76.theme,toggleTheme = _ref76.toggleTheme,onAuth = _ref76.onAuth,inline = _ref76.inline;
+function AuthScreen(_ref78) {var theme = _ref78.theme,toggleTheme = _ref78.toggleTheme,onAuth = _ref78.onAuth,inline = _ref78.inline;
   var C = useC();
   var mono = "'Courier New', monospace";
   var _useState423 = useState("login"),_useState424 = _slicedToArray(_useState423, 2),mode = _useState424[0],setMode = _useState424[1];
@@ -11485,7 +11965,7 @@ function AuthScreen(_ref76) {var theme = _ref76.theme,toggleTheme = _ref76.toggl
 
 }
 
-function ResetPasswordScreen(_ref77) {var theme = _ref77.theme,toggleTheme = _ref77.toggleTheme,onDone = _ref77.onDone;
+function ResetPasswordScreen(_ref79) {var theme = _ref79.theme,toggleTheme = _ref79.toggleTheme,onDone = _ref79.onDone;
   var C = useC();
   var mono = "'Courier New', monospace";
   var _useState433 = useState(""),_useState434 = _slicedToArray(_useState433, 2),password = _useState434[0],setPassword = _useState434[1];
@@ -11548,13 +12028,13 @@ function Root() {
   var _useState445 = useState(undefined),_useState446 = _slicedToArray(_useState445, 2),user = _useState446[0],setUser = _useState446[1];
   var _useState447 = useState(false),_useState448 = _slicedToArray(_useState447, 2),isPasswordReset = _useState448[0],setIsPasswordReset = _useState448[1];
   var _useState449 = useState(function () {
-      try {return localStorage.getItem("aerocalc-theme") || "dark";} catch (e) {return "dark";}
+      try {return localStorage.getItem("aerocalc-theme") || "light";} catch (e) {return "light";}
     }),_useState450 = _slicedToArray(_useState449, 2),theme = _useState450[0],setTheme = _useState450[1];
   var toggleTheme = function toggleTheme() {return setTheme(function (t) {
       var next = t === "dark" ? "light" : "dark";
       try {localStorage.setItem("aerocalc-theme", next);} catch (e) {}
       if (user) {
-        sbClient.from("user_preferences").upsert({ user_id: user.id, theme: next, updated_at: new Date().toISOString() }).then(function (_ref78) {var error = _ref78.error;
+        sbClient.from("user_preferences").upsert({ user_id: user.id, theme: next, updated_at: new Date().toISOString() }).then(function (_ref80) {var error = _ref80.error;
           if (error) console.error("Theme save error:", error);else
           console.log("Theme saved to cloud:", next);
         });
@@ -11564,7 +12044,7 @@ function Root() {
   // Load theme from cloud when user logs in
   React.useEffect(function () {
     if (!user) return;
-    sbClient.from("user_preferences").select("theme").eq("user_id", user.id).single().then(function (_ref79) {var data = _ref79.data,error = _ref79.error;
+    sbClient.from("user_preferences").select("theme").eq("user_id", user.id).single().then(function (_ref81) {var data = _ref81.data,error = _ref81.error;
       if (error && error.code !== "PGRST116") {console.error("Theme load error:", error);return;}
       if (data && data.theme) {
         console.log("Loaded theme from cloud:", data.theme);
@@ -11586,11 +12066,11 @@ function Root() {
     if (hash && hash.includes("type=recovery")) {
       setIsPasswordReset(true);
       // Let Supabase process the token from the hash
-      sbClient.auth.getSession().then(function (_ref80) {var data = _ref80.data;
+      sbClient.auth.getSession().then(function (_ref82) {var data = _ref82.data;
         setUser(data.session ? data.session.user : null);
       });
     } else {
-      sbClient.auth.getSession().then(function (_ref81) {var data = _ref81.data;
+      sbClient.auth.getSession().then(function (_ref83) {var data = _ref83.data;
         setUser(data.session ? data.session.user : null);
       });
     }
@@ -11609,6 +12089,7 @@ function Root() {
   if (aircraft === "c172s") return wrapTheme(/*#__PURE__*/React.createElement(C172App, { onBack: function onBack() {return setAircraft(null);}, theme: theme, toggleTheme: toggleTheme, user: user }));
   if (aircraft === "pa44") return wrapTheme(/*#__PURE__*/React.createElement(SeminoleApp, { onBack: function onBack() {return setAircraft(null);}, theme: theme, toggleTheme: toggleTheme, user: user }));
   if (aircraft === "navlog") return wrapTheme(/*#__PURE__*/React.createElement(StandaloneNavlog, { onBack: function onBack() {return setAircraft(null);}, theme: theme, toggleTheme: toggleTheme, user: user }));
+  if (aircraft === "risk") return wrapTheme(/*#__PURE__*/React.createElement(RiskAssessmentApp, { onBack: function onBack() {return setAircraft(null);}, theme: theme, toggleTheme: toggleTheme, user: user }));
   return wrapTheme(/*#__PURE__*/React.createElement(App, { onBack: function onBack() {return setAircraft(null);}, theme: theme, toggleTheme: toggleTheme, user: user }));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(Root, null));
