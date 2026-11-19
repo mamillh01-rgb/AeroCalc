@@ -30,7 +30,6 @@
   <meta property="og:type" content="website" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -126,13 +125,73 @@
 <body>
   <div id="root"></div>
   <script>
-function _typeof(o) {"@babel/helpers - typeof";return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {return typeof o;} : function (o) {return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;}, _typeof(o);}function _toConsumableArray(r) {return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _iterableToArray(r) {if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);}function _arrayWithoutHoles(r) {if (Array.isArray(r)) return _arrayLikeToArray(r);}function _regenerator() {
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */var e,t,r = "function" == typeof Symbol ? Symbol : {},n = r.iterator || "@@iterator",o = r.toStringTag || "@@toStringTag";function i(r, n, o, i) {var c = n && n.prototype instanceof Generator ? n : Generator,u = Object.create(c.prototype);return _regeneratorDefine2(u, "_invoke", function (r, n, o) {var i,c,u,f = 0,p = o || [],y = !1,G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) {return i = t, c = 0, u = e, G.n = r, a;} };function d(r, n) {for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) {var o,i = p[t],d = G.p,l = i[2];r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0));}if (o || r > 1) return a;throw y = !0, n;}return function (o, p, l) {if (f > 1) throw TypeError("Generator is already running");for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) {i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u);try {if (f = 2, i) {if (c || (o = "next"), t = i[o]) {if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object");if (!t.done) return t;u = t.value, c < 2 && (c = 0);} else 1 === c && (t = i.return) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1);i = e;} else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break;} catch (t) {i = e, c = 1, u = t;} finally {f = 1;}}return { value: t, done: y };};}(r, o, i), !0), u;}var a = {};function Generator() {}function GeneratorFunction() {}function GeneratorFunctionPrototype() {}t = Object.getPrototypeOf;var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () {return this;}), t),u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c);function f(e) {return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e;}return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () {return this;}), _regeneratorDefine2(u, "toString", function () {return "[object Generator]";}), (_regenerator = function _regenerator() {return { w: i, m: f };})();}function _regeneratorDefine2(e, r, n, t) {var i = Object.defineProperty;try {i({}, "", {});} catch (e) {i = 0;}_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) {function o(r, n) {_regeneratorDefine2(e, r, function (e) {return this._invoke(r, n, e);});}r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2));}, _regeneratorDefine2(e, r, n, t);}function _slicedToArray(r, e) {return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();}function _nonIterableRest() {throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(r, a) {if (r) {if ("string" == typeof r) return _arrayLikeToArray(r, a);var t = {}.toString.call(r).slice(8, -1);return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;}}function _arrayLikeToArray(r, a) {(null == a || a > r.length) && (a = r.length);for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];return n;}function _iterableToArrayLimit(r, l) {var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];if (null != t) {var e,n,i,u,a = [],f = !0,o = !1;try {if (i = (t = t.call(r)).next, 0 === l) {if (Object(t) !== t) return;f = !1;} else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);} catch (r) {o = !0, n = r;} finally {try {if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return;} finally {if (o) throw n;}}return a;}}function _arrayWithHoles(r) {if (Array.isArray(r)) return r;}function ownKeys(e, r) {var t = Object.keys(e);if (Object.getOwnPropertySymbols) {var o = Object.getOwnPropertySymbols(e);r && (o = o.filter(function (r) {return Object.getOwnPropertyDescriptor(e, r).enumerable;})), t.push.apply(t, o);}return t;}function _objectSpread(e) {for (var r = 1; r < arguments.length; r++) {var t = null != arguments[r] ? arguments[r] : {};r % 2 ? ownKeys(Object(t), !0).forEach(function (r) {_defineProperty(e, r, t[r]);}) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) {Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));});}return e;}function _defineProperty(e, r, t) {return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e;}function _toPropertyKey(t) {var i = _toPrimitive(t, "string");return "symbol" == _typeof(i) ? i : i + "";}function _toPrimitive(t, r) {if ("object" != _typeof(t) || !t) return t;var e = t[Symbol.toPrimitive];if (void 0 !== e) {var i = e.call(t, r || "default");if ("object" != _typeof(i)) return i;throw new TypeError("@@toPrimitive must return a primitive value.");}return ("string" === r ? String : Number)(t);}function asyncGeneratorStep(n, t, e, r, o, a, c) {try {var i = n[a](c),u = i.value;} catch (n) {return void e(n);}i.done ? t(u) : Promise.resolve(u).then(r, o);}function _asyncToGenerator(n) {return function () {var t = this,e = arguments;return new Promise(function (r, o) {var a = n.apply(t, e);function _next(n) {asyncGeneratorStep(a, r, o, _next, _throw, "next", n);}function _throw(n) {asyncGeneratorStep(a, r, o, _next, _throw, "throw", n);}_next(void 0);});};}var _React = React,useState = _React.useState,useCallback = _React.useCallback,useEffect = _React.useEffect,useRef = _React.useRef;
+function _typeof(o) {"@babel/helpers - typeof";return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {return typeof o;} : function (o) {return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;}, _typeof(o);}function _toConsumableArray(a) {return _arrayWithoutHoles(a) || _iterableToArray(a) || _unsupportedIterableToArray(a) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _iterableToArray(r) {var e = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];if (Array.isArray(r) && (null == e || e === ("undefined" != typeof Symbol && [][Symbol.iterator]) || e === []["@@iterator"])) return r;if (null != e) {for (var t, o = [], a = e.call(r); !(t = a.next()).done;) o.push(t.value);return o;}}function _arrayWithoutHoles(a) {if (Array.isArray(a)) return _arrayLikeToArray(a);}function _regenerator() {
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */var r,e,o = "function" == typeof Symbol ? Symbol : {},n = o.iterator || "@@iterator",a = o.toStringTag || "@@toStringTag";function i(o, n, a, i) {var u = n && n.prototype instanceof Generator ? n : Generator,f = Object.create(u.prototype);return _regeneratorDefine2(f, "_invoke", function (t, o, n) {var a,i,u,f = 0,p = n || [],y = !1,G = { p: 0, n: 0, v: r, a: l, f: l.bind(r, 4), d: function d(t, e) {return a = t, i = 0, u = r, G.n = e, c;} };function l(t, o) {for (i = t, u = o, e = 0; !y && f && !n && e < p.length; e++) {var n,a = p[e],l = G.p,F = a[2];t > 3 ? (n = F === o) && (u = a[(i = a[4]) ? 5 : (i = 3, 3)], a[4] = a[5] = r) : a[0] <= l && ((n = t < 2 && l < a[1]) ? (i = 0, G.v = o, G.n = a[1]) : l < F && (n = t < 3 || a[0] > o || o > F) && (a[4] = t, a[5] = o, G.n = F, i = 0));}if (n || t > 1) return c;throw y = !0, o;}return function (n, p, F) {if (f > 1) throw TypeError("Generator is already running");for (y && 1 === p && l(p, F), i = p, u = F; (e = i < 2 ? r : u) || !y;) {a || (i ? (i > 1 && (G.n = i < 3 ? -1 : u), l(i, u)) : G.v = u);try {if (f = 2, a) {if (i || (n = "next"), e = a[n]) {if (!(e = e.call(a, u))) throw TypeError("iterator result is not an object");if (!e.done) return e;u = e.value, i < 2 && (i = 0);} else 1 === i && (e = a.return) && e.call(a), i < 2 && (u = TypeError("The iterator does not provide a '" + n + "' method"), i = 1);a = r;} else if ((e = (y = G.n < 0) ? u : t.call(o, G)) !== c) break;} catch (t) {a = r, i = 1, u = t;} finally {f = 1;}}return { value: e, done: y };};}(o, a, i), !0), f;}var c = {};function Generator() {}function GeneratorFunction() {}function GeneratorFunctionPrototype() {}e = Object.getPrototypeOf;var u = [][n] ? e(e([][n]())) : (_regeneratorDefine2(e = {}, n, function () {return this;}), e),f = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(u);function p(r) {return Object.setPrototypeOf ? Object.setPrototypeOf(r, GeneratorFunctionPrototype) : (r.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(r, a, "GeneratorFunction")), r.prototype = Object.create(f), r;}return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(f, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, a, "GeneratorFunction"), _regeneratorDefine2(f), _regeneratorDefine2(f, a, "Generator"), _regeneratorDefine2(f, n, function () {return this;}), _regeneratorDefine2(f, "toString", function () {return "[object Generator]";}), (_regenerator = function _regenerator() {return { w: i, m: p };})();}function _regeneratorDefine2(e, r, n, t) {var i = Object.defineProperty;try {i({}, "", {});} catch (e) {i = 0;}_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) {function o(r, n) {_regeneratorDefine2(e, r, function (e) {return this._invoke(r, n, e);});}r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2));}, _regeneratorDefine2(e, r, n, t);}function _slicedToArray(e, i) {return _iterableToArrayLimit(e, i) || _unsupportedIterableToArray(e, i) || _nonIterableRest();}function _nonIterableRest() {throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(t, e) {if (t) {if ("string" == typeof t) return _arrayLikeToArray(t, e);var o = {}.toString.call(t).slice(8, -1);return "Object" === o && t.constructor && (o = t.constructor.name), "Map" === o || "Set" === o ? Array.from(t) : "Arguments" === o || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(o) ? _arrayLikeToArray(t, e) : void 0;}}function _arrayLikeToArray(r, a) {(null == a || a > r.length) && (a = r.length);for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];return n;}function _iterableToArrayLimit(r, t) {var e = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];if (Array.isArray(r) && (null == e || e === ("undefined" != typeof Symbol && [][Symbol.iterator]) || e === []["@@iterator"])) return r;if (null != e) {var l,n,i,a,u = [],o = !0,f = !1;try {if (i = (e = e.call(r)).next, 0 === t) {if (Object(e) !== e) return;o = !1;} else for (; !(o = (l = i.call(e)).done) && (u.push(l.value), u.length !== t); o = !0);} catch (r) {f = !0, n = r;} finally {try {if (!o && null != e.return && (a = e.return(), Object(a) !== a)) return;} finally {if (f) throw n;}}return u;}}function ownKeys(e, r) {var t = Object.keys(e);if (Object.getOwnPropertySymbols) {var o = Object.getOwnPropertySymbols(e);r && (o = o.filter(function (r) {return Object.getOwnPropertyDescriptor(e, r).enumerable;})), t.push.apply(t, o);}return t;}function _objectSpread(r) {for (var t = 1; t < arguments.length; t++) {var o = null != arguments[t] ? arguments[t] : {};t % 2 ? ownKeys(Object(o), !0).forEach(function (t) {_defineProperty(r, t, o[t]);}) : Object.getOwnPropertyDescriptors ? Object.defineProperties(r, Object.getOwnPropertyDescriptors(o)) : ownKeys(Object(o)).forEach(function (e) {Object.defineProperty(r, e, Object.getOwnPropertyDescriptor(o, e));});}return r;}function _defineProperty(r, t, o) {return (t = _toPropertyKey(t)) in r ? Object.defineProperty(r, t, { value: o, enumerable: !0, configurable: !0, writable: !0 }) : r[t] = o, r;}function _toPropertyKey(r) {var o = _toPrimitive(r, "string");return "symbol" == _typeof(o) ? o : o + "";}function _toPrimitive(t, e) {if ("object" != _typeof(t) || !t) return t;var r;if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) {var i = r.call(t, e || "default");if ("object" != _typeof(i)) return i;throw new TypeError("@@toPrimitive must return a primitive value.");}return ("string" === e ? String : Number)(t);}function asyncGeneratorStep(n, t, e, r, o, a, c) {try {var i = n[a](c),u = i.value;} catch (n) {return void e(n);}i.done ? t(u) : Promise.resolve(u).then(r, o);}function _asyncToGenerator(n) {return function () {var t = this,e = arguments;return new Promise(function (r, o) {var a = n.apply(t, e);function _next(n) {asyncGeneratorStep(a, r, o, _next, _throw, "next", n);}function _throw(n) {asyncGeneratorStep(a, r, o, _next, _throw, "throw", n);}_next(void 0);});};}var _React = React,useState = _React.useState,useCallback = _React.useCallback,useEffect = _React.useEffect,useRef = _React.useRef;
 
 var getISATemp = function getISATemp(altFt) {return 15 - altFt / 1000 * 1.98;};
+// FAA airspace fetch — straight from the FAA's own AIS ArcGIS feature services (same
+// FAA account that serves the VFR sectional tiles). No API key, open CORS, and native
+// bbox filtering. Replaced OpenAIP, which began blocking bbox queries for public
+// clients (HTTP 403 for any key). Returns {airspaces:[...]} in the same normalized
+// shape the profile view and map overlay already consume, or null if both layers fail.
+var FAA_AS_BASE = "https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/ArcGIS/rest/services/";
+var FAA_SUA_TYPES = { MOA: "MOA", R: "RESTRICTED", P: "PROHIBITED", W: "WARNING", A: "ALERT", D: "DANGER" };
+function faaAltFt(val, uom, code, isUpper) {
+  // FAA "SFC" code means the value is ABOVE the surface (e.g. 500 SFC = 500 AGL);
+  // only a value of 0 with SFC is truly ground level.
+  if (code === "SFC") {var s = parseFloat(val);return isNaN(s) ? 0 : s;}
+  if (isUpper && (code === "UNLTD" || val === null || val === undefined || val === "")) return 99999;
+  var n = parseFloat(val);
+  if (isNaN(n)) return isUpper ? 99999 : 0;
+  if (n <= -9998) return isUpper ? 99999 : 0;
+  if (uom === "FL") n = n * 100;
+  return n;
+}
+function faaRef(val, code) {
+  if (code === "SFC") return parseFloat(val) > 0 ? "AGL" : "SFC";
+  if (code === "STD") return "FL";
+  return code || "MSL";
+}
+function faaQueryUrl(layer, where, outFields, minLat, maxLat, minLon, maxLon) {
+  var env = JSON.stringify({ xmin: minLon, ymin: minLat, xmax: maxLon, ymax: maxLat, spatialReference: { wkid: 4326 } });
+  return FAA_AS_BASE + layer + "/FeatureServer/0/query?where=" + encodeURIComponent(where) +
+  "&geometry=" + encodeURIComponent(env) + "&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects" +
+  "&outFields=" + outFields + "&outSR=4326&geometryPrecision=4&maxAllowableOffset=0.002&f=geojson";
+}
+function fetchFaaAirspaceOnce(minLat, maxLat, minLon, maxLon) {
+  var classUrl = faaQueryUrl("Class_Airspace", "CLASS IN ('B','C','D')", "NAME,CLASS,LOWER_VAL,LOWER_UOM,LOWER_CODE,UPPER_VAL,UPPER_UOM,UPPER_CODE", minLat, maxLat, minLon, maxLon);
+  var suaUrl = faaQueryUrl("Special_Use_Airspace", "1=1", "NAME,TYPE_CODE,LOWER_VAL,LOWER_UOM,LOWER_CODE,UPPER_VAL,UPPER_UOM,UPPER_CODE,TIMESOFUSE", minLat, maxLat, minLon, maxLon);
+  var getJson = function getJson(u) {return fetch(u).then(function (r) {if (!r.ok) throw new Error("HTTP " + r.status);return r.json();}).then(function (j) {if (!j || !j.features) throw new Error("bad response");return j;}).catch(function () {return null;});};
+  return Promise.all([getJson(classUrl), getJson(suaUrl)]).then(function (res) {
+    if (!res[0] && !res[1]) return null;
+    var out = [];
+    if (res[0]) res[0].features.forEach(function (f) {
+      var p = f.properties || {};
+      if (!f.geometry) return;
+      out.push({ name: p.NAME || "", asClass: String(p.CLASS || "").toUpperCase(), type: "OTHER",
+        lowerFt: faaAltFt(p.LOWER_VAL, p.LOWER_UOM, p.LOWER_CODE, false), upperFt: faaAltFt(p.UPPER_VAL, p.UPPER_UOM, p.UPPER_CODE, true),
+        lowerRef: faaRef(p.LOWER_VAL, p.LOWER_CODE), upperRef: faaRef(p.UPPER_VAL, p.UPPER_CODE), geometry: f.geometry });
+    });
+    if (res[1]) res[1].features.forEach(function (f) {
+      var p = f.properties || {};
+      if (!f.geometry) return;
+      out.push({ name: p.NAME || "", asClass: "", type: FAA_SUA_TYPES[p.TYPE_CODE] || String(p.TYPE_CODE || "OTHER"),
+        lowerFt: faaAltFt(p.LOWER_VAL, p.LOWER_UOM, p.LOWER_CODE, false), upperFt: faaAltFt(p.UPPER_VAL, p.UPPER_UOM, p.UPPER_CODE, true),
+        lowerRef: faaRef(p.LOWER_VAL, p.LOWER_CODE), upperRef: faaRef(p.UPPER_VAL, p.UPPER_CODE), timesOfUse: p.TIMESOFUSE || "", geometry: f.geometry });
+    });
+    return { airspaces: out, source: "FAA" };
+  });
+}
+function fetchFaaAirspace(minLat, maxLat, minLon, maxLon) {
+  return fetchFaaAirspaceOnce(minLat, maxLat, minLon, maxLon).then(function (r) {
+    if (r) return r;
+    return new Promise(function (res) {setTimeout(res, 1200);}).then(function () {return fetchFaaAirspaceOnce(minLat, maxLat, minLon, maxLon);});
+  });
+}
+
 // Open-Meteo fetch: direct first (native CORS), worker proxy fallback with retry.
 // Avoids worker→Cloudflare-hosted-site 5xx handshake failures. Returns parsed JSON or null.
-function fetchOpenMeteoJSON(_x, _x2, _x3) {return _fetchOpenMeteoJSON.apply(this, arguments);}function _fetchOpenMeteoJSON() {_fetchOpenMeteoJSON = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee13(lat, lon, hourly) {var directUrl, proxyUrl, urls, attempt, res, data, _t14;return _regenerator().w(function (_context13) {while (1) switch (_context13.p = _context13.n) {case 0:
+function fetchOpenMeteoJSON(_x, _x2, _x3) {return _fetchOpenMeteoJSON.apply(this, arguments);}function _fetchOpenMeteoJSON() {_fetchOpenMeteoJSON = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee13(lat, lon, hourly) {var directUrl, proxyUrl, urls, attempt, res, data, _t15;return _regenerator().w(function (_context13) {while (1) switch (_context13.p = _context13.n) {case 0:
           directUrl = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&hourly=" + hourly + "&wind_speed_unit=kn&temperature_unit=celsius&forecast_days=3&timezone=UTC";
           proxyUrl = "https://metar-proxy.mamillh01.workers.dev/?type=openmeteo&lat=" + lat + "&lon=" + lon + "&hourly=" + hourly;
           urls = [directUrl, proxyUrl, proxyUrl];
@@ -142,7 +201,7 @@ function fetchOpenMeteoJSON(_x, _x2, _x3) {return _fetchOpenMeteoJSON.apply(this
             fetch(urls[attempt]));case 3:res = _context13.v;if (
           res.ok) {_context13.n = 4;break;}return _context13.a(3, 8);case 4:_context13.n = 5;return (
             res.json());case 5:data = _context13.v;if (!(
-          data && data.hourly)) {_context13.n = 6;break;}return _context13.a(2, data);case 6:_context13.n = 8;break;case 7:_context13.p = 7;_t14 = _context13.v;case 8:attempt++;_context13.n = 1;break;case 9:return _context13.a(2,
+          data && data.hourly)) {_context13.n = 6;break;}return _context13.a(2, data);case 6:_context13.n = 8;break;case 7:_context13.p = 7;_t15 = _context13.v;case 8:attempt++;_context13.n = 1;break;case 9:return _context13.a(2,
 
 
           null);}}, _callee13, null, [[2, 7]]);}));return _fetchOpenMeteoJSON.apply(this, arguments);}
@@ -4566,7 +4625,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     return { wspd: "wind_speed_250hPa", wdir: "wind_direction_250hPa", temp: "temperature_250hPa" };
   };
 
-  var fetchRouteWeather = /*#__PURE__*/function () {var _fetchRouteWeather = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(wps, cruise, currentTocTod) {var targetTime, cruiseFt, dep, dest, depElevFt, destElevFt, HOURLY_VARS, fetchAllLevels, extractAtAlt, syncTocNM, syncTodNM, syncTotalNM, j, fetched, idx2, newTemps, newWindDirs, newWindSpds, depCruise, destCruise, _t5, _t6;return _regenerator().w(function (_context5) {while (1) switch (_context5.p = _context5.n) {case 0:if (!(
+  var fetchRouteWeather = /*#__PURE__*/function () {var _fetchRouteWeather = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(wps, cruise, currentTocTod) {var targetTime, cruiseFt, dep, dest, depElevFt, destElevFt, HOURLY_VARS, fetchAllLevels, extractAtAlt, syncTocNM, syncTodNM, syncTotalNM, j, fetched, idx2, newTemps, newWindDirs, newWindSpds, depCruise, destCruise, _t5, _t6, _t7;return _regenerator().w(function (_context5) {while (1) switch (_context5.p = _context5.n) {case 0:if (!(
             wps.length < 2)) {_context5.n = 1;break;}return _context5.a(2);case 1:
             setWeatherLoading(true);setWeatherError("");
             targetTime = new Date(depTime);
@@ -4611,7 +4670,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
             fetched = [];
             idx2 = 0;case 3:if (!(idx2 < wps.length)) {_context5.n = 7;break;}if (!(
             idx2 > 0)) {_context5.n = 4;break;}_context5.n = 4;return new Promise(function (r) {setTimeout(r, 500);});case 4:_t5 =
-            fetched;_context5.n = 5;return fetchAllLevels(wps[idx2].lat, wps[idx2].lon);case 5:_t5.push.call(_t5, _context5.v);case 6:idx2++;_context5.n = 3;break;case 7:
+            fetched;_t6 = _t5.push;_context5.n = 5;return fetchAllLevels(wps[idx2].lat, wps[idx2].lon);case 5:_t6.call(_t5, _context5.v);case 6:idx2++;_context5.n = 3;break;case 7:
 
 
             newTemps = {}, newWindDirs = {}, newWindSpds = {};
@@ -4656,9 +4715,9 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
               destCruise = extractAtAlt(fetched[fetched.length - 1], cruiseFt);
               setCruiseLevelDepTemp(depCruise ? depCruise.temp : null);
               setCruiseLevelDestTemp(destCruise ? destCruise.temp : null);
-            }_context5.n = 9;break;case 8:_context5.p = 8;_t6 = _context5.v;
+            }_context5.n = 9;break;case 8:_context5.p = 8;_t7 = _context5.v;
 
-            setWeatherError("Weather fetch failed: " + _t6.message);case 9:
+            setWeatherError("Weather fetch failed: " + _t7.message);case 9:
 
             setWeatherLoading(false);case 10:return _context5.a(2);}}, _callee5, null, [[2, 8]]);}));function fetchRouteWeather(_x6, _x7, _x8) {return _fetchRouteWeather.apply(this, arguments);}return fetchRouteWeather;}();
 
@@ -4786,12 +4845,12 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
           });
         }
         if (!rings) return;
-        var floorStr = as.lowerFt <= 0 ? 'SFC' : as.lowerFt >= 18000 ? 'FL' + Math.round(as.lowerFt / 100) : as.lowerFt.toLocaleString() + ' ft';
+        var floorStr = as.lowerFt <= 0 ? 'SFC' : as.lowerFt >= 18000 ? 'FL' + Math.round(as.lowerFt / 100) : as.lowerFt.toLocaleString() + (as.lowerRef === 'AGL' ? ' AGL' : ' ft');
         var ceilStr = as.upperFt >= 99999 ? 'UNLTD' : as.upperFt >= 18000 ? 'FL' + Math.round(as.upperFt / 100) : as.upperFt.toLocaleString() + ' ft';
         rings.forEach(function (latlngs) {
           L.polygon(latlngs, { color: "white", weight: weight + 2.5, opacity: 0.6, fill: false, interactive: false }).addTo(group);
           var poly = L.polygon(latlngs, { color: color, weight: weight, opacity: 1, fillColor: color, fillOpacity: 0.08, dashArray: dashArray, interactive: true });
-          poly.bindTooltip((as.name || asType) + "\n" + asClass + " · " + floorStr + " – " + ceilStr, { sticky: true, className: "wx-tooltip", direction: "top" });
+          poly.bindTooltip((as.name || asType) + "\n" + (asClass || asType) + " · " + floorStr + " – " + ceilStr + (as.timesOfUse ? "\n" + as.timesOfUse : ""), { sticky: true, className: "wx-tooltip", direction: "top" });
           poly.addTo(group);
         });
       } catch (e) {}
@@ -4827,9 +4886,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
         }
 
         var mySeq = ++mapAsFetchSeqRef.current;
-        var base = "https://metar-proxy.mamillh01.workers.dev/";
-        var qs = "?type=airspaces&minLat=" + minLat.toFixed(4) + "&maxLat=" + maxLat.toFixed(4) + "&minLon=" + minLon.toFixed(4) + "&maxLon=" + maxLon.toFixed(4) + "&t=" + Math.floor(Date.now() / 120000);
-        fetch(base + qs).then(function (r) {return r.json();}).catch(function () {return null;}).then(function (result) {
+        fetchFaaAirspace(minLat, maxLat, minLon, maxLon).catch(function () {return null;}).then(function (result) {
           if (mySeq !== mapAsFetchSeqRef.current) return; // superseded by a newer pan/zoom
           var got = result && result.airspaces && result.airspaces.length > 0;
           var spaces = got ? result.airspaces : mapAsLastGoodRef.current;
@@ -5037,20 +5094,11 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
         catch(function () {return {};});
       });
     }),
-    fetch("https://metar-proxy.mamillh01.workers.dev/?type=airspaces&minLat=" + minLat + "&maxLat=" + maxLat + "&minLon=" + minLon + "&maxLon=" + maxLon + "&t=" + Math.floor(Date.now() / 60000)).
-    then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    }).
-    catch(function () {
-      // Retry once after a short delay — covers transient rate-limit blips
-      return new Promise(function (resolve) {setTimeout(resolve, 1500);}).
-      then(function () {
-        return fetch("https://metar-proxy.mamillh01.workers.dev/?type=airspaces&minLat=" + minLat + "&maxLat=" + maxLat + "&minLon=" + minLon + "&maxLon=" + maxLon + "&t=" + Math.floor(Date.now() / 60000)).
-        then(function (r) {return r.json();}).
-        catch(function () {return {};});
-      });
-    })]
+    // FAA airspace (helper retries once internally); {} on total failure so the
+    // rest of the profile still renders.
+    fetchFaaAirspace(minLat, maxLat, minLon, maxLon).
+    then(function (r) {return r || {};}).
+    catch(function () {return {};})]
     ).then(function (results) {
       setProfileLoading(false);
       var elevData = results[0],asData = results[1];
@@ -5396,7 +5444,7 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
     addSpecialMarker(todPt, "TOD", "#1d4ed8");
   }, [tocTod, waypoints]);
 
-  var resolveRoute = /*#__PURE__*/function () {var _resolveRoute = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {var ids, results, newAlts, _t7;return _regenerator().w(function (_context7) {while (1) switch (_context7.p = _context7.n) {case 0:
+  var resolveRoute = /*#__PURE__*/function () {var _resolveRoute = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {var ids, results, newAlts, _t8;return _regenerator().w(function (_context7) {while (1) switch (_context7.p = _context7.n) {case 0:
             ids = routeInput.trim().toUpperCase().split(/[\s,]+/).filter(Boolean);if (!(
             ids.length < 2)) {_context7.n = 1;break;}setError("Enter at least 2 airports e.g. KLAF KINDL KGYY");return _context7.a(2);case 1:
             setLoading(true);setError("");_context7.p = 2;_context7.n = 3;return (
@@ -5421,10 +5469,10 @@ function NavlogTab(_ref44) {var savedState = _ref44.savedState,onStateChange = _
             });
             if (Object.keys(newAlts).length > 0) {
               setLegAlts(function (prev) {return _objectSpread(_objectSpread({}, prev), newAlts);});
-            }_context7.n = 5;break;case 4:_context7.p = 4;_t7 = _context7.v;
+            }_context7.n = 5;break;case 4:_context7.p = 4;_t8 = _context7.v;
 
 
-            setError(_t7.message || "Could not resolve one or more airports");case 5:
+            setError(_t8.message || "Could not resolve one or more airports");case 5:
 
             setLoading(false);case 6:return _context7.a(2);}}, _callee7, null, [[2, 4]]);}));function resolveRoute() {return _resolveRoute.apply(this, arguments);}return resolveRoute;}();
 
@@ -7545,11 +7593,11 @@ function calculateC172Cruise(altFt, rpm, oatC) {
         gph: row[0].gph + t * (row[1].gph - row[0].gph)
       };
     } else {
-      var _t8 = (isaT - 0.5) * 2;
+      var _t9 = (isaT - 0.5) * 2;
       return {
-        pct: row[1].pct + _t8 * (row[2].pct - row[1].pct),
-        ktas: row[1].ktas + _t8 * (row[2].ktas - row[1].ktas),
-        gph: row[1].gph + _t8 * (row[2].gph - row[1].gph)
+        pct: row[1].pct + _t9 * (row[2].pct - row[1].pct),
+        ktas: row[1].ktas + _t9 * (row[2].ktas - row[1].ktas),
+        gph: row[1].gph + _t9 * (row[2].gph - row[1].gph)
       };
     }
   }
@@ -7785,8 +7833,8 @@ function calculateC172Takeoff(altFt, oatC, weightLbs, windKt, windDir) {
     var wks = [2200, 2400, 2550];
     for (var i = 0; i < wks.length - 1; i++) {
       if (clampedWt >= wks[i] && clampedWt <= wks[i + 1]) {
-        var _t9 = (clampedWt - wks[i]) / (wks[i + 1] - wks[i]);
-        return Math.round(c172TakeoffSpeeds[wks[i]][field] + _t9 * (c172TakeoffSpeeds[wks[i + 1]][field] - c172TakeoffSpeeds[wks[i]][field]));
+        var _t0 = (clampedWt - wks[i]) / (wks[i + 1] - wks[i]);
+        return Math.round(c172TakeoffSpeeds[wks[i]][field] + _t0 * (c172TakeoffSpeeds[wks[i + 1]][field] - c172TakeoffSpeeds[wks[i]][field]));
       }
     }
     return c172TakeoffSpeeds[wks[wks.length - 1]][field];
@@ -9887,8 +9935,8 @@ function getSemTAS(pct, altFt, oatC, mixture) {
     if (clampedAlt >= cfg.alts[i] && clampedAlt <= cfg.alts[i + 1]) {
       var lo = toInterpList(cfg.data[cfg.alts[i]], oatC);
       var hi = toInterpList(cfg.data[cfg.alts[i + 1]], oatC);
-      var _t0 = (clampedAlt - cfg.alts[i]) / (cfg.alts[i + 1] - cfg.alts[i]);
-      perfTAS = lo + _t0 * (hi - lo);
+      var _t1 = (clampedAlt - cfg.alts[i]) / (cfg.alts[i + 1] - cfg.alts[i]);
+      perfTAS = lo + _t1 * (hi - lo);
       break;
     }
   }
@@ -10146,8 +10194,8 @@ function calculateSemClimbOEI(altFt, oatC, weightLbs) {
       if (clampedAlt >= semClimbOEIAlts[i] && clampedAlt <= semClimbOEIAlts[i + 1]) {
         var lo = toInterpList(data[semClimbOEIKeys[i]], oatC);
         var hi = toInterpList(data[semClimbOEIKeys[i + 1]], oatC);
-        var _t1 = (clampedAlt - semClimbOEIAlts[i]) / (semClimbOEIAlts[i + 1] - semClimbOEIAlts[i]);
-        return lo + _t1 * (hi - lo);
+        var _t10 = (clampedAlt - semClimbOEIAlts[i]) / (semClimbOEIAlts[i + 1] - semClimbOEIAlts[i]);
+        return lo + _t10 * (hi - lo);
       }
     }
     return toInterpList(data[semClimbOEIKeys[semClimbOEIKeys.length - 1]], oatC);
@@ -10196,8 +10244,8 @@ function calculateSemClimbGearUp(altFt, oatC, weightLbs) {
       if (clampedAlt >= semClimbGearUpAlts[i] && clampedAlt <= semClimbGearUpAlts[i + 1]) {
         var lo = toInterpList(data[semClimbGearUpKeys[i]], oatC);
         var hi = toInterpList(data[semClimbGearUpKeys[i + 1]], oatC);
-        var _t10 = (clampedAlt - semClimbGearUpAlts[i]) / (semClimbGearUpAlts[i + 1] - semClimbGearUpAlts[i]);
-        return lo + _t10 * (hi - lo);
+        var _t11 = (clampedAlt - semClimbGearUpAlts[i]) / (semClimbGearUpAlts[i + 1] - semClimbGearUpAlts[i]);
+        return lo + _t11 * (hi - lo);
       }
     }
     return toInterpList(data[semClimbGearUpKeys[semClimbGearUpKeys.length - 1]], oatC);
@@ -10248,8 +10296,8 @@ function calculateSemClimbGearDown(altFt, oatC, weightLbs) {
       if (clampedAlt >= altKeys[i] && clampedAlt <= altKeys[i + 1]) {
         var lo = toInterpList(data[altStrs[i]], oatC);
         var hi = toInterpList(data[altStrs[i + 1]], oatC);
-        var _t11 = (clampedAlt - altKeys[i]) / (altKeys[i + 1] - altKeys[i]);
-        return lo + _t11 * (hi - lo);
+        var _t12 = (clampedAlt - altKeys[i]) / (altKeys[i + 1] - altKeys[i]);
+        return lo + _t12 * (hi - lo);
       }
     }
     return toInterpList(data[altStrs[altStrs.length - 1]], oatC);
@@ -11919,7 +11967,7 @@ function AuthScreen(_ref78) {var theme = _ref78.theme,toggleTheme = _ref78.toggl
   var _useState427 = useState(""),_useState428 = _slicedToArray(_useState427, 2),password = _useState428[0],setPassword = _useState428[1];
   var _useState429 = useState(""),_useState430 = _slicedToArray(_useState429, 2),msg = _useState430[0],setMsg = _useState430[1];
   var _useState431 = useState(false),_useState432 = _slicedToArray(_useState431, 2),loading = _useState432[0],setLoading = _useState432[1];
-  var submit = /*#__PURE__*/function () {var _submit = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee10() {var res, _t12, _t13;return _regenerator().w(function (_context10) {while (1) switch (_context10.p = _context10.n) {case 0:
+  var submit = /*#__PURE__*/function () {var _submit = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee10() {var res, _t13, _t14;return _regenerator().w(function (_context10) {while (1) switch (_context10.p = _context10.n) {case 0:
             setLoading(true);setMsg("");_context10.p = 1;if (!(
 
             mode === "reset")) {_context10.n = 3;break;}_context10.n = 2;return (
@@ -11928,11 +11976,11 @@ function AuthScreen(_ref78) {var theme = _ref78.theme,toggleTheme = _ref78.toggl
             {setMsg("Password reset email sent — check your inbox.");}_context10.n = 8;break;case 3:if (!(
 
             mode === "login")) {_context10.n = 5;break;}_context10.n = 4;return (
-              sbClient.auth.signInWithPassword({ email: email, password: password }));case 4:_t12 = _context10.v;_context10.n = 7;break;case 5:_context10.n = 6;return (
-              sbClient.auth.signUp({ email: email, password: password }));case 6:_t12 = _context10.v;case 7:res = _t12;
+              sbClient.auth.signInWithPassword({ email: email, password: password }));case 4:_t13 = _context10.v;_context10.n = 7;break;case 5:_context10.n = 6;return (
+              sbClient.auth.signUp({ email: email, password: password }));case 6:_t13 = _context10.v;case 7:res = _t13;
             if (res.error) {setMsg(res.error.message);} else
             if (mode === "signup") {setMsg("Account created — you can now log in.");} else
-            {onAuth(res.data.user);}case 8:_context10.n = 10;break;case 9:_context10.p = 9;_t13 = _context10.v;
+            {onAuth(res.data.user);}case 8:_context10.n = 10;break;case 9:_context10.p = 9;_t14 = _context10.v;
 
             setMsg("Something went wrong.");case 10:
             setLoading(false);case 11:return _context10.a(2);}}, _callee10, null, [[1, 9]]);}));function submit() {return _submit.apply(this, arguments);}return submit;}();
@@ -12115,9 +12163,9 @@ function Root() {
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(Root, null));
 </script>
+
 <!-- Cloudflare Web Analytics -->
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "c73f4c03f57a46f2afc72132c76bc020"}'></script>
 <!-- End Cloudflare Web Analytics -->
-
 </body>
 </html>
