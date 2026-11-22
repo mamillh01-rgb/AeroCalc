@@ -1,0 +1,36 @@
+name: Update TFRs
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # GitHub may run these a few minutes late
+  workflow_dispatch:          # "Run workflow" button for testing
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-tfr
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Download active TFRs from the FAA
+        run: node .github/scripts/update-tfr.mjs
+      - name: Commit tfr.json if it changed
+        run: |
+          if [ -n "$(git status --porcelain tfr.json)" ]; then
+            git config user.name "tfr-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add tfr.json
+            git commit -m "Update TFRs"
+            git push
+          else
+            echo "No change"
+          fi
